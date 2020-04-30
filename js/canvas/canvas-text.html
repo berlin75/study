@@ -1,0 +1,40 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>canvas 文字</title>
+<style>
+
+</style>
+</head>
+
+<body>
+<p>在一个100px宽的矩形区域中绘制文本"小火柴"，下面代码从50px字体大小开始递减，最终会找到合适的字体大小</p>
+
+<canvas id="drawing" style="border:1px solid black">
+    <p>The canvas element is not supported!</p>
+</canvas>
+
+<script src="../../vendors/jquery-3.1.1.js"></script>
+<script>
+var drawing = document.getElementById('drawing');
+//确定浏览器支持<canvas>元素
+if(drawing.getContext){
+    var context = drawing.getContext('2d');
+    var fontSize = 50;
+    var str = '小火柴'; 
+    context.textAlign = 'start';
+    context.textBaseline = 'middle';
+    context.font = fontSize + 'px arial';
+    console.log(context.measureText(str).width);
+    while(context.measureText(str).width > 100){
+        fontSize--;
+        context.font = fontSize + 'px arial';
+    }
+    console.log(fontSize);
+    context.fillText(str, 10, 30);
+    context.strokeText(str, 10, 80);
+} 
+</script>
+</body>
+</html>

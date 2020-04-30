@@ -1,0 +1,65 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>gradient</title>
+<style>
+*{ margin:0; padding:0; box-sizing:border-box;}
+div{ margin:0 auto;}
+#div1{ width:80%; height:80px; margin-bottom:10px; background:#063053;
+       background-image:linear-gradient(#063053,#395873,#5c7c99,#395873,#063053);}
+	   
+#div11{ width:80%; height:80px; margin-bottom:10px; background:#063053;
+       background-image:linear-gradient(to right,#063053,#395873,#5c7c99,#395873,#063053);}
+	   
+#div12{ width:80%; height:80px; margin-bottom:10px; background:#063053;
+       background-image:linear-gradient(to bottom right,#063053,#395873,#5c7c99,#395873,#063053);}
+	   
+#div2{ width:80%; height:80px; margin-bottom:10px; background:#063053;
+       background-image:linear-gradient(45deg,#063053,#395873,#5c7c99,#395873,#063053);}
+	   
+#div3{ width:80%; height:80px; margin-bottom:10px; background:#063053;
+       background-image:linear-gradient(red,green,blue,purple,orange);}
+	   
+/*#div4{ width:80%; height:80px; margin-bottom:10px; background:#063053;
+       background-image:linear-gradient(180deg,rgba(255,0,0,1),rgba(255,0,0,0.3),rgba(255,0,0,1);}
+*/	   
+#div5{ width:200px; height:200px; margin-bottom:10px; background:#063053;
+       background-image:radial-gradient(red,blue,green);}
+	   
+#div6{ width:200px; height:200px; margin-bottom:10px; background:#063053;
+       background-image:radial-gradient(circle,red 20%,blue 60%,green 20%);}
+	   
+#div7{ width:200px; height:200px; margin-bottom:10px; background:#063053;
+       background-image:radial-gradient(ellipse,red 20%,blue 60%,green 20%);}
+	   
+#div8{ width:80%; height:200px; margin-bottom:10px; background:#063053;
+       background-image:radial-gradient(rgba(255,255,255,0.3),rgba(255,255,255,0));}
+	   
+#div9{ width:80%; height:200px; margin-bottom:10px; background:#4b770a;
+       background-image:radial-gradient(rgba(255,255,255,0.3),rgba(255,255,255,0));}
+</style>
+</head>
+
+<body>
+<div id="div1">默认从上到下</div>
+<div id="div11">to right从左到右</div>
+<div id="div12">to bottom right从左到右</div>
+
+<div id="div2">45deg角度指定方向</div>
+
+<div id="div3">多色彩虹式渐变</div>
+
+<div id="div4">rgba渐变透明度和角度指定方向</div>
+
+<div id="div5">径向渐变radial-gradient</div>
+
+<div id="div6">不均匀径向渐变</div>
+
+<div id="div7">椭圆ellipse不均匀径向渐变</div>
+
+<div id="div8">背景径向渐变</div>
+
+<div id="div9">背景径向渐变</div>
+</body>
+</html>

@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>transition-component</title>
+<script src="../../vendors/vue.min.js"></script>
+<script src="../../vendors/velocity.min.js"></script>
+<link href="../../vendors/animate.css" rel="stylesheet">
+<style>
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .5s;
+}
+.fade-enter, .fade-leave-to{
+  opacity: 0;
+}
+
+.v-enter-active, .v-leave-active {
+  transition: opacity .5s;
+}
+.v-enter, .v-leave-to{
+  opacity: 0;
+}
+
+.slide-fade-enter-active {
+  transition: all .3s ease;
+}
+.slide-fade-leave-active {
+  transition: all .8s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+}
+.slide-fade-enter, .slide-fade-leave-to{
+  transform: translateX(20px);
+  opacity: 0;
+}
+</style>
+</head>
+<body style="padding-left: 5rem">
+<p>--------------------css过渡--------------------------------</p>
+<div id="app">
+	<button @click="show = !show">toggle</button>
+	<transition name="fade">
+		<p v-if="show">aaaaaaaaaaa</p>
+	</transition>
+	<transition name="fade" :duration="{ enter: 500, leave: 800 }">
+		<p v-if="show">bbbbbbbbbbb</p>
+	</transition>
+	<transition>
+		<p v-if="show">cccccccccccc</p>
+	</transition>
+	<transition name="slide-fade">
+	    <p v-if="show">dddddddddddd</p>
+	</transition>
+	<transition name="no-css">
+	    <p v-if="show">eeeeeeeeeeee</p>
+	</transition>
+</div>
+
+<script>
+	new Vue({
+		el: '#app',
+		data: {show: true}
+	})
+</script>
+
+<p>--------------css动画------------------------------------------</p>
+<style>
+.bounce-enter-active {
+  animation: bounce-in .5s;
+}
+.bounce-leave-active {
+  animation: bounce-in .5s reverse;
+}
+@keyframes bounce-in {
+  0% {
+    transform: scale(0);
+  }
+  50% {
+    transform: scale(1.5);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+</style>
+
+<div id="example-2">
+  <button @click="show = !show">Toggle show</button>
+  <transition name="bounce">
+    <p v-if="show">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris facilisis enim libero, at lacinia diam fermentum id. Pellentesque habitant morbi tristique senectus et netus.</p>
+  </transition>
+</div>
+
+<script>
+new Vue({
+  el: '#example-2',
+  data: {
+    show: true
+  }
+})
+</script>
+
+<p>----------------animate.css动画--------------------------------------</p>
+
+<div id="example-3">
+  <button @click="show = !show">Toggle render</button>
+  <transition
+    name="custom-classes-transition"
+    enter-active-class="animated bounceInLeft"
+    leave-active-class="animated bounceOutRight"
+  >
+    <p v-if="show">hello</p>
+  </transition>
+</div>
+
+<script>
+new Vue({
+  el: '#example-3',
+  data: {
+    show: true
+  }
+})
+</script>
+
+<p>-----------------js钩子动画 + velocity.min.js---------------------------</p>
+<p>当只用js过渡的时候,在enter和leave中,回调函数done是必须的 ,否则它们会被同步调用,过渡会立即完成</p>
+<p>推荐对于仅使用js过渡的元素添加v-bind:css="false"，Vue会跳过CSS的检测。这也可以避免过渡过程中CSS的影响</p>
+<!--
+Velocity works very much like jQuery.animate and is
+a great option for JavaScript animations
+-->
+
+<div id="example-4">
+  <button @click="show = !show">Toggle</button>
+  <transition
+    v-on:before-enter="beforeEnter"
+    v-on:enter="enter"
+    v-on:leave="leave"
+    v-bind:css="false"
+  >
+    <p v-if="show">Demo</p>
+  </transition>
+</div>
+
+<script>
+new Vue({
+  	el: '#example-4',
+  	data: {
+    	show: false
+  	},
+  	methods: {
+  	// 进入中
+    	beforeEnter: function (el) {
+      		el.style.opacity = 0
+      		el.style.transformOrigin = 'left'
+    	},
+    	enter: function (el, done) {
+      		Velocity(el, { opacity: 1, fontSize: '1.4em' }, { duration: 300 })
+      		Velocity(el, { fontSize: '1em' }, { complete: done })
+    	},
+		afterEnter: function (el) {
+	   		// ...
+		},
+		enterCancelled: function (el) {
+	   		// ...
+		},
+
+	//离开时
+		beforeLeave: function (el) {
+	    	// ...
+		},
+    	leave: function (el, done) {
+      		Velocity(el, { translateX: '15px', rotateZ: '50deg' }, { duration: 600 })
+      		Velocity(el, { rotateZ: '100deg' }, { loop: 2 })
+      		Velocity(el, {
+        		rotateZ: '45deg',
+        		translateY: '30px',
+        		translateX: '30px',
+        		opacity: 0
+      		}, { complete: done })
+    	},
+		afterLeave: function (el) {
+	    	// ...
+		},
+		leaveCancelled: function (el) {
+	    	// leaveCancelled 只用于 v-show 中
+		}
+  	}
+})
+</script>
+
+<p>---------------------多组件的过渡---------------------------------</p>
+<p>多个组件的过渡简单很多 - 我们不需要使用 key 特性。相反，我们只需要使用动态组件</p>
+<style>
+.component-fade-enter-active, .component-fade-leave-active {transition: opacity .3s ease;}
+.component-fade-enter, .component-fade-leave-to {opacity: 0;}
+</style>
+
+<div id="transition-components-demo">
+	<lable><input type="radio" name="ab" value="v-a" v-model="view">A</lable>
+    <lable><input type="radio" name="ab" value="v-b" v-model="view">B</lable>
+	<transition name="component-fade" mode="out-in">
+	  	<component v-bind:is="view"></component>
+	</transition>
+</div>
+
+<script>
+new Vue({
+  el: '#transition-components-demo',
+  data: {
+    view: 'v-a'
+  },
+  components: {
+    'v-a': { template: '<div>Component A</div>' },
+    'v-b': { template: '<div>Component B</div>' }
+  }
+})
+</script>
+
+<p>---------------------列表的进入/离开过渡-------------------</p>
+<style>
+.list-item {
+  display: inline-block;
+  margin-right: 10px;
+}
+.list-enter-active, .list-leave-active {
+  transition: all 1s;
+}
+.list-enter, .list-leave-to
+/* .list-leave-active for below version 2.1.8 */ {
+  opacity: 0;
+  transform: translateY(30px);
+}
+</style>
+
+<div id="list-demo" class="demo">
+  <button v-on:click="add">Add</button>
+  <button v-on:click="remove">Remove</button>
+  <transition-group name="list" tag="ul">
+    <li v-for="item in items" v-bind:key="item" class="list-item">{{ item }}</li>
+  </transition-group>
+</div>
+
+<script>
+new Vue({
+  el: '#list-demo',
+  data: {
+    items: [1,2,3,4,5,6,7,8,9],
+    nextNum: 10
+  },
+  methods: {
+    randomIndex: function () {
+      return Math.floor(Math.random() * this.items.length)
+    },
+    add: function () {
+      this.items.splice(this.randomIndex(), 0, this.nextNum++)
+    },
+    remove: function () {
+      this.items.splice(this.randomIndex(), 1)
+    },
+  }
+})
+</script>
+
+<p>-----------列表的交错过渡----------------------------------</p>
+<div id="staggered-list-demo">
+  <input v-model="query">
+  <transition-group
+    name="staggered-fade"
+    tag="ul"
+    v-bind:css="false"
+    v-on:before-enter="beforeEnter"
+    v-on:enter="enter"
+    v-on:leave="leave"
+  >
+    <li
+      v-for="(item, index) in computedList"
+      v-bind:key="item.msg"
+      v-bind:data-index="index"
+    >{{ item.msg }}</li>
+  </transition-group>
+</div>
+
+<script>
+new Vue({
+  el: '#staggered-list-demo',
+  data: {
+    query: '',
+    list: [
+      { msg: 'Bruce Lee' },
+      { msg: 'Jackie Chan' },
+      { msg: 'Chuck Norris' },
+      { msg: 'Jet Li' },
+      { msg: 'Kung Fury' }
+    ]
+  },
+  computed: {
+    computedList: function () {
+      var vm = this
+      return this.list.filter(item => item.msg.toLowerCase().indexOf(vm.query.toLowerCase()) !== -1)
+    }
+  },
+  methods: {
+    beforeEnter: function (el) {
+      el.style.opacity = 0
+      el.style.height = 0
+    },
+    enter: function (el, done) {
+      var delay = el.dataset.index * 150
+      setTimeout(function () {
+        Velocity(
+          el,
+          { opacity: 1, height: '1.6em' },
+          { complete: done }
+        )
+      }, delay)
+    },
+    leave: function (el, done) {
+      var delay = el.dataset.index * 150
+      setTimeout(function () {
+        Velocity(
+          el,
+          { opacity: 0, height: 0 },
+          { complete: done }
+        )
+      }, delay)
+    }
+  }
+})
+</script>
+
+<p>--------------动态过渡最基本的例子是通过 name 特性来绑定动态值------------</p>
+
+<div id="dynamic-fade-demo" class="demo">
+  Fade In: <input type="range" v-model="fadeInDuration" min="0" v-bind:max="maxFadeDuration">
+  Fade Out: <input type="range" v-model="fadeOutDuration" min="0" v-bind:max="maxFadeDuration">
+  <transition
+    v-bind:css="false"
+    v-on:before-enter="beforeEnter"
+    v-on:enter="enter"
+    v-on:leave="leave"
+  >
+    <p v-if="show">hello</p>
+  </transition>
+  <button v-if="stop" v-on:click="stop = false; show = false" >Start animating</button>
+  <button v-else v-on:click="stop = true" >Stop it!</button>
+</div>
+
+<script>
+new Vue({
+  el: '#dynamic-fade-demo',
+  data: {
+    show: true,
+    fadeInDuration: 1000,
+    fadeOutDuration: 1000,
+    maxFadeDuration: 1500,
+    stop: true
+  },
+  mounted: function () {
+    this.show = false
+  },
+  methods: {
+    beforeEnter: function (el) {
+      el.style.opacity = 0
+    },
+    enter: function (el, done) {
+      var vm = this
+      Velocity(el,
+        { opacity: 1 },
+        {
+          duration: this.fadeInDuration,
+          complete: function () {
+            done()
+            if (!vm.stop) vm.show = false
+          }
+        }
+      )
+    },
+    leave: function (el, done) {
+      var vm = this
+      Velocity(el,
+        { opacity: 0 },
+        {
+          duration: this.fadeOutDuration,
+          complete: function () {
+            done()
+            vm.show = true
+          }
+        }
+      )
+    }
+  }
+})	
+</script>
+
+<div style="height: 10rem"></div>
+</body>
+</html>

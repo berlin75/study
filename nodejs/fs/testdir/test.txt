@@ -1,0 +1,3 @@
+文件名:loopAllFiles.js  大小:1.53/kb  路径:../fs/loopAllFiles.js
+文件名:test.txt  大小:0.25/kb  路径:../fs/test.txt
+文件名:stat.js  大小:0.13/kb  路径:../fs/stat.js

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>vue-router</title>
+<script src="../../vendors/vue.min.js"></script>
+<script src="../../vendors/vue-router.js"></script>
+</head>
+<body>
+<div id="app">
+  <h1>vue-router</h1>
+  <p>
+    <!-- 使用 router-link 组件来导航,通过传入`to`属性指定链接. -->
+    <!-- <router-link> 默认会被渲染成一个 `<a>` 标签 -->
+    <!-- <router-link to="/vue-router-home">Go to vue-router-home</router-link> -->
+    <router-link to="/foo">Foo</router-link>
+    <router-link to="/bar">Bar</router-link>
+  </p>
+  <p>
+    <router-link to="/user/test1">/user/test1</router-link>
+    <router-link to="/user/test2">/user/test2</router-link>
+    <router-link to="/user/test2/more">/user/test2/more</router-link>
+    <router-link to="/user/evan/post/123">/user/evan/post/123</router-link>
+  </p>
+  <p>
+    <router-link to="/demo/d">/demo/d</router-link>
+    <router-link to="/demo/d/profile">/demo/d/profile</router-link>
+    <router-link to="/demo/d/posts">/demo/d/posts</router-link>
+  </p>
+  <!-- 路由出口,路由匹配到的组件将渲染在这里 -->
+  <router-view style="border: 1px solid"></router-view>
+
+  <p v-if="routeInfo" style="color: #666">routeInfo: 
+    <pre>{{routeInfo}}</pre>
+  </p>
+</div>
+
+<script>
+// 0. 如果使用模块化机制编程，導入Vue和VueRouter，要调用 Vue.use(VueRouter)
+ 
+// 1. 定义（路由）组件,可以从其他文件 import 进来
+// import vue-router-home from 'vue-router-home'
+const Foo = { template: '<div>foo</div>' }
+const Bar = { template: '<div>bar</div>' }
+const User = { 
+  template: `<div>User: {{ $route.params.id }}</div>`,
+  // watch: {
+  //   '$route' (to, from) {
+  //     console.log(`from: ${from}, to ${to}`)
+  //   }
+  // } 
+}
+const Demo = {
+  template: `
+    <div class="demo">
+      <h2>Demo: {{ $route.params.id }}</h2>
+      <router-view></router-view>
+    </div>
+  `
+}
+const DemoHome = {template: `<div>DemoHome</div>`}
+const DemoProfile = {template: `<div>DemoProfile</div>`}
+const DemoPosts = {template: `<div>DemoPosts</div>`}
+ 
+// 2. 定义路由
+// 每个路由应该映射一个组件。其中"component"可以是通过Vue.extend()创建的组件构造器或者只是一个组件配置对象
+const routes = [
+  // { path: '/vue-router-home', component: vue-router-home },
+  { path: '/foo', component: Foo },
+  { path: '/bar', component: Bar },
+  // 动态路由匹配
+  { path: '/user/:id', component: User },
+  { path: '/user/:username/post/:post_id', component: User },
+  { path: '/demo/:id', component: Demo,
+      children: [
+        {
+          path: '', component: DemoHome
+        },{ // 当 /demo/:id/profile 匹配成功，DemoProfile 会被渲染在 Demo 的 <router-view> 中
+          path: 'profile',component: DemoProfile
+        },{ // 当 /demo/:id/posts 匹配成功,DemoPosts 会被渲染在 Demo 的 <router-view> 中
+          path: 'posts',component: DemoPosts
+        }
+      ]
+    }
+]
+ 
+// 3. 创建router实例，然后传`routes`配置,还可以传别的配置参数
+const router = new VueRouter({
+  routes     // 缩写,相当于 routes: routes
+})
+ 
+// 4. 创建和挂载根实例。要通过router配置参数注入路由,从而让整个应用都有路由功能
+const app = new Vue({
+  el: '#app',
+  router,
+  computed: {
+    routeInfo () {
+      console.log(this.$route)
+      return this.$route
+    }
+  },
+})//.$mount('#app')
+ 
+</script>
+</body>
+</html>

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>socketio: js连接socket服务器</title>
+</head>
+<body>
+<div id="show"></div>
+<div id="send" style="width: 100%;position: fixed;bottom: 1rem">
+	<input type="txt" id="txt" name="txt" style="width: 85%;height: 2rem" />
+	<input type="submit" id="sendbtn" value="发送" style="width: 10%;height: 2rem" />
+</div>
+
+<script type="text/javascript" src="/socket.io/socket.io.js"></script>
+<script type="text/javascript">
+	var socket = io.connect('http://localhost:8888');
+	socket.on('news', data => {
+		show.innerHTML += 'Server: ' + data.server + '<br/>';
+		console.log(data);
+		sendbtn.onclick = function(){ console.log(txt.value);
+			socket.emit('reply', {client: txt.value});
+			show.innerHTML += 'Client: ' + txt.value + '<br/>';
+			txt.value = '';
+		}
+	})
+</script>
+</body>
+</html>

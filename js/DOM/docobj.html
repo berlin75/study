@@ -1,0 +1,46 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<base target="_blank">
+<title>document对象</title>
+<style>
+.red{ color:red; }
+.spclass{ font-size:0.5rem; }
+</style>
+<script>
+document.write(document.cookie+"<br/>",document.domain+"<br/>",document.lastModified+"<br/>",document.referer+"<br/>",document.URL+"<br/>",document.title);
+/*
+window.onload=function(){
+	var op=document.getElementsByTagName("p")[0];
+	document.write(op.innerHTML);
+}
+*/
+</script>
+</head>
+
+<body>
+<p>document.write在window.onload外不会覆盖源文档，在内会覆盖掉 <span id="spid" class="spclass">DOM测试文档</span></p>
+
+
+
+
+<script>
+var op=document.getElementsByTagName("p")[0];
+var ospan=op.getElementsByTagName("span")[0];
+
+ospan.className="red";
+
+document.write(ospan.innerHTML+"<br>",ospan.className+"<br>",ospan.id);
+
+var newp=op.cloneNode(true);
+document.getElementsByTagName("body")[0].appendChild(newp);
+
+ospan.removeAttribute("class");
+
+document.write();
+
+
+</script>
+</body>
+</html>

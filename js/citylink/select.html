@@ -1,0 +1,52 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>select</title>
+<script>
+	function selProvince(prov){
+		var index=prov.selectedIndex;
+		var option=prov.options[index];
+		alert(option.text);
+	}
+	
+	function addoPtion(){
+		var oTxt1=document.getElementById("txt1");
+		var oSelect1=document.getElementById("select1");
+		var newoption=document.createElement("option");
+		newoption.text=oTxt1.value;       //var newoption=new Option(oTxt1.value);
+		try{
+			oSelect1.add(newoption,null);
+		}
+		catch(ex){
+			oSelect1.add(newoption);	
+		}
+	}
+	
+	function removeoPtion(){
+		var oSelect1=document.getElementById("select1");
+		var index=oSelect1.selectedIndex;
+//		oSelect1.length=0;                 //清空列表
+//		oSelect1.remove(oSelect1.length-1);
+		oSelect1.remove(index);	
+	}
+</script>
+</head>
+
+<body>
+<span>省：</span>
+<select id="select1" onchange="selProvince(this)">
+	<option>湖南省</option>
+    <option>北京市</option>
+</select>
+<input type="text" id="txt1" />
+<input type="button" value="添加"  onclick="addoPtion()" />
+<input type="button" value="删除"  onclick="removeoPtion()" />
+
+<div>
+    <p>第一种：var newoption=document.createElement("option");</p>
+    <p>newoption.text=oTxt1.value; </p>      
+    <p>第二种var newoption=new Option(oTxt1.value);</p>
+</div>
+</body>
+</html>

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>表单验证</title>
+<style type="text/css">
+	#main{ width:500px; height:300px; border:1px solid #ccc; }
+	#main span{ display:inline-block; width:85px; text-align:right; }
+	#main input{ width:200px; height:30px; line-height:30px; } 
+	#main #sbm{ background:#09C; color:white; text-align:center; 
+	            border:0; padding:0; font-size:1.25em; margin-left:95px;
+				width:200px; height:40px; line-height:40px;}
+	#main label{ color:red; font:0.2em}
+</style>
+<script type="text/javascript">
+window.onload=function(){
+	var email=$("email");
+	var pass=$("pass");
+	var name=$("name");
+	var tele=$("tele");
+	var lblemail=$("lblemail");
+	var lblpass=$("lblpass");
+	var lblname=$("lblname");
+	var lbltele=$("lbltele");
+	var reemail=/^\w+@[0-9a-z]+\.[a-z]+$/;
+	var repass=/^\w+$/;
+	var rename=/^\w+$|^[\u4e00-\u9fa5]{2,4}$/;
+	var retele=/^1[3,4,5,6,7,8,9]\d{9}$/;
+	
+	email.onfocus=function(){
+		email.value="";
+		lblemail.innerHTML="*";
+	};
+	email.onblur=function(){
+		if(email.value.trim().length==0){         //去左右空格
+			lblemail.innerHTML="Email不能为空！";
+			email.focus();
+		}
+		else if(!reemail.test(email.value)){
+			lblemail.innerHTML="Email格式不正确！";
+			email.focus();
+		}
+		else{  
+		      lblemail.innerHTML="<font color='green'>通过！</font>";
+			  }
+	}
+	
+    pass.onfocus=function(){
+		pass.value="";
+		lblpass.innerHTML="*数字、大小字母和下划线";
+	};
+	pass.onblur=function(){
+		if(pass.value.trim().length==0){         //去左右空格
+			lblpass.innerHTML="密码不能为空！";
+		}
+		else if(repass.test(pass.value)){
+			lblpass.innerHTML="<font color='green'>通过！</font>";
+		}
+		else{lblpass.innerHTML="密码格式不正确！";}
+	}
+	
+	name.onfocus=function(){
+		name.value="";
+		lblname.innerHTML="*";
+	};
+	name.onblur=function(){
+		if(name.value.trim().length==0){         //去左右空格
+			lblname.innerHTML="名字不能为空！";
+		}
+		else if(rename.test(name.value)){
+			lblname.innerHTML="<font color='green'>通过！</font>";
+		}
+		else{lblname.innerHTML="名字格式不正确！";}
+	}
+	
+	tele.onfocus=function(){
+		tele.value="";
+		lbltele.innerHTML="*请输入中国大陆手机号";
+	};
+	tele.onblur=function(){
+		if(tele.value.trim().length==0){         //去左右空格
+			lbltele.innerHTML="手机号码不能为空！";
+		}
+		else if(retele.test(tele.value)){
+			lbltele.innerHTML="<font color='green'>通过！</font>";
+		}
+		else{lbltele.innerHTML="手机号码格式不正确！";}
+	}
+}
+
+function $(id){
+	return document.getElementById(id);
+}
+</script>
+</head>
+
+<body>
+<p>action="mailto:465137869@qq.com" method="post"  enctype="text/plain"</p>
+<div id="main">
+	<form action="mailto:465137869@qq.com" method="post"  enctype="text/plain">
+       <p><span>Email：</span>
+       <input type="text" id="email" value="请输入Email" />
+       <label for="lblemail"></label>
+       </p>
+       
+       <p><span>密&nbsp;&nbsp;&nbsp;&nbsp;码：</span>
+       <input type="text" id="pass" value="请设置密码" />
+       <label for="lblpass"></label>
+       </p>
+       
+       <p><span>真实姓名：</span>
+       <input type="text" id="name" value="请输入真实姓名" />
+       <label for="lblname"></label>
+       </p>
+       
+       <p><span>手机号码：</span>
+       <input type="text" id="tele"  value="可用于登录和找回密码" />
+       <label for="lbltele"></label>
+       </p>
+       
+       <p><input type="submit" id="sbm" value="注册" />
+       </p>
+     </form>
+</div>
+</body>
+</html>

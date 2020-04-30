@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf8">
+<title>圆环进度条canvas</title>
+<style>
+canvas {
+border:1px solid #1F232A;
+}
+.div {
+width:400px;
+height:50px;
+}
+input,button {
+text-align:center;
+font-size:20px;
+}
+
+</style>
+</head>
+<body>
+<canvas id="main" width="450" height="300"></canvas>
+<div class="div"> 进度：
+<input id="num" type="number" value="100" max="100">
+<button id="makeSure">确定</button>
+</div>
+<script src="../../../vendors/jquery-3.1.1.js"></script>
+<script>
+var makeSure=document.getElementById("makeSure");
+makeSure.onclick=function(){
+var ctx=document.getElementById("main").getContext("2d");
+ctx.clearRect(0,0,450,300);
+var num=parseInt(document.getElementById("num").value)+1;
+if(num<=101){
+for (var x=0;x<num;x++) {
+(function(x){
+setTimeout(function(){
+ctx.beginPath()
+ctx.lineWidth=10;
+ctx.strokeStyle='orange';
+ctx.arc(200, 200, 50, -90 * Math.PI / 180, (x * 3.6 - 90) * Math.PI / 180);
+ctx.stroke();
+ctx.clearRect(390,25,50,50);
+ctx.clearRect(175,175,55,55)
+ctx.fillStyle = 'orange';
+ctx.fillRect(10+x*3.5,30,3.5,40);
+ctx.font="20px Arial";
+ctx.fillText(x+"%",390,58)
+ctx.fillText(x+"%",175,208)
+},x*30); 
+})(x);
+}
+}else{
+alert("请输入0-100之间的数字")
+}
+}
+makeSure.click();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>用jQuery中的slideToggle制作手风琴菜单</title>
+<style> 
+*{margin: 0;padding: 0;list-style: none;}
+.menu{width:150px;margin:10px 0 0 10px;}
+.menu>li{background: #8731dd;color:#fff;text-indent: 16px;margin-top:-1px;cursor: pointer;}
+.menu>li>span{padding:10px 0;display:block;border-bottom: 1px solid #f3f3f3;}
+.menuactive,.menu>li>span:hover{background:#c7254e;}
+.menu>li ul{display: none;}
+.menu>li ul li{text-indent:20px;background: #9a9add;border:1px solid #f3f3f3;margin-top:-1px;padding:6px 0;}
+.menu>li .active{display: block;}
+.menu>li ul li:hover{background:#67C962;}
+.menu>li ul{margin-bottom:1px;}
+ </style>
+
+ </head> 
+ <body> 
+ <ul class="menu" id="menu">
+ 	<li><span>水果系列</span> 
+		 <ul class="active">
+			 <li>苹果</li>
+			 <li>梨子</li> 
+			 <li>葡萄</li>
+			 <li>火龙果</li>
+		 </ul>
+ 	</li>
+ 	<li><span>海鲜系列</span>
+		 <ul>
+			 <li>鱼</li>
+			 <li>大虾</li>
+			 <li>螃蟹</li>
+			 <li>海带</li>
+		 </ul>
+	 </li>
+ 	<li><span>果蔬系列</span>
+		 <ul> 
+			 <li>茄子</li>
+			 <li>黄瓜</li>
+			 <li>豆角</li>
+			 <li>西红柿</li>
+		 </ul>
+ 	</li>
+ 	<li><span>速冻食品</span>
+		 <ul>
+			 <li>水饺</li>
+			 <li>冰淇淋</li>
+		 </ul>
+ 	</li>
+ 	<li><span>肉质系列</span>
+		 <ul>
+			 <li>猪肉</li>
+			 <li>羊肉</li>
+			 <li>牛肉</li>
+		 </ul>
+	</li>
+ </ul>
+
+ <script src="../../vendors/jquery-3.1.1.js"></script>
+ <script>
+	$(function(){
+	 	$(".menu>li>span").click(function(){
+	 		console.log($(this).html());
+	 		$(this).addClass("menuactive").parent().siblings().children("span").removeClass("menuactive");
+	 		$(this).next("ul").slideToggle(); 
+	 		$(this).parent().siblings().children("ul").slideUp(); 
+	 	}); 
+	 });
+ </script>
+ </body>
+ </html>

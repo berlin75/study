@@ -1,0 +1,16 @@
+<!doctype html>
+<html>
+<head>
+    <title><%=locals.title%></title>
+</head>
+<body>
+    hello:<%=locals.name%>
+
+    <div>
+    	<p>不需要外部数据模板</p>
+    	<%for(var i=0 ; i< 10 ; i++){%>
+            <p><%=i%></p>
+        <%}%>
+    </div>
+</body>
+</html>

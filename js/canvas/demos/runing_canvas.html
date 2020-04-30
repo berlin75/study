@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf8">
+<title>奔跑的小女孩canvas</title>
+<style>
+canvas {
+background:#fff;
+}
+body {
+background:#000;
+}
+</style>
+</head>
+<body>
+
+<canvas width="600" height="600"></canvas>
+
+<script src="../../../vendors/jquery-3.1.1.js"></script>
+<script>
+/* 参考原代码 http://www.jq22.com/webqd2041 */
+
+var c = document.querySelector("canvas");
+var ctx = c.getContext("2d");
+//创建一个图片对象,并将图片路径赋给Img的src属性
+var img = new Image();
+img.src = 'running.png';
+
+//声明一个固定的全局变量,他就是每次截取图片的横坐标x,
+var init = 0;
+
+function benpao() {
+	ctx.clearRect(0, 0, 600, 600);  //每次执行函数时要先清空画布,否则会出现重影
+	ctx.save();
+	// ctx.drawImage(图片对象,截取起始x,y,截取宽,截取高,在画布位置的x,y,在画布上占多宽,多高);
+	// 180是一个人物画面的宽,共有6个人物,每＋180改变截取图片的x位置,获取新的小女孩, 
+	ctx.drawImage(img, init += 180, 0, 180, 300, 150, 150, 180, 300);
+	//判断当init=1080,得到的是最后一个小女孩的左顶点,此时init继续+180就没有图片了,故当init==1080时,使init=0;从第一张开始
+	if (init == 1080) init = 0
+	
+}
+
+//当图片加载完成后执行函数,防止异步操作bug
+img.onload = function() {
+	setInterval(benpao, 100);
+}
+
+</script>
+
+</body>
+</html>

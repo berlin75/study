@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>表格搜索-模糊搜索</title>
+<style type="text/css">
+	#tab1{ border-collapse:collapse;}
+	#tab1,th,td{width:600px; border:1px solid black ;}
+</style>
+<script type="text/javascript">
+	window.onload=function(){
+		var oTxt1=document.getElementById("txt1");
+		var oBtn1=document.getElementById("btn1");
+		var oTab1=document.getElementById("tab1");
+		oBtn1.onclick=function(){
+			for(var i=1;i<oTab1.tBodies[0].rows.length;i++){
+			  var sTab1=oTab1.tBodies[0].rows[i].cells[1].innerHTML.toLowerCase();
+			  var sTxt1=oTxt1.value.toLowerCase();   //先转换为小写
+			  var aTxt1=sTxt1.split(" ");            //多关键字搜索
+			  oTab1.tBodies[0].rows[i].style.background="";
+			  for(var j=0;j<aTxt1.length;j++){
+				  if(sTab1.search(aTxt1[j])!=-1){              //模糊搜索
+					  oTab1.tBodies[0].rows[i].style.background="yellow";
+				  }
+			   }
+			}
+		}
+	}
+</script>
+</head>
+
+<body>
+姓名：<input id="txt1" type="text" />
+<input id="btn1" type="button" value="search" />
+<br /><br />
+<table id="tab1">
+  <tr>
+    <th >ID</th>
+    <th >姓名</th>
+    <th >年龄</th>
+  </tr>
+  <tr>
+    <td>1</td>
+    <td>张三</td>
+    <td>27</td>
+  </tr>
+  <tr>
+    <td>2</td>
+    <td>李四</td>
+    <td>25</td>
+  </tr>
+  <tr>
+    <td>3</td>
+    <td>王五</td>
+    <td>30</td>
+  </tr>
+  <tr>
+    <td>4</td>
+    <td>刘六</td>
+    <td>22</td>
+  </tr>
+  <tr>
+    <td>5</td>
+    <td>Jean</td>
+    <td>22</td>
+  </tr>
+  <tr>
+    <td>6</td>
+    <td>Jason</td>
+    <td>25</td>
+  </tr>
+  <tr>
+    <td>7</td>
+    <td>王三</td>
+    <td>25</td>
+  </tr>
+</table>
+
+</body>
+</html>

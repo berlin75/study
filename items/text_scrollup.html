@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf8">
+<title>文字自动向上滚动-跑马灯</title>
+<style>
+	ul,li{list-style: none;margin: 0px;}
+	.wrap{width: 30rem;height: 4rem;position: relative;background: #f60;color: #fff;overflow: hidden;}
+	ul{position: absolute;top: 0px;}
+	/*#m1{color: #fff;padding-left: 38px;}*/
+	#mar{}
+</style>
+</head>
+<body>
+<p>每次向上移动一个li,会有停顿感，可以设置每次上一一个像素，设置短间隔时间即可 <br/>
+marquee元素效果，可以设置悬停效果</p>
+<marquee id="m1" behavior="scroll" direction="up" height="80" width="445" bgcolor="#f60" loop="-1" hspace="0" vspace="10" scrollamount="2" scrolldelay="0" onMouseOut="this.start()" onMouseOver="this.stop()" style="padding-left: 38px;">
+	<font size=+1 color=white>
+		<ol>
+			<li>恭喜135****5871用户获得300现金大礼包</li>
+			<li>恭喜135****5872用户获得300现金大礼包</li>
+			<li>恭喜135****5871用户获得300现金大礼包</li>
+			<li>恭喜135****5872用户获得300现金大礼包</li>
+			<li>恭喜135****5871用户获得300现金大礼包</li>
+			<li>恭喜135****5872用户获得300现金大礼包</li>
+		</ol>
+	</font>
+</marquee>
+
+<div class="wrap">
+	<ul>
+		<li>恭喜135****5871用户获得300现金大礼包</li>
+		<li>恭喜135****5872用户获得300现金大礼包</li>
+		<li>恭喜135****5873用户获得300现金大礼包</li>
+		<li>恭喜135****5874用户获得300现金大礼包</li>
+		<li>恭喜135****5875用户获得300现金大礼包</li>
+		<li>恭喜135****5876用户获得300现金大礼包</li>
+		<li>恭喜135****5877用户获得300现金大礼包</li>
+		<li>恭喜135****5878用户获得300现金大礼包</li>
+	</ul>
+</div>
+<script src="../vendors/jquery-3.1.1.js"></script>
+<script>
+	var shownum = 4;  //显示li的个数
+	var liheight = $('ul li').height();
+	$('.wrap').height(liheight*shownum); //容器高度等于显示的li的高度之和
+	var ulheight = $('ul').height();  
+	$('ul').append($('ul li').clone());
+		
+	setInterval(function(){
+		var ultop = $('ul').position().top;
+		if(ultop > -ulheight){
+			$('ul').animate({top:'-='+liheight}); //每次向上移动一个li
+		}else{
+			$('ul').css('top',0);
+		}
+		
+	},1000);
+	
+</script>
+
+<br/><br/><textarea rows="45" cols="150">
+参考原代码 http://www.jq22.com/webqd2322
+
+<!-- demo示例二 -->
+<div id="demo2">
+	<a href="#">第一条新闻</a>
+	<a href="#">第二条新闻</a>
+	<a href="#">第三条动态</a>
+</div>
+<!-- demo示例三 -->
+<div id="demo3" style="overflow:hidden;height:200px;">>
+	<div id="dl">
+		<p>恭喜133****1062用户获得10元手机话费</p>
+		<p>恭喜153****0792用户获得50元助学代金券</p>
+		<p>恭喜153****3890用户获得330元上课大礼包</p>
+		<p>恭喜189****0883用户获得330元上课大礼包</p>
+		<p>恭喜133****6823用户获得1500元现金</p>
+		<p>恭喜153****5050用户获得330元上课大礼包</p>
+	</div>
+</div>
+
+$(function() {
+	// demo示例二　　　　
+	$('#demo2 a:first').siblings().hide();　　　　　　
+	setInterval(function() {　　　　　　　　
+		$('#demo2 a:visible').slideUp('slow', function() {　　　　　　　　　　
+			$(this).next('a')[0] === undefined ? $('a:first').fadeIn("slow") : $(this).next('a').fadeIn("slow");　　　　　　　　
+		});　　　　　　
+	}, 1000 * 2)
+});
+
+// demo示例三
+var demo3 = document.getElementById("demo3");　　　　
+var dl = document.getElementById("dl");　　　　
+var speed = 20; //滚动速度值，值越大速度越慢
+　　　　
+function Marquee() {　　　　　　
+	demo3.scrollTop++;　　　　　　
+	var new = document.createElement("div");　　　　　　
+	new.innerHTML = dl.innerHTML;　　　　　　
+	demo3.insertBefore(new, null);　　　　
+}　　　　
+var MyMar = setInterval(Marquee, speed); //设置定时器
+
+
+</textarea>
+</body>
+</html>

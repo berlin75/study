@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>index.html</title>
+</head>
+<body>
+<p>bodyParser用于解析客户端请求的body中的内容,内部使用JSON编码处理,url编码处理以及对于文件的上传处理.</p>
+
+<p>路由，就是如何处理HTTP请求中的路径部分。比如“http://xxx.com/users/profile”这个URL，路由将决定怎么处理/users/profile这个路径</p>
+<p>app.get()调用，实际上就为我们的网站添加了一条路由，指定“/”这个路径由get的第二个参数所代表的函数来处理</p>
+<p>/index.html/:id(a*)/:name表示id必须以a开头，/index.html/:id(\\d+)/:name表示id必须为数值</p>
+<p>/index.html/:id?/:name? 参数加上?符号，没有传递参数时，会显示空白  </p>
+<p>GET</p>
+<form action="http://127.0.0.1:8888/process_get" method="GET">
+	<p><input type="text" name="first_name" placeholder="first name"></p>
+	<p><input type="text" name="last_name" placeholder="last name"></p>
+	<p><input type="submit" value="Submit"></p>
+</form>
+
+<hr/>
+<p>POST</p>
+<form action="http://127.0.0.1:8888/process_post" method="POST">
+	<p><input type="text" name="first_name" placeholder="first name"></p>
+	<p><input type="text" name="last_name" placeholder="last name"></p>
+	<p><input type="submit" value="Submit"></p>
+</form>
+
+<hr/>
+<p>upload</p>
+<form action="/file_upload" method="POST" enctype="multipart/form-data">
+	<p><input type="file" name="image" size="50" /></p>
+	<p><input type="submit" value="Submit"></p>
+</form>
+
+<hr/>
+<p><a href="./list_user">list_user</a></p>
+<p><a href="./add_user">add_user</a></p>
+<p><a href="./del_user">del_user</a></p>
+<p><a href="./:id">:id</a></p>
+</body>
+</html>

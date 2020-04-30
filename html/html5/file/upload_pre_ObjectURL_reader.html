@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf8" />
+<title>图片上传预览的两种方法</title>
+
+</head>
+<body>
+<pre>
+input属性设置：
+multiple 
+accept="image/gif,image/jpeg,image/png" 
+style="position: absolute;clip: rect(0 0 0 0);"  
+//input控件必须要显示，可以通过clip让它看不见，clip要想使元素起作用，必须设置absolute定位
+//也可以通过left:-9999em;让它超出文档视图范围
+
+label属性 for="imgFile"
+
+创建一个img对象，可以通过new Image（）和createElement("img")两种方式来创建img对象,或者html()
+</pre><hr>
+
+<h3>图片上传预览的两种方法：</h3>
+<div>
+    objURL 方式：<input type="file" id="imgFile" name="files[]" multiple accept="image/gif,image/jpeg,image/png" style="position: absolute;clip: rect(0 0 0 0);" />
+    <label for="imgFile" style="border:2px solid;padding: .5rem;"> + 选择图片文件</label>
+    <div id="preview"></div>
+</div>
+<hr>
+<div>
+    filereader方式：<input type="file" id="imgFile1" name="files[]" multiple>
+    <div id="preview1"></div>
+</div>
+<script src="../../vendors/jquery-3.1.1.js"></script>
+<script>
+function getObjectURL(file) {  
+    var url = null ; 
+    if (window.createObjectURL!=undefined) { // basic
+        url = window.createObjectURL(file) ;
+    } else if (window.URL!=undefined) { // mozilla(firefox)
+        url = window.URL.createObjectURL(file) ;
+    } else if (window.webkitURL!=undefined) { // webkit or chrome
+        url = window.webkitURL.createObjectURL(file) ;
+    }
+    return url ;
+}
+
+function getObjectURL(file){
+   return window[window.webkitURL ? 'webkitURL' : 'URL']['createObjectURL'](file);
+};
+
+//preview img ： URL.createObjectURL 方式
+document.getElementById('imgFile').onchange = function(e){ 
+    var file =  e.target.files[0]; 
+    if(file && /image/.test(file.type)){
+        var url = getObjectURL(file);   //通过createObjectURL创建的是一个对象的url引用
+        console.log(url);
+        img.onload=function(){
+            URL.revokeObjectURL(this.src); //img的onload事件中,保证img对象显示了图片后才调用revokeObjectURL方法来释放创建的URL对象
+        }
+        var pvImg = "<img id='previewImg' src='"+ url +"' />";
+        $('#preview').append(pvImg);
+    }else{
+        alert('请选择图片上传');
+    }   
+}
+
+//preview img ： filereader方式
+document.getElementById('imgFile1').onchange = function(e){ 
+    var file =  e.target.files[0];
+    if(file && /image/.test(file.type)){
+        var reader = new FileReader();
+        reader.readAsDataURL(file); 
+        reader.onload = function(){
+            console.log(this.result);
+            var pvImg = "<img id='previewImg' src='"+ this.result +"' />";
+            $('#preview1').append(pvImg);
+        }
+    }else{
+        alert('请选择图片上传');
+    } 
+}
+</script>
+</body>
+</html>

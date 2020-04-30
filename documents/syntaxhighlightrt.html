@@ -1,0 +1,101 @@
+<h2>渲染html源代码 语法高亮</h2>
+
+<xmp>
+  这里的代码将原样输出：
+  <div>div容器</div>
+</xmp>
+
+把不需要被解析的html代码放入标签< pre>< \pre>中,但“<”需用"&lt;",">“需用”&gt;"代替即可输出源码
+把不需要被解析的html代码放入标签< code>< \code>中,但“<”需用"&lt;",">“需用”&gt;"代替即可输出源码
+
+<pre style="width:100%;padding:0px" id="codeblock"><code style="width:100%">&lt;DataProvider render=&lcub;data =&gt; (
+  &lt;h1&gt;Hello &lcub;data.target&rcub;&lt;/h1&gt;
+)&rcub;/&gt;</code></pre>
+
+<script>
+// textarea包裹代码
+function select_all(obj) {
+  var text_val=eval(obj);
+  text_val.focus();
+  text_val.select();
+  if (!document.all) return; // IE only
+  r = text_val.createTextRange();
+  r.execCommand('copy');
+}
+
+var clicked=false;
+
+function firstclick(){
+  if(!clicked) clear();
+  clicked = true;
+}
+
+function clear(){
+  document.getElementById("codebox").value = '';
+}
+
+function reset(){  
+  document.getElementById("codebox").value = ' Paste your code here ...'; 
+  clicked=false
+} 
+
+function convert(){
+var textbox = document.getElementById("codebox");
+var text = textbox.value;
+textbox.value = '<pre style="width:100%;padding:0px"><code style="width:100%">' + clean(text)+"</code></pre>";
+select_all(textbox);
+}
+
+function clean(string) {
+  return string.replace(/&/g, '&amp;')
+  .replace(/</g, '&lt;')
+  .replace(/>/g, '&gt;')
+  .replace(/{/g, '&lcub;')
+  .replace(/}/g, '&rcub;')
+  .replace(/\/\*/g, '<span style="color:green">\/\*')
+  .replace(/\*\//g, '\*\/</span>');
+}
+ </script>
+
+<style>
+.code {
+  padding: 10px 10px 10px 40px;
+  font-size: 13px;
+  line-height: 18px;
+  background-color: #eee;
+  font-family: "Lucida Console", Consolas, Monaco;
+  white-space: pre-wrap;
+  word-break: break-all;
+  position: relative;
+  overflow: hidden;
+}
+.code::before {
+  content: '01.\A 02.\A 03.\A 04.\A 05.\A 06.\A 07.\A 08.\A 09.\A 10.\A 11.\A 12.\A 13.\A 14.\A 15.\A 16.\A 17.\A 18.\A 19.\A 20.\A 21.\A 22.\A 23.\A 24.\A 25.\A 26.\A 27.\A 28.\A 29.\A 30.\A 31.\A 32.\A 33.\A 34.\A 35.\A 36.\A 37.\A 38.\A 39.\A 40.\A 41.\A 42.\A 43.\A 44.\A 45.\A 46.\A 47.\A 48.\A 49.\A 50.\A 51.\A 52.\A 53.\A 54.\A 55.\A 56.\A 57.\A 58.\A 59.\A 60.\A 61.\A 62.\A 63.\A 64.\A 65.\A 66.\A 67.\A 68.\A 69.\A 70.\A 71.\A 72.\A 73.\A 74.\A 75.\A 76.\A 77.\A 78.\A 79.\A 80.\A 81.\A 82.\A 83.\A 84.\A 85.\A 86.\A 87.\A 88.\A 89.\A 90.\A 91.\A 92.\A 93.\A 94.\A 95.\A 96.\A 97.\A 98.\A 99';
+  position: absolute;
+  top: 10px;
+  bottom: 10px;
+  left: 0;
+  width: 32px;
+  text-align: right;
+  background-color: #fbfbfb;
+  color: #333;
+  outline: 100px solid #fbfbfb;
+  clip: rect(-100px 2em 9999px 0);
+  clip: rect(-100px 3.5ch 9999px 0);  /* IE9+ */
+  overflow: hidden;
+} 
+</style>
+
+<pre class="code"><code>
+.code {
+  padding: 10px 10px 10px 40px;
+  font-size: 13px;
+  line-height: 18px;
+  background-color: #eee;
+  font-family: "Lucida Console", Consolas, Monaco;
+  white-space: pre-wrap;
+  word-break: break-all;
+  position: relative;
+  overflow: hidden;
+}
+</code></pre>

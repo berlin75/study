@@ -1,0 +1,36 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>window计时</title>
+<style type="text/css">
+</style>
+
+</head>
+
+<body>
+<input type="button" value="开始计时！" id="btn1">
+<input type="text" id="txt">
+<input type="button" value="停止计时！" id="btn2">
+
+<script type="text/javascript">
+var m=0;
+var timer=null;
+function timeCount()
+{
+document.getElementById('txt').value=m++;
+timer=setTimeout("timeCount()",1000);
+}
+
+function stopCount()
+{
+setTimeout("document.getElementById('txt').value=0",0);
+clearTimeout(timer);
+}
+
+
+document.getElementById("btn1").onclick=function(){timeCount();};
+document.getElementById("btn2").onclick=function(){stopCount();};
+</script>
+</body>
+</html>

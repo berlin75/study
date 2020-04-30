@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>animation 打开盒子</title>
+<style>
+ul{
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+.box{
+	height: 100px;
+	width: 100px;
+	-webkit-perspective: 500px;
+	perspective: 500px;
+	margin: 50px 0 0 50px;
+}	
+.list{
+	position: relative;
+	height: 100px;
+	width: 100px;
+	background-color: blue;
+	-webkit-transform-style: preserve-3d;
+	-webkit-transform-origin: 50% 50% 50px ;
+	-webkit-animation: rotate1 1s 10s 3 linear;
+	transform-style: preserve-3d;
+	transform-origin: 0 0 0 ;
+	animation: rotate1 1s  10s 3 both linear;
+}
+.in{
+	position: absolute;
+	height: 100px;
+	width: 100px;
+}
+.list .in:nth-child(6){
+	background-color: pink;
+	-webkit-transform-origin: top;
+	transform-origin: top;
+	-webkit-animation: in6 2s both;
+	animation: in6 2s both;
+}
+.list .in:nth-child(5){
+	background-color: lightgreen;
+	-webkit-transform-origin: right;
+	-webkit-animation: in5 2s 2s both;
+	transform-origin: right;
+	animation: in5 2s 2s both;
+}
+.list .in:nth-child(4){
+	background-color: lightblue;
+	-webkit-transform-origin: bottom;
+	-webkit-animation: in4 2s 4s both;
+	transform-origin: bottom;
+	animation: in4 2s 4s both;
+}
+.list .in:nth-child(3){
+	background-color: lightcoral;
+	-webkit-transform-origin: left;
+	-webkit-animation: in3 2s 6s both;
+	transform-origin: left;
+	animation: in3 2s 6s both;
+}
+.list .in:nth-child(2){
+	background-color: lightcyan;
+	-webkit-animation: in2 2s 8s both;
+	animation: in2 2s 8s both;
+}
+.list .in:nth-child(1){
+	background-color: lightsalmon;
+}
+.box:hover .list{
+	-webkit-animation-play-state: paused;
+	animation-play-state: paused;
+}
+.box:hover .in{
+	-webkit-animation-play-state: paused;
+	animation-play-state: paused;
+}
+@-webkit-keyframes in6{
+	100%{-webkit-transform: rotateX(90deg);}
+}
+@-webkit-keyframes in5{
+	100%{-webkit-transform: rotateY(90deg);}
+}
+@-webkit-keyframes in4{
+	100%{-webkit-transform: rotateX(-90deg);}
+}
+@-webkit-keyframes in3{
+	100%{-webkit-transform: rotateY(-90deg);}
+}
+@-webkit-keyframes in2{
+	100%{-webkit-transform: translateZ(100px);}
+}
+@-webkit-keyframes rotate1{
+	100%{-webkit-transform: rotateY(360deg);}
+}
+@keyframes in6{
+	100%{transform: rotateX(90deg);}
+}
+@keyframes in5{
+	100%{transform: rotateY(90deg);}
+}
+@keyframes in4{
+	100%{transform: rotateX(-90deg);}
+}
+@keyframes in3{
+	100%{transform: rotateY(-90deg);}
+}
+@keyframes in2{
+	100%{transform: translateZ(100px);}
+}
+@keyframes rotate1{
+	100%{transform: rotate3d(1,1,1,360deg);}
+}
+
+</style>
+</head>
+<body>
+<p>该效果主要通过设置计算后的延迟时间来达到正方体的各个边顺序动画的效果。一次动画结束后，通过触发animationend事件重置animation-name来实现重复动画的效果</p>
+
+<div class="box">
+	<ul class="list" id="list">
+		<li class="in"></li>
+		<li class="in"></li>
+		<li class="in"></li>
+		<li class="in"></li>
+		<li class="in"></li>
+		<li class="in"></li>
+	</ul>
+</div>
+<script>
+
+list.addEventListener('webkitAnimationEnd',function(e){
+	e = e || event;
+	var target = e.target || e.srcElement;
+	if(target.nodeName == 'UL'){
+		list.style.webkitAnimationName ='none';
+		var children = list.getElementsByTagName('li');
+		for(var i = 0; i < children.length;i++){
+			children[i].style.webkitAnimationName = 'none';
+		}
+		setTimeout(function(){
+			list.style.webkitAnimationName = 'rotate1';
+			var children = list.getElementsByTagName('li');
+			for(var i = 0; i < children.length;i++){
+				children[i].style.webkitAnimationName= 'in' + (i+1);
+			}		
+		},100);		
+	}
+},false);
+list.addEventListener('animationend',function(e){
+	e = e || event;
+	var target = e.target || e.srcElement;
+	if(target.nodeName == 'UL'){
+		list.style.animationName ='none';
+		var children = list.getElementsByTagName('li');
+		for(var i = 0; i < children.length;i++){
+			children[i].style.animationName = 'none';
+		}
+		setTimeout(function(){
+			list.style.animationName = 'rotate1';
+			var children = list.getElementsByTagName('li');
+			for(var i = 0; i < children.length;i++){
+				children[i].style.animationName = 'in' + (i+1);
+			}		
+		},100);		
+	}
+},false);
+</script>
+</body>
+</html>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>input点击事件-多参</title>
+<style>
+#div1{width:200px; height:200px; background:red; }
+</style>
+<script>
+function toheight(){
+	var odiv=document.getElementById("div1");
+	odiv.style.height="400px";	
+}
+function towidth(){
+	var odiv=document.getElementById("div1");
+	odiv.style.width="400px";	
+}
+function togreen(){
+	var odiv=document.getElementById("div1");
+	odiv.style.background="green";	
+}
+function set(name,value){
+	var odiv=document.getElementById("div1");
+	odiv.style[name]=value;  
+}
+</script>
+</head>
+
+<body>
+<input name="" type="button" value="变高" onclick="toheight()" />
+<input name="" type="button" value="变宽" onclick="towidth()" />
+<input name="" type="button" value="变绿" onclick="togreen()" />
+<input name="" type="button" value="chheight" onclick="set('height','400px')" />
+<input name="" type="button" value="chwidth" onclick="set('width','400px')" />
+<input name="" type="button" value="chgreen" onclick="set('background','green')" />
+<div id="div1">此处显示  id "div1" 的内容</div>
+<p>Tips:当要改变的属性不确定时用[]操作属性</p>
+</body>
+</html>

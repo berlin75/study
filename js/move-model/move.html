@@ -1,0 +1,41 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>无标题文档</title>
+<style>
+#div1{ width:100px; height:100px; background:#03C; 
+       position:absolute; left:0; top:50px; }
+</style>
+<script>
+//window.onload=function()  //加上之后网页错误提示,是因为onclick在下面，可以直接调用js的函数
+//{
+		var timer=null;
+		function fun()
+		{
+			var oDiv1=document.getElementById("div1");
+			clearInterval(timer);         //保证只开一个定时器，多点按钮不会加速
+			timer=setInterval(function ()
+			{	
+				var speed=5;
+				if(oDiv1.offsetLeft>=500) //不用等于，设置的数不是速度的整倍会跳过
+				{
+					clearInterval(timer);  //不设置的话会一直往一个方向移动
+				}
+				else                      //不用else的话停止之后再点按钮还会执行一次
+				{
+					oDiv1.style.left=oDiv1.offsetLeft +speed+"px" ;
+				}
+			},30);                        //30ms是经验值
+		}
+//}
+</script>
+</head>
+
+<body>
+<input id="btn1" type="button" value="strat" onclick="fun()"  />
+<div id="div1">
+</div>
+<br />
+</body>
+</html>

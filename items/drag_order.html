@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf8">
+<title>拖动排序</title>
+<style>
+.item_content ul {
+	list-style:none;
+}
+.item_content ul li {
+	width:200px;
+	height:120px;
+	float:left;
+	margin:10px
+}
+.item_content {
+	width:740px;
+	height:460px;
+	border:1px solid #ccc;
+	float:left;
+}
+.item_content .item {
+	width:200px;
+	height:120px;
+	line-height:120px;
+	text-align:center;
+	cursor:pointer;
+	background:#ccc;
+}
+.item_content .item img {
+	width:200px;
+	height:120px;
+	border-radius:6px;
+}
+
+</style>
+</head>
+<body>
+<div class="item_container">
+	<div class="item_content">
+		<ul>
+			<li><div class="item"> <img src="images/500x300-1.png"> </div></li>
+			<li><div class="item"> <img src="images/500x300-2.png"> </div></li>
+			<li><div class="item"> <img src="images/500x300-3.png"> </div></li>
+			<li><div class="item"> <img src="images/500x300-4.png"> </div></li>
+			<li><div class="item"> <img src="images/500x300-5.png"> </div></li>
+			<li><div class="item"> <img src="images/500x300-6.png"> </div></li>
+			<li><div class="item"> <img src="images/500x300-7.png"> </div></li>
+			<li><div class="item"> <img src="images/500x300-8.png"> </div></li>
+			<li><div class="item"> <img src="images/500x300-9.png"> </div></li>
+		</ul>
+	</div>
+</div>
+
+<script src="../vendors/jquery-3.1.1.js"></script>
+<script>
+
+$(function() {
+	function Pointer(x, y) {        //创建对象
+		this.x = x;
+		this.y = y;
+	}
+
+	function Position(left, top) {
+		this.left = left;
+		this.top = top;
+	}
+	$(".item_content .item").each(function(i) {
+		this.init = function() {           // 初始化
+			this.box = $(this).parent();
+			$(this).attr("index", i).css({  //浮动布局改为定位布局 //自定义索引
+				position: "absolute",
+				left: this.box.offset().left,
+				top: this.box.offset().top
+			}).appendTo(".item_content");   //将.item移动到.item_content方便获取兄弟元素
+			this.drag();
+		},
+		this.move = function(callback) {    // 移动
+			$(this).stop(true).animate({
+				left: this.box.offset().left,
+				top: this.box.offset().top
+			}, 500, function() {
+				// if (callback) {
+				// 	callback.call(this);
+				// }
+				callback&&callback.call(this); //逻辑与回调函数callback存在才会执行动画之后再执行后面的回调
+			});                                //call方法
+		},
+		this.collisionCheck = function() {
+			var currentItem = this;
+			var direction = null;
+			$(this).siblings(".item").each(function() { //击点进入目标范围则碰撞成功
+				if (
+					currentItem.pointer.x > this.box.offset().left &&
+					currentItem.pointer.y > this.box.offset().top &&
+					(currentItem.pointer.x < this.box.offset().left + this.box.width()) &&
+					(currentItem.pointer.y < this.box.offset().top + this.box.height())
+				) {
+					// 返回对象和方向
+					if (currentItem.box.offset().top < this.box.offset().top) {
+						direction = "down";
+					} else if (currentItem.box.offset().top > this.box.offset().top) {
+						direction = "up";
+					} else {
+						direction = "normal";
+					}
+					this.swap(currentItem, direction);
+				}
+			});
+		},
+		this.swap = function(currentItem, direction) { // 交换位置
+			if (this.moveing) return false;
+			var directions = {
+				normal: function() {
+					var saveBox = this.box;
+					this.box = currentItem.box;
+					currentItem.box = saveBox;
+					this.move();
+					$(this).attr("index", this.box.index());
+					$(currentItem).attr("index", currentItem.box.index());
+				},
+				down: function() {
+					// 移到上方
+					var box = this.box;
+					var node = this;     //this 指碰撞成功的兄弟元素
+					var startIndex = currentItem.box.index();
+					var endIndex = node.box.index();;
+					for (var i = endIndex; i > startIndex; i--) {
+						var prevNode = $(".item_content .item[index=" + (i - 1) + "]")[0];
+						node.box = prevNode.box;
+						$(node).attr("index", node.box.index());
+						node.move();
+						node = prevNode;
+					}
+					currentItem.box = box;
+					$(currentItem).attr("index", box.index());
+				},
+				up: function() {
+					// 移到上方
+					var box = this.box;
+					var node = this;
+					var startIndex = node.box.index();
+					var endIndex = currentItem.box.index();;
+					for (var i = startIndex; i < endIndex; i++) {
+						var nextNode = $(".item_content .item[index=" + (i + 1) + "]")[0];
+						node.box = nextNode.box;
+						$(node).attr("index", node.box.index());
+						node.move();
+						node = nextNode;
+					}
+					currentItem.box = box;
+					$(currentItem).attr("index", box.index());
+				}
+			}
+			directions[direction].call(this);
+		},
+		this.drag = function() {    // 拖拽
+			var oldPosition = new Position(); //实例化对象
+			var oldPointer = new Pointer();
+			var isDrag = false;     //是否是处于拖拽状态
+			var currentItem = null;
+			$(this).mousedown(function(e) {
+				e.preventDefault();
+				oldPosition.left = $(this).position().left;
+				oldPosition.top = $(this).position().top;
+				oldPointer.x = e.clientX;
+				oldPointer.y = e.clientY;
+				isDrag = true;
+				currentItem = this;
+			});
+			$(document).mousemove(function(e) {
+				var currentPointer = new Pointer(e.clientX, e.clientY);
+				if (!isDrag) return false; 
+				$(currentItem).css({
+					"opacity": "0.8",
+					"z-index": 999
+				});
+				var left = currentPointer.x - oldPointer.x + oldPosition.left;
+				var top = currentPointer.y - oldPointer.y + oldPosition.top;
+				$(currentItem).css({
+					left: left,
+					top: top
+				});
+				currentItem.pointer = currentPointer;
+				// 开始交换位置
+
+				currentItem.collisionCheck();
+			});
+			$(document).mouseup(function() {
+				if (!isDrag) return false;   //还可以用解绑mousemove事件
+				isDrag = false;
+				currentItem.move(function() {
+					$(this).css({
+						"opacity": "1",
+						"z-index": 0
+					});
+				});
+			});
+		}
+		this.init();
+	});
+});
+
+</script>
+
+</body>
+</html>

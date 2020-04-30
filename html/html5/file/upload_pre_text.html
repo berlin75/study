@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf8">
+<title>html5 file api 预览文本文件</title>
+<style>
+#DropZone {width:400px;height:100px;background:#f8f8f8;border:1px dotted #333;text-align:center;line-height:100px;color:#aaa;display:inline-block;}
+.drag_hover {background:#FAD6F9;}
+.show {margin-top:20px;position:relative;width:950px;}
+.show .item {position:absolute;width:250px;height:250px;}
+.show img {max-width:224px;max-height:224px;cursor: pointer;box-shadow:0px 1px 1px 1px #AAA3A3;}
+.show img:hover {box-shadow:0px 1px 1px 2px #83ABD2;}
+.show .big {z-index:2;}
+.show .big img {max-width:none;max-height:none;cursor: pointer;box-shadow:2px 2px 10px 2px #666;}
+
+</style>
+</head>
+<body>
+<pre>
+预览文本文件,主要用到FileReader的readAsText，
+对于诸如mimetype为text/plain、text/html等文件均认为是文本文件，即minetype为text开头都能在本例中预览。
+
+由于需要在页面上预览文本，如果使用innerHTML插入文本的话，则需要对html中一些特殊字符进行实体编码，
+这样才能保证正常显示文本
+</pre>
+
+<div class="upload_box">
+    <input type="file" id="Files" name="files[]" multiple="">
+    <span id="DropZone">拖拽区域</span>
+</div>
+<div class="show" id="lists"></div>
+<div class="show" id="Errors"></div>
+<div class="show" id="Preview"></div>
+
+<script src="../../vendors/jquery-3.1.1.js"></script>
+<script>
+//预览文本文件 
+function encodeHTML(source) {   //存在语法错误
+    return source.replace(/&/g,'\&').replace(/</g,'\<').replace(/>/g,'\>').replace(/"/,'\"').replace(/'/,'\'');  
+};
+function fileSelect(e) {  
+    e = e || window.event;  
+       
+    var files = e.target.files;  //FileList Objects      
+    var ireg = /text\/.*/i,  
+        p = document.getElementById('Preview');  
+           
+    var ul = document.getElementById('Errors');  
+    for(var i = 0, f; f = files[i]; i++) {  
+        console.log(f.type);  
+        if(!f.type.match(ireg)) {  
+            //设置错误信息  
+            var li = document.createElement('li');  
+            li.innerHTML = '<li>' + f.name +'不是文本文件.</li>';                 
+            ul.appendChild(li);                
+            continue;  
+        }  
+           
+        var reader = new FileReader();  
+           
+        reader.onload = (function(file) {  
+            return function(e) {  
+                var div = document.createElement('div');  
+                div.className = "text"  
+                div.innerHTML = encodeHTML(this.result);
+                p.insertBefore(div, null);  
+            };  
+        })(f);  
+        //读取文件内容  
+        reader.readAsText(f);  
+    }  
+}  
+       
+if(window.File && window.FileList && window.FileReader && window.Blob) {  
+    document.getElementById('Files').addEventListener('change', fileSelect, false);  
+} else {  
+    document.write('您的浏览器不支持File Api');  
+} 
+</script>
+
+</body>
+</html>

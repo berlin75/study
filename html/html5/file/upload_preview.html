@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf8">
+<title>html5 file api 预览</title>
+<style>
+#DropZone {width:400px;height:100px;background:#f8f8f8;border:1px dotted #333;text-align:center;line-height:100px;color:#aaa;display:inline-block;}
+.drag_hover {background:#FAD6F9;}
+.show {margin-top:20px;position:relative;width:950px;}
+.show .item {position:absolute;width:250px;height:250px;}
+.show img {max-width:224px;max-height:224px;cursor: pointer;box-shadow:0px 1px 1px 1px #AAA3A3;}
+.show img:hover {box-shadow:0px 1px 1px 2px #83ABD2;}
+.show .big {z-index:2;}
+.show .big img {max-width:none;max-height:none;cursor: pointer;box-shadow:2px 2px 10px 2px #666;}
+
+</style>
+</head>
+<body>
+<pre>
+</pre>
+
+<p>预览本地图片,主要用到FileReader的readAsDataURL方法，通过将图片数据读取成Data URL的方法，将图片展示出来，关于DATA URI</p>
+<p>调用FileReader的readAsDataURL接口，将启动异步加载文件内容，通过给reader监听一个onload事件，将数据加载完毕后，在onload事件处理中，通过reader的result属性即可获得文件内容</p>
+<p>点击图片放大，再次点击缩小？？？？</p>
+<div class="upload_box">
+    <input type="file" id="Files" name="files[]" multiple="">
+    <span id="DropZone">拖拽区域</span>
+</div>
+<div class="show" id="lists"></div>
+<ul class="show" id="Errors"></ul>
+<div class="show" id="Preview"></div>
+
+<hr>
+<input type="file" name="file" onchange="showPreview(this)" />  
+<img id="portrait" src="" width="150" height="75">
+
+<script src="../../vendors/jquery-3.1.1.js"></script>
+<script>
+//预览
+function fileSelect(e) {  
+    e = e || window.event;         
+    var files = e.target.files;  //FileList Objects      
+    var ireg = /image\/.*/i; 
+    var p = document.getElementById('Preview');  
+           
+    var ul = document.getElementById('Errors');  
+    for(var i = 0, f; f = files[i]; i++) {  
+        if(!f.type.match(ireg)) {  
+            //设置错误信息  
+            var li = document.createElement('li');  
+            li.innerHTML = '<li>' + f.name +'不是图片文件.</li>';                
+            ul.appendChild(li);                
+            continue;  
+        }  
+           
+        var reader = new FileReader();  
+           
+        reader.onload = (function(file) {  
+            return function(e) {  
+                var span = document.createElement('span');  
+                span.innerHTML = '<img class="thumb" src="'+ this.result +'" alt="'+ file.name +'" />';                     
+                p.insertBefore(span, null);  
+            };  
+        })(f);  
+        //读取文件内容  
+        reader.readAsDataURL(f);  
+    }  
+}  
+       
+if(window.File && window.FileList && window.FileReader && window.Blob) {  
+    document.getElementById('Files').addEventListener('change', fileSelect, false);  
+} else {  
+    document.write('您的浏览器不支持File Api');  
+}  
+
+
+function showPreview(source){  
+    var file = source.files[0];
+    if(!/image\/\w+/.test(file.type)){  
+        alert("请确保文件为图像类型");  
+        return false;  
+    }   
+    if(window.FileReader) {  
+        var fr = new FileReader();  
+        fr.onloadend = function(e) {  
+            console.log(e.target);
+            console.log(this);
+            document.getElementById("portrait").src = e.target.result;  
+        };  
+        fr.readAsDataURL(file);  
+    }  
+} 
+</script>
+
+</body>
+</html>

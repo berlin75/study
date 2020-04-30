@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>css_variable</title>
+<style>
+	:root{
+		--color: #fff;
+		--bgColor: yellow;
+		--baseWidth: 200px;
+		--word:"CSS";
+		--word-second:"Variable";
+	};
+	body{
+		--1: #369;
+	}
+	h1{
+		--width: calc(4*var(--baseWidth));
+		width: var(--width);
+		background-color: var(--bgColor);
+	}
+	h1::after{
+	  content:' - 'var(--word)' 'var(--word-second);
+	  font-size: 16px;
+	}
+	header{
+		--borderColor: 30px;
+		--size: 30;
+		background-color: var(--1, red);
+		color: var(--color);
+		font-size: var(--size)px;
+	}
+	main{
+		--size: 60px;
+		font-size: var(--size);
+		background-color: var(--borderColor, green)
+	}
+	footer{
+		--size: 30;
+		font-size: calc(var(--size)*1px);
+	}
+	@media screen and (max-width: 900px) {
+	    :root {
+	        --word:"test";
+			--word-second:"to do";
+	    }
+	}
+</style>
+</head>
+<body>
+	<h1>css variable</h1>
+	<header>header</header>
+	<main>main</main>
+	<footer>footer</footer>
+
+	<script>
+//  读取
+var root = getComputedStyle(document.documentElement);
+var cssVariable = root.getPropertyValue('--baseWidth').trim();
+console.log(cssVariable);       
+
+setTimeout(function(){
+	// 写入
+	document.documentElement.style.setProperty('--baseWidth', '100px');
+}, 10000)
+
+	</script>
+</body>
+</html>

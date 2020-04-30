@@ -1,0 +1,9 @@
+<%include layout_head%>
+<h1>文章列表</h1>
+<% for(var i = 0; i < entries.length; i++){ %>
+	<p>
+		<a href="/article/<%= entries[i]['id'] %>"><%= entries[i]['title'] %></a>
+		published: <%= entries[i]['published'] %>
+	</p>
+<% } %>
+<%include layout_foot%>

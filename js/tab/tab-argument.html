@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>input点击事件-传参</title>
+<style>
+#div1{width:350px; height:200px; background:red; }
+</style>
+<script>
+function togreen(){
+	var odiv=document.getElementById("div1");
+	odiv.style.background="green";	
+}
+function toyellow(){
+	var odiv=document.getElementById("div1");
+	odiv.style.background="yellow";	
+}
+function toblack(){
+	var odiv=document.getElementById("div1");
+	odiv.style.background="black";	
+}
+function setcolor(col){
+	var odiv=document.getElementById("div1");
+    odiv.style.background=col ;   
+}
+</script>
+</head>
+
+<body>
+<input name="" type="button" value="green" onclick="togreen()" />
+<input name="" type="button" value="yellow" onclick="toyellow()" />
+<input name="" type="button" value="black" onclick="toblack()" />
+<input name="" type="button" value="chgreen" onclick="setcolor('green')" />
+<input name="" type="button" value="chyellow" onclick="setcolor('yellow')" />
+<input name="" type="button" value="chblack" onclick="setcolor('black')" />
+<div id="div1">此处显示  id "div1" 的内容</div>
+</body>
+</html>

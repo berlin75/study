@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>操作属性的两种方法</title>
+<script>
+function settxt(){
+  var otxt=document.getElementById("txt1");
+  otxt.value="abcdefg"
+}
+
+function settxt1(){
+  var otxt=document.getElementById("txt1");
+  otxt["value"]="hijkmn"   //可以var a="name"; 方括号内可以直接写a
+}
+
+function settxt2(){
+  var a="value";           //"value"是字符串
+  var otxt=document.getElementById("txt1");
+  otxt[a]="opq"   
+}
+
+function settxt3(name){
+  var otxt=document.getElementById("txt1");
+  otxt[name]="xyz"   
+}
+
+function settxt4(){
+  var a="value";           //"value"是字符串
+  var otxt=document.getElementById("txt1");
+  otxt.a="opq"   
+}
+
+function settxt3(name){
+  var otxt=document.getElementById("txt1");
+  otxt.name="xyz"   
+}
+</script>
+</head>
+
+<body>
+<input id="txt1" type="text" />
+<input type="button" value="第一种." onclick="settxt()" />
+<input type="button" value="第二种[]" onclick="settxt1()" />
+<input type="button" value="第二种[]加变量" onclick="settxt2()" />
+<input type="button" value="第二种[]传参" onclick="settxt3('value')" />
+<input type="button" value="第一种.加变量不可行" onclick="settxt4()" />
+<input type="button" value="第一种.传参不可行" onclick="settxt5('value')" />
+</body>
+</html>

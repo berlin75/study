@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>test net</title>
+</head>
+<body>
+<p></p>
+<ol></ol>
+
+<script>
+document.querySelector('p').innerHTML=`记录网络掉线<br>开始时间：${new Date().toLocaleString()}`;
+var isOff = true;
+var isOn = true;
+function record(info){
+	var oLi = document.createElement('li');
+	oLi.innerHTML = info + new Date().toLocaleString();
+	document.querySelector('ol').appendChild(oLi); 
+}
+function toSure(){
+	if(!navigator.onLine && isOff){
+		record('掉线：');
+		isOff = false;
+		isOn = true;
+	}
+	if(navigator.onLine && isOn){
+		record('连接：');
+		isOff = true;
+		isOn = false;
+	}
+	setTimeout(function(){
+		toSure();
+	}, 1000)
+}
+toSure();
+
+window.addEventListener('online',  function(){
+  console.log("online: " + new Date().toLocaleString());
+});
+window.addEventListener('offline', function(){
+  console.log("offline: " + new Date().toLocaleString());
+});	
+</script>
+</body>
+</html>

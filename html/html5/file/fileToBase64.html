@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>生成base64</title>
+</head>
+<body>
+<input type="file" id="fileElem" multiple  style="display:none" onchange="handleFiles(this.files)">
+<a href="#" id="fileSelect">Select some files translate to base64 data</a>
+
+<div id="preview"></div>
+<script>
+function handleFiles(files){ 
+	if (!files.length) return preview.innerHTML = "<p>No files selected!</p>";
+
+	preview.innerHTML = "";
+	[].forEach.call(files, file => {
+    	/* reader.readAsDataURL(file) */	    
+	    var reader = new FileReader();
+	    reader.onload = function(e) { 
+    		preview.innerHTML = file.name 
+    		+ '<br/>base64数据：<div style="width:80%;border:1px solid;padding:1rem;white-space:pre-line;word-wrap:break-word;">' 
+    		+ e.target.result + '</div>'; 
+    	}; 
+	    reader.readAsDataURL(file);
+	})
+}
+
+
+var fileSelect = document.getElementById("fileSelect");
+var fileElem = document.getElementById("fileElem");
+
+fileSelect.addEventListener("click", function (e) {
+  	fileElem &&fileElem.click();
+  	e.preventDefault();          // prevent navigation to "#"
+}, false);
+</script>
+</body>
+</html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>ajax异步上传base64图片</title>
+<script src="../../vendors/jquery-3.3.1.min.js"></script>
+</head>
+<body>
+<input type="file" id="upload64">
+
+<script>
+$('#upload64').change(function(){
+	var file = this.files[0];
+	if(file.size > 5*1024*1024){
+		alert('上传的文件太大');
+		return;
+	}
+	var reader = new FileReader;
+	reader.onload = function(){
+		var base64 = reader.result;
+		// console.log(base64);
+		base64_uploading(base64);
+	}
+	reader.readAsDataURL(file);
+})
+
+function base64_uploading(base64Data){
+	$.ajax({
+		type:"post",
+		url:"ajax_base64.php",
+		data:{"upload":base64Data},
+		dataType:"json",
+		success:function(data){
+			console.log(data);
+		}
+	})
+}
+</script>
+</body>
+</html>

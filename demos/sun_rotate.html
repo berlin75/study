@@ -1,0 +1,150 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Demo</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+<style type="text/css">
+
+* { margin:0; padding:0; }
+body { background:url("images/timgq.jpg"); }
+
+.wrap { width:800px; height:800px; margin:60px auto; position:relative; }
+.po { position:absolute; display:inline-block; text-align:center; vertical-align:middle; }
+.sun { width:100px; height:100px; border-radius:50%; background:url("images/sun1.jpg") no-repeat; background-size:cover; top:350px; left:350px; }
+.sun1 { width:200px; height:200px; border-radius:50%; border:1px dashed black; top:300px; left:300px; }
+.sun2 { width:300px; height:300px; border-radius:50%; border:1px dashed grey; top:250px; left:250px; }
+.sun3 { width:400px; height:400px; border-radius:50%; border:1px dashed black; top:200px; left:200px; }
+.sun4 { width:500px; height:500px; border-radius:50%; border:1px dashed grey; top:150px; left:150px; }
+.sun5 { width:600px; height:600px; border-radius:50%; border:1px dashed black; top:100px; left:100px; }
+.sun6 { width:700px; height:700px; border-radius:50%; border:1px dashed grey; top:50px; left:50px; }
+.sun7 { width:800px; height:800px; border-radius:50%; border:1px dashed black; top:0; left:0; }
+.sun8 { width:900px; height:900px; border-radius:50%; border:1px dashed grey; top:-50px; left:-50px; }
+.er1 { transform-style:preserve-3d; perspective:600px; }
+.er1 img { width:30px; height:30px; border-radius:50%; position:absolute; top:85px; left:-15px; transform-origin:115px 15px; transition:all 1s linear; }
+.er2 img { width:40px; height:40px; border-radius:50%; position:absolute; top:125px; left:-20px; transform-origin:171px 15px; transition:all 1s linear; }
+.er3 img { width:50px; height:50px; border-radius:50%; position:absolute; top:180px; left:-20px; transform-origin:220px 15px; transition:all 1s; }
+.er4 img { width:40px; height:40px; border-radius:50%; position:absolute; top:230px; left:-20px; transform-origin:270px 15px; transition:all 1s; }
+.er5 img { width:40px; height:40px; border-radius:50%; position:absolute; top:280px; left:-20px; transform-origin:320px 15px; transition:all 1s; }
+.er6 img { width:40px; height:40px; border-radius:50%; position:absolute; top:330px; left:-20px; transform-origin:370px 15px; transition:all 1s; }
+.er7 img { width:40px; height:40px; border-radius:50%; position:absolute; top:380px; left:-20px; transform-origin:420px 15px; transition:all 1s; }
+.er8 img { width:40px; height:40px; border-radius:50%; position:absolute; top:430px; left:-20px; transform-origin:470px 15px; transition:all 1s linear; }
+
+.roll1 { animation:roll 7.5s linear infinite; }
+.roll2 { animation:roll 18s linear infinite; }
+.roll3 { animation:roll 30s linear infinite; }
+.roll4 { animation:roll 54s linear infinite; }
+.roll5 { animation:roll 354s linear infinite; }
+.roll6 { animation:roll 870s linear infinite; }
+.roll7 { animation:roll 2520s linear infinite; }
+.roll8 { animation:roll 4950s linear infinite; }
+
+@keyframes roll {
+	0% {
+	transform:rotate(0deg);
+}
+100% {
+	transform:rotate(360deg);
+}
+}
+
+</style>
+</head>
+<body>
+
+<!-- 太阳星系旋转图：transform-style: preserve-3d;perspective: 600px;3d动画前：需要设置3d场景，以及景深效果行星旋转时应该要设置她的旋转中心transform-origin为太阳 -->
+<div class="wrap">
+	<a class="sun po"></a>
+	<a class="sun1 po">1<span class="er1"><img src="http://www.jq22.com/img/cs/xq56.png" class="roll1"></span></a>
+	<a class="sun2 po">2<span class="er2"><img src="http://www.jq22.com/img/cs/xq56.png" class="roll2"></span></a>
+	<a class="sun3 po">3<span class="er3"><img src="http://www.jq22.com/img/cs/xq56.png" class="roll3"></span></a>
+	<a class="sun4 po">4<span class="er4"><img src="http://www.jq22.com/img/cs/xq56.png" class="roll4"></span></a>
+	<a class="sun5 po">5<span class="er5"><img src="http://www.jq22.com/img/cs/xq56.png" class="roll5"></span></a>
+	<a class="sun6 po">6<span class="er6"><img src="http://www.jq22.com/img/cs/xq56.png" class="roll6"></span></a>
+	<a class="sun7 po">7<span class="er7"><img src="http://www.jq22.com/img/cs/xq56.png" class="roll7"></span></a>
+	<a class="sun8 po">8<span class="er8"><img src="http://www.jq22.com/img/cs/xq56.png" class="roll8"></span></a>
+</div>
+
+<script src="../demos/jquery-3.3.1.min.js"></script>
+<script type="text/javascript">
+function sliceSize(dataNum, dataTotal) {
+  return (dataNum / dataTotal) * 360;
+}
+
+function addSlice(id, sliceSize, pieElement, offset, sliceID, color) {
+  $(pieElement).append("<div class='slice "+ sliceID + "'><span></span></div>");
+  var offset = offset - 1;
+  var sizeRotation = -179 + sliceSize;
+
+  $(id + " ." + sliceID).css({ "transform": "rotate(" + offset + "deg) translate3d(0,0,0)" });
+
+  $(id + " ." + sliceID + " span").css({
+    "transform"       : "rotate(" + sizeRotation + "deg) translate3d(0,0,0)",
+    "background-color": color
+  });
+}
+
+function iterateSlices(id, sliceSize, pieElement, offset, dataCount, sliceCount, color) {
+  var maxSize = 179
+  var sliceID = "s" + dataCount + "-" + sliceCount;
+
+  if( sliceSize <= maxSize ) {
+    addSlice(id, sliceSize, pieElement, offset, sliceID, color);
+  } else {
+    addSlice(id, maxSize, pieElement, offset, sliceID, color);
+    iterateSlices(id, sliceSize-maxSize, pieElement, offset+maxSize, dataCount, sliceCount+1, color);
+  }
+}
+
+function createPie(id) {
+  var
+    listData      = [],
+    listTotal     = 0,
+    offset        = 0,
+    i             = 0,
+    pieElement    = id + " .pie-chart__pie"
+    dataElement   = id + " .pie-chart__legend"
+
+    color = ["rgb(187,228,255)","rgb(2,166,209)","rgb(5,116,206)","rgb(239,71,111)","rgb(255,209,102)","rgb(6,214,160)","rgb(172,78,221)","rgb(255,140,62)","rgb(0,188,212)","rgb(194,24,91)","rgb(230,74,25)","rgb(103,58,183)" ];
+
+  color = shuffle( color );
+
+  $(dataElement+" span").each(function() {
+    listData.push(Number($(this).html()));
+  });
+
+  for(i = 0; i < listData.length; i++) {
+    listTotal += listData[i];
+  }
+
+  for(i=0; i < listData.length; i++) {
+    var size = sliceSize(listData[i], listTotal);
+    iterateSlices(id, size, pieElement, offset, i, 0, color[i]);
+    $(dataElement + " li:nth-child(" + (i + 1) + ")").css("border-color", color[i]);
+    offset += size;
+  }
+}
+
+function shuffle(a) {
+    var j, x, i;
+    for (i = a.length; i; i--) {
+        j = Math.floor(Math.random() * i);
+        x = a[i - 1];
+        a[i - 1] = a[j];
+        a[j] = x;
+    }
+
+    return a;
+}
+
+function createPieCharts() {
+  createPie('.pieID--region' );
+  createPie('.pieID--operations' );
+}
+
+createPieCharts();
+
+</script>
+</body>
+</html>

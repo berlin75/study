@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>节点,定位</title>
+<style type="text/css">
+	*{ margin:0; padding:0; }
+	#div1{ width:200px; height:200px; background:black;margin:50px; position:relative;}
+	#div2{ width:100px; height:100px; background:red;position:absolute; left:50px; top:50px;}
+	#div3{ width:200px; height:200px; background:blue; }
+		   
+/* margin:50px;  position:relative;  position:absolute; left:50px; top:50px;
+*/</style>
+
+</head>
+
+<body>
+<ul style="margin: 1rem;">
+	<p>childNodes.length     返回子节点数量，包括元素节点，属性节点和文本节点，通过nodeType判断<br>
+	children.length       返回节点数量</p>
+	<li><a href="javascript:;">隐藏</a><span>1</span>abcd</li>
+    <li>efghi<a href="javascript:;">隐藏</a></li>
+    <li>123456<a href="javascript:;">隐藏</a></li>
+    <li>scf434<a href="javascript:;">隐藏</a></li>
+</ul>
+
+<p>offsetParent  寻找某一元素用来定位的父级元素</p>
+
+	<div id="div1">
+		<div id="div2"></div>
+	</div>
+    <div id="div3"></div>
+
+<script type="text/javascript">
+	window.onload=function(){
+		var odiv1=document.getElementById("div1");
+		var odiv2=document.getElementById("div2");
+		var odiv3=document.getElementById("div3");
+		
+		alert(odiv1.offsetParent.tagName);
+		alert(odiv2.offsetParent.tagName);
+		alert(odiv3.offsetParent.tagName);
+	
+		var oA=document.getElementsByTagName("a");
+		for(var i=0;i<oA.length;i++){
+			oA[i].onclick=function(){
+				this.parentNode.style.display="none";
+			}
+		}
+		
+		var oli=document.getElementsByTagName("li")[0];
+		alert('type'+oli.childNodes[0].nodeType);
+		alert(oli.childNodes.length);
+		alert(oli.children.length);
+		
+	}
+</script>
+</body>
+</html>

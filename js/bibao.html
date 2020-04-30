@@ -1,0 +1,32 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>函数变量闭包计数器</title>
+</head>
+
+<body>
+<button type="button" value="计数" onclick="sum()">计数</button>
+<p>0</p>
+<script>
+	function sum(){
+		document.getElementsByTagName("p")[0].innerHTML=add();	
+	}
+	var add=(function (){                   //自调函数
+		      var counter=0;                      //计数器，变量作为局部函数
+		      return function(){ return counter +=1;}    //内嵌函数可以调用上层函数的变量
+	        })();
+	
+//	var counter=0;
+//	function add(){
+//	   return counter+=1;	
+//	}
+</script>
+<br />
+<p>可以声明全局变量，但是可能会被其他合作的人用相同的变量名，覆盖掉</p>
+<p>闭包可以形成私有作用域，可以访问外部的变量，外部不能访问里面的变量，保护变量不和外部的变量相冲突。</p>
+<p>自我调用函数(立即执行该函数)只执行一次，内嵌函数可以访问上层函数的变量。</p>
+<p>闭包是可访问上一层作用域里变量的函数，即便上一层函数已经关闭</p>
+<p>很多系统内部函数采用闭包，尽可能少的使用全局变量</p>
+</body>
+</html>

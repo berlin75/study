@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>nodejs ws</title>
+</head>
+<body>
+<script type="text/javascript">
+
+// 以下代码可以在浏览器console执行，特别是socket.send('i am console!');
+
+// Create WebSocket connection,打开socket
+const socket = new WebSocket('ws://localhost:3000/test');  
+
+// Connection opened,发送一个初始化消息       
+socket.addEventListener('open', event => {           
+    socket.send('hi, I am the client!');
+});
+
+// Listen for messages监听消息,看设置多个监听器
+socket.addEventListener('message', event => {        
+    console.log(event.data);
+});
+socket.addEventListener('message', event => {          
+    console.log(event);
+    // MessageEvent {isTrusted: true, data: "ECHO: hi, I am the client!", origin: "ws://localhost:3000", lastEventId: "", source: null…}
+});
+
+// 监听Socket的关闭
+socket.addEventListener('close', event => {           
+    console.log('Client notified socket has closed',event);
+}); 
+
+</script>
+</body>
+</html>

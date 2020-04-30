@@ -1,0 +1,57 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>淡入淡出的图片</title>
+<style type="text/css">
+	#div1{ width:200px; height:200px; background:red;
+	       filter:alpha(opacity:30);opacity:0.3;   }  /*浏览器兼容性问题解决*/
+</style>
+<script type="text/javascript">
+window.onload=function()
+{
+	var oDiv=document.getElementById("div1");
+	oDiv.onmouseover=function()
+	{
+		change(1);
+	}
+	oDiv.onmouseout=function()
+	{
+		change(0.3);
+	}
+}
+
+var timer=null;
+var alpha=0.3;
+function change(iTarget)
+{
+	var oDiv=document.getElementById("div1");
+	clearInterval(timer);
+	timer=setInterval(function()
+	{
+		var speed=alpha<iTarget?0.1:-0.1;
+		if(oDiv.style.opacity==iTarget)
+		{
+			clearInterval(timer);
+		}
+		else
+		{
+			alpha+=speed;                    //无法直接取透明度的值，临时添加变量
+			oDiv.style.opacity=alpha;
+			oDiv.style.filter="alpha(opacity:"+(alpha*100)+")";
+			
+			var oDiv2=document.getElementById("div2");
+			oDiv2.innerHTML="透明度："+alpha+" 速度："+speed;
+		}
+	},30);
+}
+
+</script>
+</head>
+
+<body>
+<div id="div1">
+</div>
+<div id="div2"></div>
+</body>
+</html>

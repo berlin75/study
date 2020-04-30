@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>nodejs文件上传页面</title>
+<style>
+form{width: 50rem;}
+#form{float: left;width: 30%;}
+#show{float: left;width: 65%;height: 12rem;border: 1px dashed #ccc;}
+#show .txt{height: 100%;color: #333;text-align: center;}
+.thumb{width: 100%;}
+</style>
+</head>
+<body>
+	<form action="/upload" method="post" enctype="multipart/form-data">
+		<fieldset> 
+	        <legend>上传文件：</legend>
+	        <div id="form">
+				<p><input type="text" name="name" placeholder="说明"></p>
+				<p><input type="text" name="description" placeholder="描述"></p>
+				<p><input type="text" name="savedir" placeholder="保存目录默认file/" data-savedir="file/"></p>
+				<p><input type="file" name="files[]" id="Files" multiple=""></p>			
+				<p><input type="button" value="上传"></p>
+			</div>
+			<div id="show">
+				<div id="Preview">
+					<div class="txt"> + 预览区</div>
+				</div>
+				<ul id="Errors"></ul>
+			</div>
+		</fieldset>
+	</form>
+
+<script>
+var postData = {'name': '', 'description': '', 'savedir': '', 'files': []};
+
+function fileSelect(e) { 
+    e = e || window.event; 
+    var files = e.target.files;  //FileList Objects     
+    var ireg = /image\/.*/i; 
+    var p = document.getElementById('Preview'); 
+    var ul = document.getElementById('Errors'); 
+    for(var i = 0, f; f = files[i]; i++) { 
+        if(!f.type.match(ireg)) { 
+            //设置错误信息 
+            var li = document.createElement('li'); 
+            li.innerHTML = '<li>' + f.name +'不是图片文件.</li>';                
+            ul.appendChild(li);               
+            continue; 
+        } 
+            
+        var reader = new FileReader();            
+        reader.onload = (function(file) { 
+            return function(e) { 
+                var span = document.createElement('span'); 
+                span.innerHTML='<img class="thumb" src="' + this.result +'" alt="'+file.name +'">';
+                p.insertBefore(span, null); 
+                postData.files.push({'filename': file.name, 'filecontent': this.result})
+            }; 
+        })(f); 
+        //读取文件内容 
+        reader.readAsDataURL(f); 
+    } 
+} 
+
+function uploadform(){
+	postData.name = document.querySelector('input[name=name]').value;
+	postData.description = document.querySelector('input[name=description]').value;
+	postData.savedir = document.querySelector('input[name=savedir]').value || 'file/';
+	console.log(JSON.stringify(postData));
+
+    var request=new XMLHttpRequest();
+    request.open("POST","/upload");
+    request.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+    request.send(JSON.stringify(postData));
+    request.onreadystatechange=function(){
+        if(request.readyState===4){
+            if(request.status===200){
+                console.log(request.responseText);
+            }else{
+                alert("发生错误："+request.status);
+            }
+        }
+    }
+}
+    
+if(window.File && window.FileList && window.FileReader && window.Blob) { 
+    document.getElementById('Files').addEventListener('change', fileSelect, false); 
+} else { 
+    document.write('您的浏览器不支持File Api'); 
+}
+
+document.querySelector('input[type=button]').addEventListener('click', uploadform, false);
+</script>
+</body>
+</html>

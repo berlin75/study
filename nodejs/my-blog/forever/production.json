@@ -1,0 +1,10 @@
+{
+    "uid": "myblog",
+    "append": true,
+    "watch": true,
+    "script": "index.js",
+    "sourceDir": ".",
+    "LOGFILE": "./foreverlogs/forever.log"
+  }
+
+// forever start ./forever/production.json

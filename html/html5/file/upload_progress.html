@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf8">
+<title>html5 file api FileReader进度条</title>
+<style>
+#DropZone {width:400px;height:100px;background:#f8f8f8;border:1px dotted #333;text-align:center;line-height:100px;color:#aaa;display:inline-block;}
+.drag_hover {background:#FAD6F9;}
+.show {margin-top:20px;position:relative;width:950px;}
+.show .item {position:absolute;width:250px;height:250px;}
+.show img {max-width:224px;max-height:224px;cursor: pointer;box-shadow:0px 1px 1px 1px #AAA3A3;}
+.show img:hover {box-shadow:0px 1px 1px 2px #83ABD2;}
+.show .big {z-index:2;}
+.show .big img {max-width:none;max-height:none;cursor: pointer;box-shadow:2px 2px 10px 2px #666;}
+
+</style>
+</head>
+<body>
+<pre>
+ 既然FileReader是异步读取文件内容，那么就应该可以监听它的读取进度。事实上，FileReader的onloadstart以及onprogress等事件，可以用来监听FileReader的读取进度。
+
+在onprogress的事件处理器中，提供了一个ProgressEvent对象，这个事件对象实际上继承了Event对象，提供了三个只读属性：lengthComputable、loaded、total；通过以上几个属性，即可实时显示读取进度
+
+为了安全地、正常地观察到文件读取进度，我们采用分段读取的方法来测试FileReader的进度条
+
+每次读取1M的字节（你也可以随便改步长，比如说一次一个字节，然后传一个大小为几字节的文件，也能很好地观察到进度），在一次读取完毕后，onload事件中开启下一次读取，直至整个文件都读取完毕
+</pre>
+
+<form>  
+    <fieldset>  
+        <legend>分度读取文件：</legend>  
+        <input type="file" id="File" />  
+        <input type="button" value="中断" id="Abort" />  
+        <p>  
+            <label>读取进度：</label><progress id="Progress" value="0" max="100"></progress>  
+        </p>  
+        <p id="Status"></p>  
+    </fieldset>  
+</form> 
+
+<script src="../../vendors/jquery-3.1.1.js"></script>
+<script>
+//FileReader进度条
+var h = {  
+    init: function() {  
+        var me = this;  
+           
+        document.getElementById('File').onchange = me.fileHandler;  
+        document.getElementById('Abort').onclick = me.abortHandler;  
+           
+        me.status = document.getElementById('Status');  
+        me.progress = document.getElementById('Progress');  
+        me.percent = document.getElementById('Percent');  
+           
+        me.loaded = 0;    
+        me.step = 1024*1024;   //每次读取1M
+        me.times = 0;          //读取的次数
+    },  
+    fileHandler: function(e) {  
+        var me = h;           
+        var file = me.file = this.files[0];  
+           
+        var reader = me.reader = new FileReader();  
+        console.log(reader);
+ 
+        me.total = file.size;  
+        
+        reader.onabort = me.onAbort; 
+        reader.onerror = me.onerror;  
+        reader.onload = me.onLoad;
+        reader.onloadstart = me.onLoadStart; 
+        reader.onloadend = me.onLoadEnd; 
+        reader.onprogress = me.onProgress;  
+                     
+        me.readBlob(file, 0);   //读取第一块
+    },  
+    onLoadStart: function() {  
+        var me = h;  
+    },  
+    onAbort: function() {  
+        var me = h;  
+    },  
+    onError: function() {  
+        var me = h;            
+    },
+    onLoadEnd: function() {  
+        var me = h;            
+    },
+    onProgress: function(e) {  
+        var me = h;             
+        me.loaded += e.loaded;           
+        me.progress.value = (me.loaded / me.total) * 100;   //更新进度条 
+    },    
+    onLoad: function() {  
+        var me = h;  
+   
+        if(me.loaded < me.total) {  
+            me.readBlob(me.loaded);  
+        } else {  
+            me.loaded = me.total;  
+        }  
+    },    
+    readBlob: function(start) {  
+        var me = h;             
+        var file = me.file;             
+        me.times += 1;  
+           
+        var blob = me.blobSlice(file, start, start + me.step + 1);
+        console.log(blob);   
+        me.reader.readAsText(blob);  
+    },  
+    abortHandler: function() {  
+        var me = h;             
+        if(me.reader) {  
+            me.reader.abort();  
+        }  
+    },
+    blobSlice: function(blob,startByte,length){
+        if(blob.slice){
+            return blob.slice(startByte,length);
+        } else if(blob.webkitSlice){
+            return blob.webkitSlice(startByte,length);
+        } else if(blob.webkitSlice){
+            return blob.webkitSlice(startByte,length);
+        } else {
+         return null;
+        }
+    }  
+};  
+   
+h.init();  
+
+</script>
+
+</body>
+</html>

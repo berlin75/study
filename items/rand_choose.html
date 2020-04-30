@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf8">
+<title>随机抽取</title>
+<style>
+.box {
+border-radius:8px;
+height:100px;
+width:500px;
+background-color:#999;
+margin:0 auto;
+text-align:center;
+padding:30px;
+}
+#uname {
+height:100px;
+width:500px;
+background-color:#666;
+border-radius:8px;
+text-align:center;
+line-height:100px;
+color:#fff;
+font-size:30px;
+}
+#btn {
+border-radius:15px;
+height:60px;
+width:300px;
+background-color:#999;
+color:#fff;
+font-size:20px;
+}
+
+
+</style>
+</head>
+<body>
+<p>***********************************************************</p>
+<div class="box">
+<br>
+<div id="uname">随机名</div>
+</div>
+<br>
+<br>
+
+<center>
+<button id="btn">开始点名</button>
+</center>
+
+获奖名单：<span id="span"></span>
+<p>***********************************************************</p>
+<script src="../vendors/jquery-3.1.1.js"></script>
+<script>
+//创建数组
+var arr = new Array('胡歌', '霍建华', '彭于晏', '杨洋', '李易峰', '张云龙', '李钟硕', '刘浩然', '王俊凯');
+
+//获取按钮，获取随机名
+
+var btn = document.getElementById('btn');
+var uname = document.getElementById('uname');
+
+//全局变量(数组长度?1)
+var len = arr.length - 1;
+var mytime = null;
+
+//定义空数组
+var zhong = [];
+var zhongstr = '';
+
+//定时器全局变量null
+
+//函数如果时间为空，修改按钮文本为停止;否则，清楚定时器 停下了，修改全局变量，按钮文本改为开始
+
+btn.onclick = function() {
+if (mytime == null) {
+show();
+btn.innerHTML = '停止';
+} else {
+//正在运行中 清除定时器 停下了
+clearInterval(mytime);
+//修改全局变量
+mytime = null;
+//修改按钮文本
+btn.innerHTML = '开始';
+//将数组中的成员压入新数组
+zhong.push(num);
+zhongstr += arr[num] + '';
+span.innerHTML = zhongstr;
+//在人员名单中删除该成员
+arr.splice(num, 1);
+//新元素的个数
+len = arr.length - 1;
+//判断人员名单是否为零
+if (len == -1) {
+btn.onclick = function() {
+alert('没有更多人员!')
+}
+}
+}
+}
+
+//随机方法,启动定时器
+//随机获取下标 修改文本
+function show() {
+mytime = setInterval(function() {
+num = rand(0, len);
+uname.innerHTML = arr[num]; //通过下标获取值
+}, 10)
+
+}
+
+//随机函数
+function rand(m, n) {
+return Math.floor(Math.random() * (n - m + 1)) + m;
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>可删</title>
+<style type="text/css">
+#div1{ width:100px; height:100px; background:red; position:absolute; left:600px; top:40px;}
+#div2{ width:1px; height:400px; background:black; position:absolute; left:1000px; top:0px;}
+</style> 
+<script type="text/javascript">
+window.onload=function()
+{
+	var oBtn1=document.getElementById("btn1");
+	var oBtn2=document.getElementById("btn2");
+	var oBtnjia=document.getElementById("btnjia");
+	var oBtnjian=document.getElementById("btnjian");
+	var oDiv1=document.getElementById("div1");
+	var presite=oDiv1.offsetLeft;
+	var speed=5;
+	function move()
+	{
+		if((oDiv1.offsetLeft>=0)&&(oDiv1.offsetLeft<=1250))
+		{
+			oDiv1.style.left=oDiv1.offsetLeft+speed+"px";
+		}
+		else
+		{
+			oDiv1.style.left=presite+"px";
+		}
+		document.title="位置："+oDiv1.offsetLeft+" 速度："+speed;
+	}
+	var timer=null;
+	oBtn1.onclick=function()
+	{
+		clearInterval(timer);
+		timer=setInterval(move,30);
+	}
+	oBtnjia.onclick=function()
+	{
+		++speed;
+	}
+	oBtnjian.onclick=function()
+	{
+		--speed;
+	}
+	oBtn2.onclick=function()
+	{
+		clearInterval(timer);
+	}
+	
+}
+</script>
+</head>
+
+<body>
+<input id="btn1" type="button" value="开始"  />
+<input id="btnjia" type="button" value="加速"  />
+<input id="btnjian" type="button" value="减速"  />
+<input id="btn2" type="button" value="停止"  />
+<div id="div1"></div>
+<div id="div2"></div>
+</body>
+</html>

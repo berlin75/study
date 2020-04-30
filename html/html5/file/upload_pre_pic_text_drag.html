@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf8">
+<title>html5 file api 拖放上传</title>
+<style>
+#droptarget{width: 350px;height: 200px;background: #f2f2f2;border: 1px dotted #333;}
+.show{margin-top: 1rem;}
+</style>
+</head>
+<body>
+<pre>
+EventUtil.addHandler(droptarget,'drageover',handleEvent);  
+EventUtil.addHandler(droptarget,'drop',handleEvent);
+以上跨浏览器事件绑定方法封装监听方法无效，应该使用下面的方式
+// droptarget.addEventListener('dragover', handleEvent, false);  
+// droptarget.addEventListener('drop', handleEvent, false);
+
+</pre>
+<div id="droptarget"></div>  
+<div class="show" id="progress"></div>
+<div class="show" id="output"></div>
+
+
+<script src="../../vendors/jquery-3.1.1.js"></script>
+<script>
+//跨浏览器事件绑定方法封装
+var EventUtil = {
+    addHandler: function (element, type, handler) { //添加事件
+        if (element.addEventListener) {
+            element.addEventListener(type, handler, false);
+        } else if (element.attachEvent) {
+            element.attachEvent('on' + type, handler);
+        } else {
+            element['on' + type] = handler; //若以上两种添加事件的方法都不支持，则使用默认的行为来添加事件
+        }
+    },
+    removeHandler: function (element, type, handler) { //移除事件
+        if (element.removeEventListener) {
+            element.removeEventListener(type, handler, false);
+        } else if (element.detachEvent) {
+            element.detachEvent('on' + type, handler);
+        } else {
+            element['on' + type] = null;
+        }
+    },
+    getEvent: function (e) { //获取event对象,在兼容dom的浏览器中，event变量只是简单地传入和返回，但是在IE中，event参数未定义，其实就是undefined，因此，我们需要根据IE的特性把event对象赋值成window.event,这样就可以兼容每个浏览器
+        return e ? e : window.event;
+    },
+    getTarget: function (e) { //在这个方法内部，会检测event对象的target属性，如果存在返回target，否则返回srcElement属性
+        return e.target || e.srcElement;
+    },
+    preventDefault: function (e) { //获取事件的目标,preventDefault()方法和returnValue属性的作用一样，如果preventDefault()方法不存在，就换做returnValue=false
+        if (e.preventDefault) {
+            e.preventDefault();
+        } else {
+            e.returnValue = false;
+        }
+    },
+    stopPropagation: function (e) { //阻止冒泡,Ie不支持事件捕获，因此，这个方法只能用来阻止事件冒泡
+        if (e.stopPropagation) {
+            e.stopPropagation();
+        } else {
+            e.cancelBubble = true;
+        }
+    },
+    getRelatedTarget: function (e) { //发生mouseover和mouseout时可以获取相关元素
+        if (e.relatedTarget) {
+            return e.relatedTarget;
+        } else if (e.toElement) {
+            return e.toElement;
+        } else if (e.fromElement) {
+            return e.fromElement;
+        } else {
+            return null;
+        }
+    },
+    getButton: function(e) { //使用mousedown和mouseup时使用
+        if (document.implementation.hasFeature("MouseEvents", "20")) {
+            return e.button;
+        } else {
+            switch (e.button) {
+            case 0:
+            case 1: 
+            case 3:
+            case 5:
+            case 7:
+                return 0;
+            case 2:
+            case 6:
+                return 2;
+            case 4:
+                return 1;
+            }
+        }
+    },
+    getCharCode:function(event){   //返回字符编码
+        if(typeof event.charCode == "number"){
+            return event.charCode;
+        }else{
+            return event.keyCode;
+        }
+    }
+}
+
+var droptarget = document.getElementById('droptarget');
+
+function handleEvent(e){ 
+    e = e || window.event;  
+    e.stopPropagation();
+    e.preventDefault();   
+    if(e.type == 'drop') { 
+        var files = e.dataTransfer.files;
+        var info = '';
+        for(var i = 0, f; f = files[i]; i++) {  
+            info += files[i].name + '(' + files[i].type + ',' + files[i].size + 'bytes )<br>';
+        }
+        document.getElementById('output').innerHTML = info;
+
+    }else if(e.type == 'dragover'){    
+        e.dataTransfer.dropEffect = 'copy'; //指定拖放视觉效果 
+    }       
+
+}
+
+EventUtil.addHandler(droptarget,'drageover',handleEvent);
+EventUtil.addHandler(droptarget,'drop',handleEvent);
+// droptarget.addEventListener('dragover', handleEvent, false);  
+// droptarget.addEventListener('drop', handleEvent, false);
+ 
+</script>
+
+</body>
+</html>

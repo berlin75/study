@@ -1,0 +1,64 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>event绑定事件IE的兼容性问题</title>
+<style type="text/css">
+*{ margin:0px; padding:0px; }
+body{ height:1800px;}  #div2{ position:absolute; top:300px;}
+#div1{ width:100px; height:100px; background:red; position:absolute;}
+</style> 
+<script type="text/javascript">
+window.onload=function()
+{
+	var oBtn=document.getElementById("btn");
+//	if(oBtn.attachEvent)
+//	{
+//		oBtn.attachEvent("onclick",function ()
+//		{
+//			alert("a");
+//		});
+//		oBtn.attachEvent("onclick",function ()
+//		{
+//			alert("b");
+//		});
+//	}
+//	else
+//	{
+//		oBtn.addEventListener("click",function()
+//		{
+//			alert("a");
+//		},false);
+//		oBtn.addEventListener("click",function()
+//		{
+//			alert("b");
+//		},false);
+//	}
+	
+	function addEvent(obj, ev,fn)
+	{
+		if(obj.attachEvent)
+		{
+			obj.attachEvent("on"+ev,fn);
+		}
+		else
+		{
+			obj.addEventListener(ev,fn,false);
+		}
+	}
+	addEvent(oBtn,"click",function()
+		{
+			alert("a");
+		});
+	addEvent(oBtn,"click",function()
+		{
+			alert("b");
+		});
+}
+</script>
+</head>
+	
+<body>
+     <input id="btn"  type="button"  value="弹出" />
+</body>
+</html>

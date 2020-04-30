@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>vuejs</title>
+<script src="../../vendors/vue.min.js"></script>
+</head>
+<body>
+<div id="app">
+<input type="Checkbox" name="name" value="提交值" v-model="first" @click="console.log(this, this.value, this.checked)">选项
+<label>{{ first }}</label>
+
+<input type="radio" name="age" value="1" onclick="console.log(this.value, this.checked)">选项
+<input type="radio" name="age" value="2" onclick="console.log(this.value, this.checked)">选项
+</div>
+<script>
+var vm = new Vue({
+	el: '#app',
+	data: {
+		first: 'unkonw'
+	}
+})
+console.log(vm.first)
+vm.first = 'knom'
+console.log(vm.first)
+
+</script>
+
+</body>
+</html>

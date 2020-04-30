@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf8">
+<title>移动端手势密码canvas</title>
+<style>
+
+
+</style>
+</head>
+<body>
+<p>移动端手势密码canvas,pc端无效</p>
+
+<canvas id="myCanvas"></canvas>
+
+<script src="../../../vendors/jquery-3.1.1.js"></script>
+<script>
+var R = 26;
+var reachPoind = [-1];
+
+function draw(x, y) {
+ctx.beginPath();
+ctx.arc(x, y, R, 0, 2 * Math.PI);
+ctx.fillStyle = "green";
+ctx.fill();
+ctx.beginPath();
+ctx.arc(x, y, R - 3, 0, 2 * Math.PI);
+ctx.fillStyle = "#fff";
+ctx.fill();
+}
+var c = document.getElementById("myCanvas");
+var ctx = c.getContext("2d");
+var wid = document.body.offsetWidth;
+var hei = 320;
+c.width = wid;
+c.height = hei;
+xpos = Math.ceil((wid - (R) * 6) / 2) - 24;
+ypos = Math.ceil((hei - (R) * 6) / 2) - 24;
+var arr1 = [];
+for (var j = 0; j < 3; j++) {
+for (var i = 0; i < 3; i++) {
+var point = {};
+point.x = 50 + xpos * i + R * 2 * i;
+point.y = 50 + ypos * j + R * 2 * j;
+arr1.push(point);
+draw(point.x, point.y);
+ctx.closePath();
+}
+}
+c.addEventListener('touchstart', onTouchStart, false);
+c.addEventListener('touchmove', onTouchMove, false);
+c.addEventListener('touchend', onTouchEnd, false);
+
+function onTouchStart(e) {
+var tempx = e.touches[0].pageX;
+var tempy = e.touches[0].pageY;
+isSelect(tempx, tempy)
+}
+
+function onTouchMove(e) {
+var tempx = e.touches[0].pageX;
+var tempy = e.touches[0].pageY;
+isSelect(tempx, tempy);
+ctx.clearRect(0, 0, wid, hei);
+redraw(tempx, tempy, true)
+}
+var iInt;
+
+function isSelect(tempx, tempy) {
+var xdiff;
+var ydiff;
+for (var i in arr1) {
+xdiff = Math.abs(tempx - arr1[i].x);
+ydiff = Math.abs(tempy - arr1[i].y);
+var tempR = Math.pow((xdiff * xdiff + ydiff * ydiff), 0.5);
+if (tempR < R) {
+drawstop(i)
+return
+}
+}
+}
+
+function drawstop(i) {
+ctx.beginPath();
+ctx.arc(arr1[i].x, arr1[i].y, 10, 0, 2 * Math.PI);
+ctx.fillStyle = "green";
+ctx.fill();
+ctx.closePath();
+iInt = i;
+for (var i in reachPoind) {
+if (iInt == reachPoind[i]) {
+return;
+} else {
+if (i == reachPoind.length - 1) {
+reachPoind.push(iInt);
+}
+}
+}
+}
+
+function drawline(arr, x, y, bol) {
+ctx.beginPath();
+for (var i in arr) {
+if (i != 0) {
+if (i == 1) {
+ctx.moveTo(arr1[arr[i]].x, arr1[arr[i]].y);
+} else {
+ctx.lineTo(arr1[arr[i]].x, arr1[arr[i]].y);
+}
+}
+}
+ctx.strokeStyle = 'green';
+ctx.lineWidth = 10;
+ctx.stroke();
+if (bol) {
+ctx.beginPath();
+ctx.moveTo(arr1[arr[arr.length - 1]].x, arr1[arr[arr.length - 1]].y);
+ctx.lineTo(x, y);
+ctx.strokeStyle = 'green';
+ctx.lineWidth = 10;
+ctx.stroke();
+}
+}
+
+function onTouchEnd(e) {
+ctx.clearRect(0, 0, wid, hei);
+redraw(e.changedTouches[0].clientX, e.changedTouches[0].clientY, false);
+var temp = [];
+for (var i in reachPoind) {
+temp.push(reachPoind[i])
+}
+alert(temp);
+reachPoind = [-1];
+}
+
+function redraw(tempx, tempy, bol) {
+drawline(reachPoind, tempx, tempy, bol); //画线
+for (var i in arr1) { //画圆
+draw(arr1[i].x, arr1[i].y);
+}
+for (var i in reachPoind) { //画点
+if (i != 0) {
+drawstop(reachPoind[i]);
+
+}
+}
+}
+</script>
+
+<br/><br/><textarea rows="3" cols="150">
+参考原代码 http://www.jq22.com/webqd2292
+
+</textarea>
+</body>
+</html>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<base target="_blank">
+<title>为导航栏的li加上.selected样式</title>
+<style>
+body {
+    font-family: 'Microsoft YaHei';
+}
+div.nav-wrapper {
+    text-align: center;
+    border-top: 1px solid #718d1f;
+    border-bottom: 1px solid #718d1f;
+}
+div.center {
+    display: table;
+    margin: 0 auto;
+}
+ul.nav-list {
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+}
+li.nav-item {
+    line-height: 40px;
+    float: left;
+    list-style: none;
+}
+li.nav-item.selected a {
+    color: #fff;
+    background-color: #718d1f;
+}
+li.nav-item a {
+        padding: 10px 20px;
+        text-decoration: none;
+        color: #666;
+    }
+
+</style>
+</head>
+
+<body>
+    <div class="nav-wrapper">
+        <div class="center">
+            <ul class="nav-list">
+                <li class="nav-item"><a href="nav-selected.html">Home</a></li>
+                <li class="nav-item"><a href="Products.html">Products</a></li>
+                <li class="nav-item"><a href="Service.html">Service</a></li>
+                <li class="nav-item"><a href="About.html">About</a></li>
+                <li class="nav-item"><a href="Contact.html">Contact</a></li>
+            </ul>
+        </div>
+    </div>
+    <script src="../../vendors/jquery-3.1.1.js"></script>
+    <script>
+    (function() {
+        $("li.nav-item a[href='" + location.href.substring(location.href.lastIndexOf("/") + 1) + "']").parent('li').addClass("selected");
+    })();
+    </script>
+
+
+
+<pre style="margin-top: 5rem;border: 1px solid #ccc;">
+(function() {
+    $("li.nav-item a[href='" + location.href.substring(location.href.lastIndexOf("/") + 1) + "']").parent('li').addClass("selected");
+})();
+</pre>
+</body>
+
+</html>

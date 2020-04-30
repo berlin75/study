@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf8">
+<title>控制输入框字数</title>
+<style>
+	#wrap{position: relative;width: 50rem;height: 5rem;}
+	textarea{width: 100%;height: 100%;resize: none;}
+	#tip{position: absolute;bottom: 0;right: 0;color: #ccc;display: none;}
+</style>
+</head>
+<body>
+<p>禁止textarea拉伸大小: style="resize:none"<br/>
+keyup对按键不起无效: 计算输入值的长度<br/>
+英文和中文，键盘功能键如退格: 计算输入值的长度<br/>
+textarea消除边框，容器添加边框，显示输入统计的元素则会自动定位在输入区内<br/>
+************************************************************</p>
+<div id="wrap">
+	<textarea></textarea>
+	<div id="tip">还能输入150字</div>
+</div>
+<script src="../../vendors/jquery-3.1.1.js"></script>
+<script>
+	var limit = 150;
+	var count = 0;
+	$('textarea').focus(function(){
+		$('#tip').show();
+	}).blur(function(){
+		$('#tip').hide();
+	}).keyup(function(){ 
+		count = $(this).val().length;
+		if(count > limit){
+			$(this).val($(this).val().substr(0,limit));
+		}
+		$('#tip').text('已输入'+ count + '字,还能输入' + (limit - count) + '字'); 
+	});
+</script>
+
+<br/><br/><textarea rows="4" cols="150">
+参考原代码 http://www.jq22.com/webqd2233
+
+</textarea>
+</body>
+</html>

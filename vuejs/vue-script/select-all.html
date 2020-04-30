@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>vuejs</title>
+<script src="../../vendors/vue.min.js"></script>
+</head>
+<body>
+<div id="app">
+<p>
+	<label for="all">全选</label>
+	<input type="checkbox" id="all" v-model="checkall" @click="checkallHandle">
+</p><p>
+	<input type="checkbox" value="vue" id="vue" v-model="checkvue">
+	<label for="vue">vue</label>
+</p><p>
+	<input type="checkbox" value="webpack" id="webpack" v-model="checkwebpack">
+	<label for="webpack">webpack</label>
+</p><p>
+	<input type="checkbox" value="git" id="git" v-model="checkgit">
+	<label for="git">git</label>
+</p>
+
+<p>选中项为：{{ checkedArr() }}</p>
+</div>
+
+<script>
+new Vue({
+	el: '#app',
+	data: {
+		checkall: false,
+		checkvue: false,
+		checkwebpack: false,
+		checkgit: false,
+	},
+	methods: {
+		checkallHandle: function(){ console.log(this.checkall);
+			if(this.checkall){
+				this.checkvue = this.checkwebpack = this.checkgit = false;
+			}else{
+				this.checkvue = this.checkwebpack = this.checkgit = true;
+			}
+		},
+		checkedArr: function(){
+			return [this.checkvue&&'vue', this.checkwebpack&&'webpack', this.checkgit&&'git']
+			       .filter(v => v);
+		}
+	}
+})
+
+</script>
+
+<div id="check">
+<p>
+	<label for="all1" style="cursor:pointer;" @click="changeChecked">
+		<button>{{ checked?'取消全选':'全选'}}</button>
+	</label>
+	<input type="checkbox" id="all1" v-model="checked" v-show="false">
+</p><p>
+	<input type="checkbox" value="vue" id="vue1" v-model="checkNames">
+	<label for="vue1">vue</label>
+</p><p>
+	<input type="checkbox" value="webpack" id="webpack1" v-model="checkNames">
+	<label for="webpack1">webpack</label>
+</p><p>
+	<input type="checkbox" value="git" id="git1" v-model="checkNames">
+	<label for="git1">git</label>
+</p>
+
+<p>选中项为：{{ checkNames }}</p>
+</div>
+
+<script>
+new Vue({
+	el: '#check',
+	data: {
+		checked: false,
+		checkNames: [],
+		checkedArr: ['vue', 'webpack', 'git'],
+	},
+	methods: {
+		changeChecked: function(){ console.log(this.checked, 'this.checked是点击之前的值');
+			this.checkNames = this.checked ? [] : this.checkedArr;
+		}
+	},
+	watch: {
+		checkNames: function(){
+			this.checked = this.checkNames.length == this.checkedArr.length ? true : false;
+		}
+	}
+})
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>select数组</title>
+<script>
+	function selProvince(prov){
+		var index=prov.selectedIndex;
+		var option=prov.options[index];
+		var cities=provinces[option.text];
+		selCity.length=0;
+		for ( var city in cities){
+			selCity.add(new Option(city));
+		}
+	}
+	
+	function clickCity(sel_City){
+		var index=selProv.selectedIndex;
+		var provName=selProv.options[index].text; //获取省名
+		var index=sel_City.selectedIndex;
+		var option=sel_City.options[index];
+		var parts=provinces[provName][option.text];
+		selPart.length=0;
+		for ( var index in parts){
+			selPart.add(new Option(parts[index]));
+		}
+	}
+	
+	var provinces=new Array();
+	var selProv,selCity,selPart;
+	window.onload=function(){    //数组中存对象
+		selProv=document.getElementById("selProv");
+		selCity=document.getElementById("selCity");
+		selPart=document.getElementById("selPart");
+		provinces["湖南省"]={"长沙市":["雨花区","芙蓉区"],"娄底市":["娄星区","双峰县"]};
+		provinces["湖北省"]={"武汉市":["汉口区","武昌区"],"黄冈市":["黄州区","麻城市"]};
+		provinces["广东省"]={"广州市":["天河区","番禺区"],"深圳市":["宝安区","罗湖区"]};
+		for(var prov in provinces){ //获取对象的属性
+			selProv.add(new Option(prov));  //添加
+		}
+		selProvince(selProv);
+	}
+</script>
+</head>
+
+<body>
+<span>省：</span>
+<select id="selProv" onchange="selProvince(this)">
+</select>
+
+<span>市：</span>
+<select id="selCity" onchange="clickCity(this)">
+</select>
+
+<span>区：</span>
+<select id="selPart">
+</select>
+
+</body>
+</html>

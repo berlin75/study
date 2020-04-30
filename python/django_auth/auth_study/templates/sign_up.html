@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>注册界面</title>
+</head>
+<body>
+<div>
+<h1>注册</h1>
+<form action="/auth/register/" method="post">
+    {% csrf_token %}
+    用 户 名：<input type="text" name="userName" placeholder="用户名"/>
+    登录密码：<input type="password" name="userPassword" placeholder="登录密码"/>
+    确认密码：<input type="password" name="userConfirmPassword" placeholder="确认密码"/>
+    邮    箱：<input type="email" name="userEmail" placeholder="邮箱"/>
+    <input type="submit" value="注册"/>
+</form>
+</div>
+   {{ form.errors }} <!--如果注册错误则显示对应的错误 -->
+</body>
+</html>

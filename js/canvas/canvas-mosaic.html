@@ -1,0 +1,122 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>canvas 马赛克效果</title>
+<style>
+
+</style>
+</head>
+<body>
+<p>普通模糊效果不仅需要使用当前像素点，还需要使用周围的像素点，并把这些像素点都赋予平均值</p>
+
+<div id="btns" style="margin-bottom: 1rem;">
+  <button id="toLightBlur">轻度模糊</button>
+  <button id="toHeavyBlur">重度模糊</button>
+  <button id="toLightMosaic">轻度马赛克</button>
+  <button id="toHeavyMosaic">重度马赛克</button>
+</div>
+<canvas id="drawing1" style="border:1px solid black">
+    <p>The canvas element is not supported!</p>
+</canvas>
+<canvas id="drawing2" style="border:1px solid black">
+    <p>The canvas element is not supported!</p>
+</canvas>
+
+<script>
+if(drawing1.getContext){
+  var cxt1 = drawing1.getContext('2d');
+  var cxt2 = drawing2.getContext('2d');
+  var img = new Image();
+  img.src="../../image/chunfen.jpg";
+  img.onload = function(){
+    drawing1.width = drawing2.width = img.width;
+    drawing1.height = drawing2.height = img.height;
+    cxt1.drawImage(img,0,0);
+    toLightBlur.onclick = function(){
+      fnToBlur(1);
+    }
+    toHeavyBlur.onclick = function(){
+      fnToBlur(3);
+    }   
+    toLightMosaic.onclick = function(){
+      fnToMosaic(4);
+    } 
+    toHeavyMosaic.onclick = function(){
+      fnToMosaic(9);
+    }     
+    function fnToBlur(n){
+      cxt2.clearRect(0,0,drawing2.width,drawing2.height); 
+      var imageData = cxt1.getImageData(0,0,drawing2.width,drawing2.height); 
+      var tempImageData = imageData;
+      var data = imageData.data;
+      var tempData = tempImageData.data;
+      var blurR = n;
+      var totalnum = (2*blurR + 1)*(2*blurR + 1);  //1-9 3-49
+      for(var i = blurR; i < drawing2.height - blurR; i++){
+        for(var j = blurR; j < drawing2.width - blurR; j++){
+          var totalr = 0, totalg = 0, totalb = 0;
+          for(var dx = -blurR; dx <= blurR; dx++){  //像素点
+            for(var dy = -blurR; dy <= blurR; dy++){
+              var x = i + dx;
+              var y = j + dy;
+              var p = x*drawing2.width + y;
+              totalr += tempData[p*4+0];
+              totalg += tempData[p*4+1];
+              totalb += tempData[p*4+2];
+            }
+          }
+          var p = i*drawing2.width + j;
+          data[p*4+0] = totalr / totalnum;
+          data[p*4+1] = totalg / totalnum;
+          data[p*4+2] = totalb / totalnum;
+        }
+      }
+      imageData.data = data;
+      cxt2.putImageData(imageData,0,0); 
+    }
+    function fnToMosaic(n){
+      cxt2.clearRect(0,0,drawing2.width,drawing2.height); 
+      var imageData = cxt1.getImageData(0,0,drawing2.width,drawing2.height); 
+      var tempImageData = imageData;
+      var data = imageData.data;
+      var tempData = tempImageData.data;
+      var size = n;
+      var totalnum = size*size;
+      for(var i = 0; i < drawing2.height; i+=size){
+        for(var j = 0; j < drawing2.width; j+=size){
+          var totalr = 0, totalg = 0, totalb = 0;
+          for(var dx = 0; dx < size; dx++){
+            for(var dy = 0; dy < size; dy++){
+              var x = i + dx;
+              var y = j + dy;
+              var p = x*drawing2.width + y;
+              totalr += tempData[p*4+0];
+              totalg += tempData[p*4+1];
+              totalb += tempData[p*4+2];
+            }
+          }
+          var p = i*drawing2.width + j;
+          var resr = totalr / totalnum;
+          var resg = totalg / totalnum;
+          var resb = totalb / totalnum;
+          for(var dx = 0; dx < size; dx++){
+            for(var dy = 0; dy < size; dy++){
+              var x = i + dx;
+              var y = j + dy;
+              var p = x*drawing2.width + y;
+              data[p*4+0]= resr;
+              data[p*4+1]= resg;
+              data[p*4+2]= resb;
+            }
+          }
+        }
+      }
+      imageData.data = data;
+      cxt2.putImageData(imageData,0,0); 
+    }    
+  }
+}
+</script>
+</body>
+</html>

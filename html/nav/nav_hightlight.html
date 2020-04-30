@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>nav hightlight</title>
+<style>
+	*{margin:0; padding: 0; list-style: none; text-decoration: none;}
+	ul{display: flex;justify-content: space-around;background: rgba(0,0,0,.9);}
+	a{display: block;padding: 0.5rem;color: #fff;font-weight: bold;}
+
+	ul li{opacity: 0.5;min-width: 100px;}
+	ul li:not(:first-child){border-left: 1px solid #fff;}
+	body.home ul li.home,body.buy ul li.buy{opacity: 1;}
+	li:hover{opacity: 1;}
+	
+	.user{position: relative;}
+	.menu{position: absolute;top:40px;right: 0px;display: none;}
+	.user:hover .menu{display: list-item;}
+	.menu:hover{display: list-item;}
+	.menu:before{content: "";position: absolute;left: 0;top: -20px;width: 100%;height: 20px;}
+</style>
+</head>
+<body class="home">
+<ul>
+	<li class="home"><a href="#">home</a></li>
+	<li class="buy"><a href="#">buy</a></li>
+	<li class="user">
+		<a href="#">user</a>
+		<ol class="menu">
+			<li>个人中心</li>
+			<li>登出</li>
+		</ol>
+	</li>
+</ul>
+
+</body>
+</html>

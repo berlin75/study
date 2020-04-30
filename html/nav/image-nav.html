@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>图片导航栏</title>
+<style>
+	*{ margin:0; padding:0;}
+	nav{ width:100%; margin:10px;}
+	nav ul{ list-style:none;}
+	nav ul li{ display:inline-block; height:44px; width:43px; padding: }
+	nav ul li a{ display:block;}
+	nav ul li img{ width:43px; height:44px;}
+	#one{ background:url(img_navsprites.gif) -47px 0px;}
+	#two{ background:url(img_navsprites.gif) -91px 0px;}
+	#three{ background:url(img_navsprites.gif) 0px 0px; margin-left:85%;}
+	#one:hover{ background:url(img_navsprites_hover.gif) -47px 0px;}
+	#two:hover{ background:url(img_navsprites_hover.gif) -91px 0px;}
+	#three:hover{ background:url(img_navsprites_hover.gif) 0px 0px; margin-left:85%;}
+</style>
+</head>
+
+<body>
+<nav>
+    <ul>
+        <li id="one"><a href="#"><img src="img_trans.gif" /></a></li>
+        <li id="two"><a href="#"><img src="img_trans.gif" /></a></li>
+        <li id="three"><a href="#"><img src="img_trans.gif" /></a></li>
+    </ul>
+</nav>
+<div style=" width:100%; margin:50px auto;">
+	<img src="img_navsprites.gif" />
+	<img src="img_navsprites_hover.gif" />
+	<p>46*44*3;0,46,90</p>
+</div>
+</body>
+</html>

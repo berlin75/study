@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>表格排序</title>
+<style type="text/css">
+	#tab1{ border-collapse:collapse;}
+	#tab1,th,td{width:600px; border:1px solid black ;}
+	#ul1{ background:red; width:500px; }
+	#ul2{ background:green; width:500px; }
+</style>
+<script type="text/javascript">
+	window.onload=function(){
+/************下面是把ul1的子节点移到另一个ul，和ul1的子节点自己移到****************/	
+		var oUl1=document.getElementById("ul1");
+		var oBtn1=document.getElementById("btn1");
+		var oBtn2=document.getElementById("btn2");
+		var oUl2=document.getElementById("ul2");
+		oBtn1.onclick=function(){
+			oUl2.appendChild(oUl1.children[0]);
+		}
+		oBtn2.onclick=function(){
+			oUl1.appendChild(oUl1.children[0]);
+		}
+
+/*******列表排序原理**********************************************************/		
+		var oUl3=document.getElementById("ul3");
+		var oBtn3=document.getElementById("btn3");
+		oBtn3.onclick=function(){
+			var aLi=oUl3.children;
+//			ali.sort();   //sort函数只能用来给真正的数组排序
+            var arr=[];
+			for(var i=0;i<aLi.length;i++){
+				arr[i]=aLi[i];
+			}
+			arr.sort(function(n1,n2){     //比较函数告诉sort排序的原则。比较aLi[i]的值大小，但是并不改变其性质
+		     	return parseInt(n1.innerHTML)-parseInt(n2.innerHTML);
+		    });                                        
+			for(var i=0;i<arr.length;i++){
+				oUl3.appendChild(arr[i]);
+			}
+			
+		}
+
+/*******表格排序**************************************************************/		
+		var oTab1=document.getElementById("tab1");
+		var oBtn=document.getElementById("btn");
+		oBtn.onclick=function(){
+		     var arr=[];
+			 for(var i=0;i<oTab1.tBodies[0].rows.length;i++){
+				arr[i]= oTab1.tBodies[0].rows[i];
+			 }
+			 arr.sort(function(tr1,tr2){
+				var n1=parseInt(tr1.cells[0].innerHTML); 
+				var n2=parseInt(tr2.cells[0].innerHTML);
+				return n1-n2;
+			 });
+			 for(var i=0;i<arr.length;i++){
+				 oTab1.tBodies[0].appendChild(arr[i]);
+			 }
+		}
+	}
+</script>
+</head>
+
+<body>
+<ul id="ul1">
+  <li>1</li>
+  <li>2</li>
+  <li>3</li>
+  <li>4</li>
+  <li>5</li>
+</ul>
+<input id="btn1" type="button" value="移动到另一个的下面" />
+<input id="btn2" type="button" value="移动到自己的下面" />
+<ul id="ul2">
+</ul>
+<br /><br />
+
+
+<input id="btn3" type="button" value="列表排序" />
+<ul id="ul3">
+  <li>100</li>
+  <li>1</li>
+  <li>93</li>
+  <li>47</li>
+  <li>59</li>
+</ul>
+
+
+
+<br /><br />
+<input id="btn" type="button" value="表格排序" />
+<table id="tab1">
+  <tr>
+    <th >ID</th>
+    <th >姓名</th>
+    <th >年龄</th>
+  </tr>
+    <tr>
+    <td>4</td>
+    <td>刘六</td>
+    <td>22</td>
+  </tr>
+  <tr>
+    <td>6</td>
+    <td>Jason</td>
+    <td>25</td>
+  </tr>
+  <tr>
+    <td>2</td>
+    <td>李四</td>
+    <td>25</td>
+  </tr>
+  <tr>
+    <td>3</td>
+    <td>王五</td>
+    <td>30</td>
+  </tr>
+    <tr>
+    <td>1</td>
+    <td>张三</td>
+    <td>27</td>
+  </tr>
+  <tr>
+    <td>7</td>
+    <td>王三</td>
+    <td>25</td>
+  </tr>
+  <tr>
+    <td>5</td>
+    <td>Jean</td>
+    <td>22</td>
+  </tr>
+</table>
+
+<p>把数组arr[i]添加到父节点，为什么不是使子节点的个数增加？？？</p>
+比较函数告诉sort排序的原则。比较aLi[i]的值大小，但是并不改变其性质
+</body>
+</html>

@@ -1,0 +1,102 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>慕课网表单案例</title>
+<style>
+    body{ background:#ccc;}
+	ul,li{ list-style:none;}
+	h2{ border-bottom:1px solid #ccc;}
+	h2 span{ cursor:pointer;}
+	#login-reg{ width:700px; height:300px; border:1px #ccc solid; padding:20px; background:#fff; margin:0 auto; box-shadow:5px 5px 15px #333;}
+	#username,#password,#regname,#yzm{ width:250px; height:30px;}
+	#loginbtn,#regbtn{ width:330px; height:45px; border:none; background:red; color:white; font-weight:bold; font-size:1.2em;}
+	#loginbtn{width:370px;}
+	h2 span{ display:inline-block; padding:0 20px 0 20px;}
+	.active{ border-bottom:2px solid red;}
+	.error{ display:none; font-size:0.8em; color:red; padding-left:70px;}
+	#username{ background:url(form.png) no-repeat 0 -5px;}
+	#password{ background:url(form.png) no-repeat 0 -95px;}
+	#username,#password{ padding-left:40px;}
+</style>
+</head>
+<body>
+<div id="login-reg">
+	<h2>
+		<span id="title1" class="active">登录</span><span id="title2">注册</span>
+	</h2>
+	<div id="login">
+		<form action="" method="post">
+			<p>
+				<label for="username">用户名：</label>
+				<input type="text" required name="username" id="username" title="username" placeholder="请输入登录邮箱/手机号" autofocus>
+				<p class="error">请输入正确的邮箱和手机号</p>
+			</p><p>
+				<label for="password">密&nbsp;&nbsp;码：</label>
+				<input type="password" required name="password" id="password" title="password" placeholder="6-16位密码，区分大小写，不能用空格">
+				<p class="error">请输入6-16位密码，区分大小写，不能使用空格！</p>
+				<ul class="autoul" style="display:none">
+					<li class="autoli" data-key="0">
+						<span class="ex"></span>
+						<span class="at">@</span>
+						<span class="step">qq.com</span>
+					</li>
+					<li  class="autoli" data-key="1">
+						<span class="ex"></span>
+						<span class="at">@</span>
+						<span class="step">163.com</span>
+					</li>
+					<li  class="autoli" data-key="2">
+						<span class="ex"></span>
+						<span class="at">@</span>
+						<span class="step">sina.com</span>
+					</li>
+				</ul>
+			</p><p>
+				<input type="checkbox" name="sess" id="sess" title="为了您的信息安全，请谨慎使用" checked>下次自动登录
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:void(0)">忘记密码</a>
+			</p><p>
+				<input type="submit" name="loginbtn" id="loginbtn" value="登录">
+			</p><p>
+				其他方式登录 <a href="javascript:void(0)">QQ<img src=""></a>&nbsp;&nbsp;<a href="javascript:void(0)">微信<img src=""></a>
+			</p>
+		</form>
+	</div>
+	<div id="reg" style="display:none;">
+		<form action="" method="post">
+			<p>
+				<label for="">用户名：</label>
+				<input type="text" required name="regname" id="regname" title="regname" placeholder="请输入注册邮箱/手机号" pattern="/^\d{11}$/">
+			</p><p>
+				<label for="">验证码：</label>
+				<input type="text" name="yzm" id="yzm" title="验证码" placeholder="请输入验证码">
+			</p><p>
+				<input type="submit" name="regbtn" id="regbtn" value="注册">
+			</p><p>
+				其他方式登录 <a href="javascript:void(0)"><img src=""></a>
+			</p>
+		</form>
+	</div>
+</div>
+
+<script>
+	var otitle1=document.getElementById("title1");
+	var otitle2=document.getElementById("title2");
+	var ologin=document.getElementById("login");
+	var oreg=document.getElementById("reg");
+	otitle1.onclick=function(){
+		otitle1.className="active";
+		otitle2.className="";
+		ologin.style.display="block";
+		oreg.style.display="none";
+	}
+	otitle2.onclick=function(){
+		otitle1.className="";
+		otitle2.className="active";
+		ologin.style.display="none";
+		oreg.style.display="block";
+	}
+	
+</script>
+</body>
+</html>

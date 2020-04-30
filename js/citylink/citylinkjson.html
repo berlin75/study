@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>省市区三级联动[JSON+Jquery]</title>
+    <script src="../../vendors/jquery-3.1.1.js"></script>
+    <script type="text/javascript">
+        $(function () {
+			$.getJSON("./AraeDataJson/citylist.json",function(data){
+				$.each(data, function(idx, obj) {
+					var nameoption = "<option value='" + obj.name + "'>" + obj.name + "</option>";
+					var cityoption = obj.city;
+					$("#ddlPROVINCE").append(nameoption);
+				});
+				$("#ddlPROVINCE").change(function () {
+					var selValue = $(this).val();
+					$("#hidPROVINCE_NAME").val($(this).find("option:selected").text());
+					$("#ddlCITY option:gt(0)").remove();
+
+					$.each(city, function (k, p) {
+						if (p.PARENT_ID == selValue) {
+							var option = "<option value='" + p.ID + "'>" + p.NAME + "</option>";
+							$("#ddlCITY").append(option);
+						}
+					});
+
+            });
+			});
+        });
+    </script>
+</head>
+<body>
+    <select id="ddlPROVINCE">
+        <option value="0">--请选择省份--</option>
+    </select>
+    <input type="hidden" id="hidPROVINCE_NAME" name="PROVINCE_NAME" />
+    <select id="ddlCITY">
+        <option value="0">--请选择城市--</option>
+
+    </select>
+    <input type="hidden" id="hidCITY_NAME" name="CITY_NAME" />
+    <select id="ddlCOUNTY">
+        <option value="0">--请选择区/县--</option>
+    </select>
+    <input type="hidden" id="hidCOUNTY_NAME" name="COUNTY_NAME" />
+    <input type="button" id="btnOK" value="确定" />
+</body>
+</html>

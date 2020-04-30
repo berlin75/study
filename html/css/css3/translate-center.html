@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>translate居中</title>
+<style>
+#ex3_container{
+	width:200px;
+	height:200px;
+	background-color:yellow;
+	position:relative;
+}
+#ex3_content{
+	background:gray; 
+	color:white; 
+	position:absolute;
+	left:50%; 
+	top:50%; 
+	transform:translate(-50%,-50%);
+	-webkit-transform:translate(-50%,-50%);
+}
+</style>
+</head>
+
+<body>
+<p>transform:translate(-50%,-50%);是以自身为参照</p>
+<div id="ex3_container">
+	<div id="ex3_content">
+		Hello World
+		Hello World
+		Hello World
+		Hello World
+		Hello World
+	</div>
+</div>
+
+</body>
+</html>

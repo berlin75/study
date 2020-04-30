@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>鼠标事件</title>
+<style>
+	div{background-color:green;width:120px;height:20px;padding:40px;margin-top:30px;color:#ffffff;}
+</style>
+</head>
+
+<body>
+鼠标事件，this的使用
+
+<div onmouseover="mOver(this)" onmouseout="mOut(this)" >把鼠标移到上面</div>
+<script>
+function mOver(obj){
+	obj.innerHTML="谢谢"
+}
+
+function mOut(obj){
+	obj.innerHTML="把鼠标移到上面"
+}
+</script>
+
+
+<div id="abc" onmouseover="mOver1()" onmouseout="mOut1()">把鼠标移到上面</div>
+<script>
+var txt1=document.getElementById("abc");
+function mOver1(){
+	txt1.innerHTML="谢谢"
+}
+
+function mOut1(){
+	txt1.innerHTML="把鼠标移到上面"
+}
+</script>
+
+
+</body>
+</html>

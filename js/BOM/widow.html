@@ -1,0 +1,60 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>window</title>
+<style type="text/css">
+</style> 
+<script type="text/javascript">
+</script>
+</head>
+<body>
+
+<p id="demo"></p>
+<input type="button" value="加载新的文档" onclick="window.location.assign('https://www.baidu.com/');" />
+<script>
+var w=window.innerWidth
+|| document.documentElement.clientWidth
+|| document.body.clientWidth;
+
+var h=window.innerHeight
+|| document.documentElement.clientHeight
+|| document.body.clientHeight;
+
+x=document.getElementById("demo");
+x.innerHTML="浏览器的内部窗口宽度：" + w + "，高度：" + h + "。"
+
+var scrollTop=document.body.scrollTop                   //IE\FF
+||document. documentElement .scrollTop      //chrome
+document.write("<br/>滚动距离："+ scrollTop+"<br/>")
+
+document.write("屏幕宽度：" + screen.availWidth+"<br/>");
+document.write("屏幕高度：" + screen.availHeight+"<br/>");
+
+var browser=navigator.appName
+var b_version=navigator.appVersion
+var version=parseFloat(b_version)
+document.write("浏览器名称："+ browser+"<br/>")
+document.write("浏览器版本："+ version+"<br/>")
+
+document.write("location：" + window.location+"<br/>");
+document.write("loc主机域名：" + window.location.hostname+"<br/>");
+document.write("loc路径：" + window.location.pathname+"<br/>");
+document.write("loc返回web主机端口：" + window.location.port+"<br/>");
+document.write("locweb协议：" + window.location.protocol+"<br/>");
+document.write("locurl：" + window.href+"<br/>");
+
+
+
+</script>
+
+
+<input type="button" value="后退到上一个网页" onclick="window.history.back();" />
+<br />
+<input type="button" value="进入下一个网页" onclick="window.history.forward();" />
+<br />
+
+
+
+</body>
+</html>

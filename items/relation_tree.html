@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf8">
+<title>简单关系树</title>
+<style>
+.relationship {
+padding:20px;
+}
+.relationship *,.relationship *:before,.relationship *:after {
+-webkit-box-sizing:border-box;
+-moz-box-sizing:border-box;
+box-sizing:border-box;
+}
+.relationship table {
+border-spacing:0;
+border-collapse:separate;
+}
+.relationship>table:first-child {
+margin:20px auto;
+}
+.relationship td {
+text-align:center;
+vertical-align:top;
+padding:0;
+}
+.relationship td.top {
+border-top:2px solid rgba(217,79,213,0.8);
+}
+.relationship td.right {
+border-right:1px solid rgba(217,79,213,0.8);
+float:none;
+}
+.relationship td.left {
+border-left:1px solid rgba(217,79,213,0.8);
+float:none;
+}
+.relationship td>.down {
+background-color:rgba(217,79,213,0.8);
+margin:0px auto;
+height:20px;
+width:2px;
+float:none;
+}
+.relationship .node {
+display:inline-block;
+position:relative;
+margin:0;
+padding:3px;
+border:2px dashed transparent;
+text-align:center;
+width:130px;
+}
+.relationship .node:hover {
+background-color:rgba(79,147,217,0.8);
+transition:.5s;
+cursor:default;
+z-index:20;
+}
+.relationship .node .title {
+text-align:center;
+font-size:12px;
+font-weight:bold;
+height:20px;
+line-height:20px;
+overflow:hidden;
+text-overflow:ellipsis;
+white-space:nowrap;
+background-color:rgba(217,79,213,0.8);
+color:#fff;
+border-radius:4px 4px 0 0;
+}
+.relationship .node .title .symbol {
+float:left;
+margin-top:4px;
+margin-left:2px;
+}
+.relationship .node .content {
+width:100%;
+height:20px;
+font-size:11px;
+line-height:18px;
+border:1px solid rgba(217,79,213,0.8);
+border-radius:0 0 4px 4px;
+text-align:center;
+background-color:#fff;
+color:#333;
+overflow:hidden;
+text-overflow:ellipsis;
+white-space:nowrap;
+}
+
+</style>
+</head>
+<body>
+<div class="relationship">
+	<table>
+		<tbody id="outTbody">
+
+		</tbody>
+	</table>
+</div>
+
+<script src="../vendors/jquery-3.1.1.js"></script>
+<script>
+var winHeight = $(window).height();
+$(function() {
+// 这里的数据可以用后台获取的数据
+
+	var parentData = {
+		id: "a1",
+		name: "小红",
+		wxId: "xiaohong123"
+	};
+	appendParent(parentData); //最上层的父
+	var childData = [{
+			id: "b1",
+			name: "小明",
+			wxId: "xiaoming123"
+		}, {
+			id: "b2",
+			name: "小刚",
+			wxId: "xiaogang123"
+		}, {
+			id: "b3",
+			name: "小花",
+			wxId: "xiaohua123"
+	}];
+	appendSecond(childData); //添加第二层的布局
+	var thirdData = [{
+			id: "c1",
+			name: "土豆",
+			wxId: "tudou123"
+		}, {
+			id: "c2",
+			name: "眼镜",
+			wxId: "yanjing123"
+		}, {
+			id: "c3",
+			name: "豆包",
+			wxId: "doubao123"
+	}];
+	appendThird(thirdData, "b2"); //依次往后添加
+	appendThird(thirdData, "b3");
+	var fourdData = [{
+			id: "d1",
+			name: "土豆",
+			wxId: "dd123"
+		}, {
+			id: "d2",
+			name: "眼镜",
+			wxId: "ddd123"
+		}, {
+			id: "d3",
+			name: "豆包",
+			wxId: "dddd123"
+	}];
+	appendThird(thirdData, "c2");
+});
+
+//最高一级父
+function appendParent(parentData) {
+	var box = [];
+	box[0] = '<tr>';
+	box[1] = '<td colspan="16">';
+	box[2] = '<div class="node">';
+	box[3] = '<div class="title">';
+	box[4] = '<i class="fa fa-users symbol"></i> ' + parentData.name + '';
+	box[5] = '</div>';
+	box[6] = '<div class="content">' + parentData.wxId + '</div>';
+	box[7] = '</div>';
+	box[8] = '</td>';
+	box[9] = '</tr>';
+	$("#outTbody").append(box.join(""));
+}
+//第二层
+function appendSecond(data) {
+	var box = [];
+	box[0] = '<tr class="lines" style="">';
+	box[1] = '<td colspan="8">';
+	box[2] = '<div class="down"></div>';
+	box[3] = '</td>';
+	box[4] = '</tr>';
+	$("#outTbody").append(box.join(""));
+	appendSpace(data.length, "outTbody", 0);
+	var boxHtml = [];
+	boxHtml[0] = '<tr id="parentContent" class="nodes">';
+	boxHtml[1] = '</tr>';
+	$("#outTbody").append(boxHtml.join(""));
+	for (var i = 0; i < data.length; i++) {
+		var htmlBox = [];
+		htmlBox[0] = '<td colspan="2" class="">';
+		htmlBox[1] = '<table><tbody id="tb_' + data[i].id + '">';
+		htmlBox[2] = '<tr><td colspan="6">';
+		htmlBox[3] = '<div class="node">';
+		htmlBox[4] = '<div class="title">' + data[i].name + '</div>';
+		htmlBox[5] = '<div class="content">' + data[i].wxId + '</div>';
+		htmlBox[6] = '</div>';
+		htmlBox[7] = '</td></tr>';
+		htmlBox[8] = '</tbody></table>';
+		htmlBox[9] = '</td>';
+		$("#parentContent").append(htmlBox.join(""));
+	}
+
+}
+
+//第三层以及第三层的以后的布局都是调用这个方法
+// 这里的参数id是这层的父的ID
+function appendThird(data, id) {
+	var box = [];
+	box[0] = '<tr class="lines" style="">';
+	box[1] = '<td colspan="8">';
+	box[2] = '<div class="down"></div>';
+	box[3] = '</td>';
+	box[4] = '</tr>';
+	$("#tb_" + id).append(box.join(""));
+	appendSpace(data.length, id, 1);
+	var boxHtml = [];
+	boxHtml[0] = '<tr id="tr_' + id + '" class="nodes">';
+	boxHtml[1] = '</tr>';
+	$("#tb_" + id).append(boxHtml.join(""));
+	for (var i = 0; i < data.length; i++) {
+		var htmlBox = [];
+		htmlBox[0] = '<td colspan="2" class="">';
+		htmlBox[1] = '<table><tbody id="tb_' + data[i].id + '">';
+		htmlBox[2] = '<tr><td colspan="6">';
+		htmlBox[3] = '<div class="node">';
+		htmlBox[4] = '<div class="title">' + data[i].name + '</div>';
+		htmlBox[5] = '<div class="content">' + data[i].wxId + '</div>';
+		htmlBox[6] = '</div>';
+		htmlBox[7] = '</td></tr>';
+		htmlBox[8] = '</tbody></table>';
+		htmlBox[9] = '</td>';
+		$("#tr_" + id).append(htmlBox.join(""));
+	}
+}
+
+//动态添加空格
+function appendSpace(size, id, type) {
+	var flag = 0;
+	var boxHtml = [];
+	boxHtml[0] = '<tr id="parentLine" class="lines" style="">';
+	boxHtml[1] = '<td class="right"> </td>';
+	for (var i = 0; i < size - 1; i++) {
+		flag = i + 2;
+		var box = [];
+		box[0] = '<td class="left top"> </td>';
+		box[1] = '<td class="right top"> </td>';
+		boxHtml[flag] = box.join("");
+	}
+	boxHtml[flag + 1] = '<td class="left"> </td>';
+	boxHtml[flag + 2] = '</tr>';
+	if (type == 0) {
+		$("#" + id).append(boxHtml.join(""));
+	} else {
+		$("#tb_" + id).append(boxHtml.join(""));
+	}
+}
+</script>
+</body>
+</html>

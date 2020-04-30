@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>表单验证-移动字段名</title>
+<style>
+form{width: 50%;margin: 0 auto;}
+.form_group{position: relative;margin-bottom: 1.5rem;}
+.form_group div{display: inline;position: absolute;left: .5rem; top: .5rem;color: #999;background: #fff;padding: 0px 10px;}
+.form_group input{width: 18rem;height: 1rem;border: 1px solid #ccc;border-radius: 5px;padding: .5rem;}
+.focus_input{top: -1rem;color: #5188a6;}
+</style>
+</head>
+<body>
+	<h2><center>表单验证</center></h2>
+	<form action="" method="post" name="regForm" onsubmit="return checkForm()">
+		<div class="form_group">			
+			<input type="text" name="email" id="email">
+			<div>邮箱</div>
+			<span id="etab">* 请输入常用邮箱</span>
+		</div>
+		<div class="form_group">			
+			<input type="text" name="user">
+			<div>用户名</div>
+			<span id="utab">* 请输入用户名(数字字母下划线)6-12位</span>
+		</div>
+		<div class="form_group">			
+			<input type="password" name="pass">
+			<div>密码</div>
+			<span id="ptab">* 请输入6-18位的密码</span>
+		</div>
+		<div class="form_group">			
+			<input type="password" name="repass">
+			<div>重复密码</div>
+			<span id="rptab">* 请再输入一次密码</span>
+		</div>
+		<input type="submit" value="注 册">
+
+	</form>
+
+<script src="../../vendors/jquery-3.1.1.js"></script>
+<script>
+	// 验证邮箱
+	function checkEmail() {
+		var email = document.regForm.email.value;
+		var etab = document.getElementById('etab');
+		if (email.match(/^[\w-]+@[\w-]+(\.\w+){1,3}$/) == null) {
+			etab.innerHTML = '* 邮箱格式不正确.';
+			etab.style.color = '#f00';
+			return false;
+		} else {
+			etab.innerHTML = '* 通过验证.';
+			etab.style.color = '#0a0';
+			return true;
+		}
+	}
+
+	// 验证用户
+	function checkUser() {
+		var user = document.regForm.user.value;
+		var utab = document.getElementById('utab');
+		if (user.match(/^\w{6,12}$/) == null) {
+			utab.innerHTML = '* 用户名格式不正确.';
+			utab.style.color = '#f00';
+			return false;
+		} else {
+			utab.innerHTML = '* 通过验证.';
+			utab.style.color = '#0a0';
+			return true;
+		}
+	}
+
+	// 验证密码
+	function checkPass() {
+		var pass = document.regForm.pass.value;
+		var ptab = document.getElementById('ptab');
+		if (pass.length < 6 || pass.length > 18) {
+			ptab.innerHTML = '* 密码长度不合法.';
+			ptab.style.color = '#f00';
+			return false;
+		} else {
+			ptab.innerHTML = '* 通过验证.';
+			ptab.style.color = '#0a0';
+			return true;
+		}
+	}
+
+	// 验证重复密码
+	function checkRepass() {
+		var pass = document.regForm.pass.value;
+		var repass = document.regForm.repass.value;
+		var rptab = document.getElementById('rptab');
+		var ptab = document.getElementById('ptab');
+		if(!pass){
+			ptab.innerHTML = '* 请输入密码.';
+			ptab.style.color = '#f00';
+			return false;
+		}else if (repass !== pass) {
+			rptab.innerHTML = '* 两次密码输入不一致.';
+			rptab.style.color = '#f00';
+			return false;
+		} else {
+			rptab.innerHTML = '* 通过验证.';
+			rptab.style.color = '#0a0';
+			return true;
+		}
+	}
+
+	$('.form_group input').focus(function(){ 
+		$(this).next().css({'top':'-1rem', 'color':'#5188a6'});
+	}).blur(function(){
+		switch($(this).attr('name')){
+			case 'email':
+			  checkEmail();
+			  break;
+			case 'user':
+			  checkUser();
+			  break;
+			case 'pass':
+			  checkPass();
+			  break;
+			case 'repass':
+			  checkRepass();
+			  break;
+		}
+	});
+
+	// 提交时 总体验证
+	function checkForm() {
+		return checkEmail() && checkUser() && checkPass() && checkRepass();
+	}
+</script>
+
+<br/><br/><textarea rows="25" cols="150">
+参考原代码 http://www.jq22.com/webqd2358  http://www.jq22.com/webqd1239
+
+	// 验证用户
+	function checkUser() {
+		var user = document.regForm.user.value;
+		var utab = document.getElementById('utab');
+		if (user.match(/^\w{6,12}$/) == null) {
+			utab.innerHTML = '* 用户名格式不正确.';
+			utab.style.color = '#f00';
+			return false;
+		} else {
+			utab.innerHTML = '* 通过验证.';
+			utab.style.color = '#0a0';
+			return true;
+		}
+	}
+
+	// 提交时 总体验证
+	function checkForm() {
+		return checkEmail() && checkUser() && checkPass() && checkRepass();
+	}
+</textarea>
+</body>
+</html>

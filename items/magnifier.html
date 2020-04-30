@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf8">
+<title>放大镜效果</title>
+<style>
+.wrap {
+	position:relative;
+	margin-left:100px;
+}
+.imgbox {
+	width:300px;
+	height:300px;
+	border:1px solid #000;
+}
+.imgbox img {
+	width:300px;
+	height:300px;
+	vertical-align:top;
+}
+.showbox {
+	display:none;
+	position:absolute;
+	left:403px;
+	top:0;
+	width:400px;
+	height:300px;
+	overflow:hidden;
+	border:1px solid #ccc;
+}
+.showbox img {
+	position:absolute;
+	height:1200px;
+	width:1200px;
+}
+.hoverbox {
+	display:none;
+	position:absolute;
+	top:0;
+	background:#09f;
+	border:1px solid #09f;
+	height:75px;
+	width:100px;
+	cursor:move;
+	z-index:10;
+}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+	<div class="imgbox">
+		<img src="images/img01.jpg" alt="">
+		<div class="hoverbox"></div>
+	</div>
+	<div class="showbox">
+		<img src="images/img01.jpg" alt="">
+	</div>
+</div>
+
+<script src="../vendors/jquery-3.1.1.js"></script>
+<script>
+//根据鼠标位置定位overbox，根据鼠标位置和大小图的比例定位bigimg
+function Zoom(smallimg, hoverbox, sl, st, x, y, h_w, h_h, bigimg) {
+	var moveX = x - sl - (h_w / 2);  //鼠标区域距离,hoverbox相对于smallimg的偏移
+	var moveY = y - st - (h_h / 2);  //不就是hoverbox相对于同胞元素smallimg的偏移，若smallimg等于他们的父元素
+
+	if (moveX < 0) moveX = 0;   //鼠标不能移出smallimg范围
+	if (moveY < 0) moveY = 0;
+	if (moveX > smallimg.width() - h_w) moveX = smallimg.width() - h_w;    //hoverbox不能移出smallimg范围
+	if (moveY > smallimg.height() - h_h) moveY = smallimg.height() - h_h;
+
+	hoverbox.css({     //定位
+		left: moveX,
+		top: moveY
+	});
+	
+	var zoomX = bigimg.width() / smallimg.width();    //求大小图片比例，大图相对于小图的倍数
+	var zoomY = bigimg.height() / smallimg.height();   
+
+	bigimg.css({       //定位
+		left: -(moveX * zoomX),
+		top: -(moveY * zoomY)
+	});
+}
+
+//监听鼠标位置来调用定位函数
+function Zoomhover(smallimg, hoverbox, bigimg) {
+	var sl = smallimg.offset().left, st = smallimg.offset().top;  //小图定位
+	var hw = hoverbox.width(), hh = hoverbox.height();
+	var time;
+	$(".imgbox img,.hoverbox").mouseover(function(e) {
+		var x = e.pageX, y = e.pageY;
+		$(".hoverbox,.showbox").show();
+		hoverbox.css("opacity", "0.3");
+		time = setTimeout(function() {
+			Zoom(smallimg, hoverbox, sl, st, x, y, hw, hh, bigimg);
+		}, 1)
+	}).mousemove(function(e) {
+		var x = e.pageX, y = e.pageY;
+		time = setTimeout(function() {
+			Zoom(smallimg, hoverbox, sl, st, x, y, hw, hh, bigimg);
+		}, 1)
+	}).mouseout(function() {
+		bigimg.parent().hide();
+		hoverbox.hide();
+	})
+}
+
+$(function() {
+	Zoomhover($(".imgbox img"), $(".hoverbox"), $(".showbox img"));
+})
+
+</script>
+
+</body>
+</html>

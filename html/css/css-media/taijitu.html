@@ -1,0 +1,42 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>太极图</title>
+<style>
+div{ width:200px; height:200px; border-radius:50%; box-shadow:5px 5px 60px #666fff;
+       position:relative;
+       background:linear-gradient(0deg,white 50%,black 50%);
+}
+#div2{top:100%; margin:100px 0 0 0px; }
+#div1:before{ content:''; width:50%; height:50%; position:absolute; top:25%;
+        border-radius:50%;
+        background:radial-gradient(white 25%,black 25%);
+}
+
+#div1:after{ content:''; width:50%; height:50%; position:absolute; top:25%; left:50%;
+        border-radius:50%;
+        background:radial-gradient(black 25%,white 25%);
+}
+
+#div2:before{ content:''; width:50%; height:50%; position:absolute; top:25%; 
+        border-radius:50%; box-sizing:border-box; border:33px solid black; background:white;
+}
+
+#div2:after{ content:''; width:50%; height:50%; position:absolute; top:25%; left:50%;
+        border-radius:50%; box-sizing:border-box; border:33px solid white; background:black;
+}
+
+#div1{ transition:5s;}
+#div1:hover{ transform:rotate(360deg)}
+#div2{ transition:5s;}
+#div2:hover{ transform:rotate(360deg)}
+</style>
+</head>
+
+<body>
+<div id="div1"></div>
+<div id="div2"></div>
+<p style="font-size:20em; width:50%; margin:0px; position:fixed;right:0px;top:0px;">☯</p>
+</body>
+</html>

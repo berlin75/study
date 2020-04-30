@@ -1,0 +1,20 @@
+{
+  "publicPath": "/dist/",
+  "all": [
+    "app-7b8e5d9b89aba86f3f3c.js",
+    "manifest-f4a31194e5407eb437c8.js",
+    "app-7b8e5d9b89aba86f3f3c.js.map",
+    "manifest-f4a31194e5407eb437c8.js.map"
+  ],
+  "initial": [
+    "manifest-f4a31194e5407eb437c8.js",
+    "app-7b8e5d9b89aba86f3f3c.js"
+  ],
+  "async": [],
+  "modules": {
+    "7c477217": [
+      0,
+      2
+    ]
+  }
+}

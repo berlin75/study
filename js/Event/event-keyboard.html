@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>event键盘按键控制</title>
+<style type="text/css">
+*{ margin:0px; padding:0px; }
+body{ height:1800px;}
+#div1{ width:100px; height:100px; background:#ccc; 
+       position:absolute; left:200px; top:200px;}
+</style> 
+<script type="text/javascript">
+document.onkeydown=function(ev){
+	var oEvent=ev||event;
+	var oDiv=document.getElementById("div1");
+	console.log(oEvent.keyCode);
+	if(oEvent.keyCode==65){
+		oDiv.style.left=oDiv.offsetLeft-10+"px";
+	}else if(oEvent.keyCode==68){
+		oDiv.style.left=oDiv.offsetLeft+10+"px";
+	}
+	if(oEvent.keyCode==83){
+		oDiv.style.top=oDiv.offsetTop+10+"px";
+	}else if(oEvent.keyCode==87){
+		oDiv.style.top=oDiv.offsetTop-10+"px";
+	}
+	
+//	var timer=setInterval();              //解决按键卡顿现象
+}
+</script>
+</head>
+
+<body>
+<p>解决按键卡顿现象 </p>
+<p>Entr13   Shift16  Ctrl17  alt18  w 87  d68   s 83   a 65  b66  c67   Tab19  capslk20 </p>
+<div id="div1"> &nbsp; w <br/> d &nbsp; s <br/>&nbsp; a</div>
+</body>
+</html>

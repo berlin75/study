@@ -1,0 +1,125 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>下拉菜单图片相册混合网页</title>
+<style type="text/css">
+	*{ margin:0px; padding:0px;}
+	body{ height:1500px;}
+	ul{ list-style:none;}
+	a{ text-decoration:none; display:block;}
+	a:hover{ color:red; background:#333;}
+	.ul0{width:1000px ; height:100px;  
+	     background:#999999 url(../image/LOGE.jpg) no-repeat 20px center;; 
+	     margin:0px auto; position:relative;}
+	.ul0 .li1{ float:left; border:1px solid #ccc; 
+	         width:150px; height:45px; line-height:45px; 
+			 text-align:center;  margin-left:12px; margin-top:30px; }
+   .li1 ul{display:none;}
+   .li1 ul li{ background:gray; border-bottom:1px solid #ccc; 
+			   border-top:1px solid #ccc; }
+   .li1:hover ul{display:block;}
+/******************************************************************************** */  
+   .zw{width:1000px; height:400px; background:black; margin:10px auto;}
+   .zleft{width:870px; height:400px; float:left; margin-right:5px;}
+   .zright{width:120px; height:400px; float:right; 
+           position:relative; margin:10px 5px opx 0px;}
+   .zright li{ height:95px; margin-top:4px;}
+   .zright div{position:absolute; left:-880px ; top:0px ; display:none;}
+   .zright li:hover div{display:block;}
+   .img1{width:120px; height:95px; }
+   .img2{width:870px; height:400px; }
+/******************************************************************************** */  
+   .video{ width:960px; height:800px; margin:0px auto;}
+   .kefu{ width:80px; height:400px; background:pink;
+          position:fixed; left:90px ; top:110px ;}
+   .kefu p{ text-align:center;}
+   .footer{width:1000px;height:100px; margin:0px auto; color:red; background:gray;}
+	 
+</style>
+<script type="text/javascript">
+</script>
+</head>
+
+<body>
+<div>
+	<ul class="ul0">
+        <li class="li1" style=" border:none;"></li>
+        <li class="li1"><a href="#">首页</a>
+             <ul>
+            	<li ><a href="#">下拉A</a></li>
+                <li ><a href="#">下拉A</a></li>
+                <li ><a href="#">下拉A</a></li>
+                <li ><a href="#">下拉A</a></li>
+            </ul>
+        </li>
+        <li class="li1"><a href="#">产品</a>
+            <ul>
+            	<li ><a href="#">下拉A</a></li>
+                <li ><a href="#">下拉A</a></li>
+                <li ><a href="#">下拉A</a></li>
+                <li ><a href="#">下拉A</a></li>
+            </ul>
+        </li>
+        <li class="li1"><a href="#">荣誉</a>
+            <ul>
+            	<li ><a href="#">下拉A</a></li>
+                <li ><a href="#">下拉A</a></li>
+                <li ><a href="#">下拉A</a></li>
+                <li ><a href="#">下拉A</a></li>
+            </ul>
+        </li>
+        <li class="li1"><a href="#">联系</a></li>
+        <li class="li1"><a href="#">留言</a></li>
+        
+	</ul>
+</div>
+
+<div class="zw">
+    <div class="zleft">
+    	<img class="img2"  src="../image/1.jpg" />
+    </div>
+    <div class="zright">
+    	<ul>
+        	<li><img class="img1" src="../image/1.jpg" />
+            	<div><img class="img2"  src="../image/1.jpg" /></div>
+            </li>
+            <li><img class="img1" src="../image/2.jpg" />
+            	<div><img class="img2"  src="../image/2.jpg" /></div>
+            </li>
+            <li><img class="img1" src="../image/3.jpg" />
+            	<div><img class="img2"  src="../image/3.jpg" /></div>
+            </li>
+            <li><img class="img1" src="../image/4.jpg" />
+            	<div><img class="img2"  src="../image/4.jpg" /></div>
+            </li>
+        </ul>
+	</div>
+</div>
+
+<div class="video">
+	<embed src='http://player.youku.com/player.php/sid/XMTQ5ODA5NDQxNg==/v.swf' allowFullScreen='true' quality='high' width='960' height='800' align='middle' allowScriptAccess='always' type='application/x-shockwave-flash'></embed>
+</div>
+
+<div class="footer">
+<p>图片：先给导航栏的整体ul定位，使大图的div相对于其定位</p>
+<p>二级菜单：先全部隐藏display：none；再给其父元素li添加伪类：hover ul的display：block</p>
+<p>链接：改变属性display：block；把行内元素改为块级元素，让其宽高等于其父元素</p>
+<p>居中：必须先设置好元素的宽高，才能用margin:0px auto;设置居中</p>
+</div>
+
+<div class="kefu">
+<br /><br />
+<p><a href="#">客服</a></p>
+<br /><br />
+<p><a href="#">客服</a></p>
+<br /><br />
+<p><a href="#">客服</a></p>
+<br /><br />
+<p><a href="#">客服</a></p>
+<br /><br />
+<p><a href="#">客服</a></p>
+<br /><br />
+</div>
+</body>
+</html>

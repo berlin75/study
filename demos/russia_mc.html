@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>俄罗斯方块-慕课网</title>
+<style>
+*{margin: 0; padding: 0;}
+.container{ display: flex; flex-direction: row; margin: 1rem; }
+main{ position: relative; }	
+.game{ width: 200px; height: 400px; background: #f2faff; border: 1px solid blue; position: relative; }
+.result{display: none; width: 100%; height: 100%; line-height: 100%; z-index: 100; color: white;
+	font-size: 24px; font-weight: bold; text-align: center; vertical-align: middle; box-sizing: border-box; padding-top: 8rem;
+	position: absolute; top: 0; left: 0; background: rgba(0,0,0,0.3)}
+aside{ margin-left: 1rem; }
+#go{color: white; font-weight: bold; background: lightgreen; padding: 1rem 1.5rem;margin-top: 1rem;}
+.next{ width: 80px; height: 80px; background: #f2faff; border: 1px solid blue; position: relative; }
+.none, .curr, .done{ width: 20px; height: 20px; border: 1px solid white; box-sizing: border-box; position: absolute; }
+.none{background: #f2faff;}
+.curr{background: red;}
+.done{background: gray;}
+</style>
+</head>
+<body>
+<div class="container">
+	<main>
+		<div class="game" id="game"></div>
+		<div class="result" id="result">GAME OVER!<br/><br/></div>
+	</main>
+	<aside>
+		<div class="next" id="next"></div>
+		<div class="info" id="info">
+			<div>time: <span id="time">00:00:00</span></div>
+			<div>score: <span id="score">0</span>分</div>
+			<div>level: <input type="number" min="1" max="3" value="1"></div>
+			<button type="button" id="go"> go </button>
+		</div>
+	</aside>
+</div>	
+
+<script>
+var Square = function(){
+	// 初始化方块数据
+	this.data = [
+		[0,0,0,0],
+		[0,0,0,0],
+		[0,0,0,0],
+		[0,0,0,0]
+	];
+
+	// 游戏区标记原点,把预览区data拷贝到游戏区orign为原点同样大小的区域内
+	this.orign = {x: 0, y: 3};
+
+	// 旋转方向,即旋转数组的索引
+	this.dir = 0;
+
+	// 旋转数组：枚举所有旋转
+	this.rotates = [
+		[
+			[0,2,0,0],
+			[0,2,0,0],
+			[0,2,0,0],
+			[0,2,0,0]
+		],[
+			[0,0,0,0],
+			[2,2,2,2],
+			[0,0,0,0],
+			[0,0,0,0]
+		],[
+			[0,2,0,0],
+			[0,2,0,0],
+			[0,2,0,0],
+			[0,2,0,0]
+		],[
+			[0,0,0,0],
+			[2,2,2,2],
+			[0,0,0,0],
+			[0,0,0,0]
+		],
+	];
+
+	this.shape_i = [
+		[
+			[0,2,0,0],
+			[0,2,0,0],
+			[0,2,0,0],
+			[0,2,0,0]
+		],[
+			[0,0,0,0],
+			[2,2,2,2],
+			[0,0,0,0],
+			[0,0,0,0]
+		],[
+			[0,2,0,0],
+			[0,2,0,0],
+			[0,2,0,0],
+			[0,2,0,0]
+		],[
+			[0,0,0,0],
+			[2,2,2,2],
+			[0,0,0,0],
+			[0,0,0,0]
+		],
+	];
+	this.shape_o = [
+		[
+			[0,2,2,0],
+			[0,2,2,0],
+			[0,0,0,0],
+			[0,0,0,0]
+		],[
+			[0,2,2,0],
+			[0,2,2,0],
+			[0,0,0,0],
+			[0,0,0,0]
+		],[
+			[0,2,2,0],
+			[0,2,2,0],
+			[0,0,0,0],
+			[0,0,0,0]
+		],[
+			[0,2,2,0],
+			[0,2,2,0],
+			[0,0,0,0],
+			[0,0,0,0]
+		],
+	];
+	this.shape_t = [
+		[
+			[0,2,0,0],
+			[2,2,2,0],
+			[0,0,0,0],
+			[0,0,0,0]
+		],[
+			[2,0,0,0],
+			[2,2,0,0],
+			[2,0,0,0],
+			[0,0,0,0]
+		],[
+			[2,2,2,0],
+			[0,2,0,0],
+			[0,0,0,0],
+			[0,0,0,0]
+		],[
+			[0,2,0,0],
+			[2,2,0,0],
+			[0,2,0,0],
+			[0,0,0,0]
+		],
+	];
+	this.shape_l = [
+		[
+			[2,0,0,0],
+			[2,0,0,0],
+			[2,2,0,0],
+			[0,0,0,0]
+		],[
+			[2,2,2,0],
+			[2,0,0,0],
+			[0,0,0,0],
+			[0,0,0,0]
+		],[
+			[0,2,2,0],
+			[0,0,2,0],
+			[0,0,2,0],
+			[0,0,0,0]
+		],[
+			[0,0,2,0],
+			[2,2,2,0],
+			[0,0,0,0],
+			[0,0,0,0]
+		],
+	];
+	this.shape_j = [
+		[
+			[0,2,0,0],
+			[0,2,0,0],
+			[2,2,0,0],
+			[0,0,0,0]
+		],[
+			[2,0,0,0],
+			[2,2,2,0],
+			[0,0,0,0],
+			[0,0,0,0]
+		],[
+			[0,2,2,0],
+			[0,2,0,0],
+			[0,2,0,0],
+			[0,0,0,0]
+		],[
+			[2,2,2,0],
+			[0,0,2,0],
+			[0,0,0,0],
+			[0,0,0,0]
+		],
+	];
+	this.shape_z = [
+		[
+			[2,2,0,0],
+			[0,2,2,0],
+			[0,0,0,0],
+			[0,0,0,0]
+		],[
+			[0,2,0,0],
+			[2,2,0,0],
+			[2,0,0,0],
+			[0,0,0,0]
+		],[
+			[2,2,0,0],
+			[0,2,2,0],
+			[0,0,0,0],
+			[0,0,0,0]
+		],[
+			[0,2,0,0],
+			[2,2,0,0],
+			[2,0,0,0],
+			[0,0,0,0]
+		],
+	];
+	this.shape_s = [
+		[
+			[2,0,0,0],
+			[2,2,0,0],
+			[0,2,0,0],
+			[0,0,0,0]
+		],[
+			[0,2,2,0],
+			[2,2,0,0],
+			[0,0,0,0],
+			[0,0,0,0]
+		],[
+			[2,0,0,0],
+			[2,2,0,0],
+			[0,2,0,0],
+			[0,0,0,0]
+		],[
+			[0,2,2,0],
+			[2,2,0,0],
+			[0,0,0,0],
+			[0,0,0,0]
+		],
+	];
+
+	this.canRotate = function(isValid){   
+		var d = (this.dir + 1) % 4;        
+		return isValid(this.orign, this.rotates[d])
+	}
+
+	this.rotate = function(num = 1){     // 每次旋转默认增加90度
+		this.dir = (this.dir + num) % 4;    
+		this.data = this.rotates[this.dir]; 
+	}
+
+	this.canDown = function(isValid){
+		return isValid({x: this.orign.x + 1, y: this.orign.y}, this.data)
+	}
+
+	this.down = function(){
+		this.orign.x++;
+	}
+
+	this.canLeft = function(isValid){
+		return isValid({x: this.orign.x, y: this.orign.y - 1}, this.data)
+	}
+
+	this.left = function(){
+		this.orign.y--;
+	}
+
+	this.canRight = function(isValid){
+		return isValid({x: this.orign.x, y: this.orign.y + 1}, this.data)
+	}
+
+	this.right = function(){
+		this.orign.y++;
+	}
+
+}
+
+var Game = function(){
+	// dom元素
+	var gameDiv;
+	var nextDiv;
+	var resultDiv;
+	var timeDiv;
+	var scoreDiv;
+	var score = 0;
+
+	var nextDivs = [];
+	var gameDivs = [];
+
+	var curr;  // 当前方块
+	var next;  // 下个方块
+
+	// 游戏矩阵
+	var gameData = [
+		[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+		[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+		[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+		[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+		[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+		[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+		[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+		[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+		[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+		[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+		[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+		[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+		[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+		[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+		[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+		[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+		[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+		[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+		[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+		[0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+	];
+
+	// 初始化div(游戏区/预览区dom, 区域数据, 区域内所有cell dom)
+	var initDiv = function(container, data, divs){
+		for (var i = 0; i < data.length; i++) {
+			var div = [];
+			for(var j = 0; j < data[0].length; j++){
+				var cell = document.createElement('div');
+				cell.style.top = i * 20 + 'px';
+				cell.style.left = j * 20 + 'px';
+				cell.className = 'none;'
+				container.appendChild(cell);
+				div.push(cell);
+			}
+			divs.push(div);
+		}
+	}
+
+	// 数据驱动渲染：根据数据修改div渲染游戏区(区域数据, 区域内所有cell dom)
+	var refreshDiv = function(data, divs){
+		for (var i = 0; i < data.length; i++) {
+			for(var j = 0; j < data[0].length; j++){
+				if(data[i][j] === 0){
+					divs[i][j].className = 'none;'
+				}else if(data[i][j] === 1){
+					divs[i][j].className = 'done';
+				}else if(data[i][j] === 2){
+					divs[i][j].className = 'curr';
+				}
+			}
+		}
+	}
+
+	// 碰撞检测：检测下一个要移动的目标点是否合法,超出游戏区范围或目标点被占用时不合法
+	var check = function(pos, x, y){
+		return pos.x + x >= 0 && pos.x + x < gameData.length && pos.y + y >= 0 &&　pos.y + y < gameData[0].length && gameData[pos.x + x][pos.y + y] != 1;
+	}
+
+	// 检测预览区形状数据是否合法,游戏快结束时再加一个形状就填满了
+	var isValid = function(pos, data){
+		for (var i = 0; i < data.length; i++) {
+			for (var j = 0; j < data[0].length; j++) {
+				if(data[i][j] != 0){
+					if(!check(pos, i, j)) return false;
+				}
+			}
+		}
+		return true;
+	}
+
+	// 清除数据
+	var clearData = function(){
+		for (var i = 0; i < curr.data.length; i++) {
+			for (var j = 0; j < curr.data[0].length; j++) {
+				if(check(curr.orign, i, j)) gameData[curr.orign.x + i][curr.orign.y + j] = 0;
+			}
+		}
+	}
+
+	// 设置数据,把预览区data拷贝到游戏区orign为原点同样大小的区域内
+	var setData = function(){
+		for (var i = 0; i < curr.data.length; i++) {
+			for (var j = 0; j < curr.data[0].length; j++) {
+				if(check(curr.orign, i, j)) gameData[curr.orign.x + i][curr.orign.y + j] = curr.data[i][j];
+			}
+		}
+	}
+
+	var generateSquare = function(index, dir){ 
+		var map = {1: 'i', 2: 'o', 3: 't', 4: 'l', 5: 'j', 6: 'z', 7: 's'};
+		var s = new Square();
+		s.rotates = s["shape_" + map[++index]];
+		s.rotate(dir);
+		return s;
+	}
+
+	// 初始化
+	this.init = function(doms, type, dir){
+		gameDiv = doms.gameDiv;
+		nextDiv = doms.nextDiv;
+		timeDiv = doms.timeDiv;
+		scoreDiv = doms.scoreDiv;
+		resultDiv = doms.resultDiv;
+		next = generateSquare(type, dir);
+		// (游戏区/预览区dom, 区域数据, 区域内所有cell dom)
+		initDiv(gameDiv, gameData, gameDivs);
+		initDiv(nextDiv, next.data, nextDivs);
+		// (区域数据, 区域内所有cell dom)
+		refreshDiv(next.data, nextDivs);
+	}
+
+	this.down = function(){
+		if(curr.canDown(isValid)){           // 检测是否可以移动到下一个点
+			clearData();                       // 下移之前先把当前位置的数据清除
+			curr.down(); 
+			setData();  
+			refreshDiv(gameData, gameDivs);
+			return true;
+		}else{
+			return false;
+		}
+	}
+
+	this.fall = function(){    // 坠落
+		while(this.down());
+	}
+
+	this.left = function(){ 
+		if(!curr.canLeft(isValid)) return;
+		clearData();                    
+		curr.left();
+		setData();
+		refreshDiv(gameData, gameDivs);
+	}
+
+	this.right = function(){
+		if(!curr.canRight(isValid)) return;
+		clearData();                    
+		curr.right();
+		setData();
+		refreshDiv(gameData, gameDivs);
+	}
+
+	this.rotate = function(){ 
+		if(!curr.canRotate(isValid)) return; 
+		clearData();                    
+		curr.rotate(); 
+		setData(); 
+		refreshDiv(gameData, gameDivs);  
+	}
+
+	// 方块移动到底部固定
+	this.fixed = function(){
+		for (var i = 0; i < curr.data.length; i++) {
+			for (var j = 0; j < curr.data[0].length; j++){
+				if(check(curr.orign, i, j)){ 
+					if(gameData[curr.orign.x + i][curr.orign.y + j] == 2){
+						gameData[curr.orign.x + i][curr.orign.y + j] = 1;
+					}
+				}
+			}
+		}
+		refreshDiv(gameData, gameDivs);
+	}
+
+	// 使用next的方块
+	this.performNext = function(type, dir){
+		curr = next;
+		setData();
+		next = generateSquare(type, dir);  // 预览区生成新的方块
+		refreshDiv(gameData, gameDivs);
+		refreshDiv(next.data, nextDivs);
+	}
+
+	this.checkclear = function(){
+		var line = 0;
+		for (var i = gameData.length - 1; i >= 0; i--) {
+			var clear = true;
+			for (var j = 0; j < gameData[0].length; j++) {
+				if(gameData[i][j] == 0){
+					clear = false;
+					break;
+				}
+			}
+			if(clear){
+				line++;
+				for(var m =i; m > 0; m--){
+					for(var n = 0; n < gameData[0].length; n++){  // 上面的行下移
+						gameData[m][n] = gameData[m-1][n];     
+					}
+				}
+				// 最上面新增值全部为零的行
+				for(var n = 0; n < gameData[0].length; n++){
+					gameData[0][n] = 0;     
+				}
+				i++;
+			}
+		}
+		return line;
+	}
+
+	this.checkGameOver = function(){
+		var gameover = false;
+		for(var i = 0; i < gameData[0].length; i++){
+			if(gameData[1][i] == 1){   // 第二行有固定的方块时游戏结束
+				gameover = true;
+			}
+		}
+		return gameover;
+	}
+
+	var sec_to_time = function(time, f1 = "时", f2 = "分", f3 = "秒") {
+		time = parseInt(time);
+	  if(time >= 0){
+	    var h = Math.floor(time/3600);
+	    var m = Math.floor(time/60) % 60;
+	    var s = time % 60;
+	    time = h < 10 ? '0'+ h + f1 : h + f1
+	    if(m < 10) time += "0";
+	    time += m + f2;
+	    if(s < 10) time += "0";
+	    time += s.toFixed(0);
+			time += f3;
+	  }
+	  return time;
+	}
+
+	this.setTime = function(time){ 
+		timeDiv.innerHTML = sec_to_time ? sec_to_time(time, ":", ":", "") : time + 's';
+	}
+
+	this.addScore = function(line){  // 每次消除的行数,可扩展为消行越多分数越高
+		score += line
+		scoreDiv.innerHTML = score;
+	}
+
+	this.gameOver = function(win){
+		if(win){
+			resultDiv.innerHTML += 'win!';
+		}else{
+			resultDiv.innerHTML += 'lose!';
+		}
+		resultDiv.style.display = 'block';
+	}
+}
+
+function Local(level){
+	var game;              // 游戏对象
+	var INSTERVAL = (6 - level) * 100;   // 时间间隔
+	var timer = null;
+	var pause = false;
+	var timeCount = 0;     // 时间计数器
+	var time = 0;          // 时间
+
+	// 绑定键盘事件
+	var bindKeyEvent = function(){
+		document.onkeydown = function(e){ 
+			if(e.keyCode == 38){        // up
+				game.rotate();
+			}else if(e.keyCode == 39){  // right
+				game.right();
+			}else if(e.keyCode == 40){  // down
+				game.down();
+			}else if(e.keyCode == 37){  // left
+				game.left();
+			}else if(e.keyCode == 32){  // space
+				game.fall();
+			}else if(e.keyCode == 27){  // esc pause
+				if(!pause){
+					clearInterval(timer);
+					pause = true;
+				}else{
+					timer = setInterval(move, INSTERVAL);
+					pause = false;
+				}
+			}
+		}
+	}
+
+	var rand = function(n){
+		return Math.ceil(Math.random() * n) -1;
+	}
+
+	var timeFunc = function(){
+		timeCount++;
+		if(timeCount * INSTERVAL == 1000){
+			timeCount = 0;
+			time++;
+			game.setTime(time);  // 将time更新渲染到游戏页面
+		}
+	}
+
+	var move = function(){
+		timeFunc();        // 根据move执行次数计时
+		if(!game.down()){ 
+			game.fixed();
+			var line = game.checkclear();
+			if(line) game.addScore(line);
+			if(game.checkGameOver()){
+				game.gameOver(false);
+				stop();
+			}else{
+				game.performNext(rand(7), rand(4));  // 使用next的方块(type, dir)
+			}
+		}
+	}
+
+	var stop = function(){
+		if(timer){
+			clearInterval(timer);
+			timer = null;
+		}
+		document.onkeydown = null;
+	}
+
+		// 开始
+	this.start = function(){
+		var doms = {
+			gameDiv: document.querySelector('#game'),
+			nextDiv: document.querySelector('#next'),
+			timeDiv: document.querySelector('#time'),
+			scoreDiv: document.querySelector('#score'),
+			resultDiv: document.querySelector('#result'),
+		}
+		game = new Game();
+		game.init(doms, rand(7), rand(4));
+		bindKeyEvent();
+		game.performNext(rand(7), rand(4))
+		timer = setInterval(move, INSTERVAL)
+	}
+}
+
+var level = 1;
+document.querySelector('[type=number]').onchange = function(){
+	console.log(this.value);
+	level = this.value;
+}
+
+document.querySelector('#go').onclick = function(){ 
+	document.querySelector('[type=number]').disabled = true;
+	this.disabled = true;
+	this.style.background = 'gray';
+	(new Local(level)).start();
+}
+
+</script>
+
+</body>
+</html>

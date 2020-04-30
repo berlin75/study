@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>vuex</title>
+<script src="../../vendors/vue.min.js"></script>
+<script src="../../vendors/vuex.js"></script>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+const store = new Vuex.Store({
+	state: {
+		count: 0
+	},
+	mutations: {
+		increment: state => state.count++,
+		decrement: state => state.count--
+	}
+})
+
+const Counter = {
+  template: `<div>{{ count }}</div>`,
+  computed: {
+    count () {
+      return this.$store.state.count
+    }
+  }
+}
+
+const app = new Vue({
+	el: '#app',
+	store,       // 把store对象提供给“store”选项,这可以把store的实例注入所有的子组件
+	components: {Counter},
+	template: `
+		<div class="app">
+			<Counter></Counter>
+			<button @click="inc"> + </button>
+			<button @click="dec"> - </button>
+		</div>
+	`,
+	methods: {
+		inc(){ this.$store.commit('increment') },
+		dec(){ this.$store.commit('decrement') }
+	}
+})
+</script>
+</body>
+</html>

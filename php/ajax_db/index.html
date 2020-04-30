@@ -1,0 +1,33 @@
+<html>
+<head>
+<title>ajax_db</title>
+</head>
+<body>
+
+<form> 
+	Select a User:
+	<select name="users" onchange="showUser(this.value)">
+		<option value="1">zhangsan</option>
+		<option value="2">lisi</option>
+		<option value="3">wangwu</option>
+		<option value="4">liuliu</option>
+	</select>
+</form>
+
+<div id="txtHint"><b>User info will be listed here.</b></div>
+
+<script>
+function showUser(id){ 
+	var xmlHttp=new XMLHttpRequest();
+	xmlHttp.onreadystatechange=function(){
+		if (xmlHttp.readyState==4 || xmlHttp.readyState=="complete"){ 
+		 	document.getElementById("txtHint").innerHTML=xmlHttp.responseText 
+		} 
+	} 
+	xmlHttp.open("GET","getuser.php?q="+id+"&fensh="+Math.random(),true)
+	xmlHttp.send(null)
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>localStorage</title>
+<style>
+li{cursor: pointer;margin-bottom: 1rem;width: 50%}
+.finished{border-bottom: 1px solid}
+</style>
+<script src="../../vendors/vue.min.js"></script>
+</head>
+<body>
+<div id="hello">
+	<h1>{{ title }}</h1>
+	<input v-model="newItem" @keyup.enter="addNew" placeholder="Enter">
+	<ul>
+	  <li v-for="item in items" v-bind:class="{finished: item.isfinished}" @click="toggleFinished(item)">{{ item.label }}</li>
+	</ul>
+</div>
+<script>
+const STORAGE_KEY = 'todosVuejs';	
+const vm = new Vue({
+	el: '#hello',
+	data () {
+     	return {
+      		title: 'This is a toDoList.',
+      		items: localStorage[STORAGE_KEY] ? JSON.parse(localStorage[STORAGE_KEY]) : [],
+      		newItem: '',
+    	}
+  	},
+	watch: {
+	    items: {
+      		handler: function (items){ 
+      			localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+      		},
+      		deep: true
+    	}
+	},
+	methods: {
+	    toggleFinished: function(item){ 
+	      	item.isfinished = !item.isfinished;
+	    },
+	    addNew: function(){
+	      	this.items.push({
+	        	label: this.newItem,
+	        	isfinished: false
+	      	})
+	      	this.newItem = '';
+	    }
+	}
+})
+</script>
+</body>
+</html>

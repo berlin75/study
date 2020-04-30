@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">	
+<title>vuejs</title>
+<style> 
+  .active{background: yellow; }
+  .err{color: red;background: gray;}
+</style>
+<script src="../../vendors/vue.min.js"></script>
+</head>
+<body>
+<div id="app">
+	<label for="i1">修改样式1</label>
+	<input type="checkbox" id="i1" v-model="isActive">
+	<div :class="{'active': isActive, 'err': hasError}">绑定class属性,err类会覆盖active类的样式</div>
+
+  <label for="i2">修改样式2</label>
+  <input type="checkbox" id="i2" v-model="classObj.active">
+  <div :class="classObj">绑定class属性,classObj对象的键名是class名称</div>
+
+  <p>绑定返回对象的计算属性,动态地根据其他值来确定要输出的值</p>
+  <label for="i2">修改样式3</label>
+  <input type="checkbox" id="i2" v-model="newClass.active">
+  <div :class="newClass">绑定class属性,classObj对象的键名是class名称</div>
+
+</div>
+<script>
+new Vue({
+  el: '#app',
+  data: {
+    isActive: true,
+    hasError: false,
+    errorlevel: [{type: 'fatal'}, {type: 'waring'}, {type: null}][Math.floor(Math.random()*3)],
+    classObj: {
+      active: false,
+      err: Math.random() > 0.5,
+    }
+  },
+  computed: {
+    newClass: function(){
+      return {
+        active: this.isActive,
+        err: this.isActive && this.hasError.type === 'fatal'
+      }
+    }
+  }
+})
+</script>
+</body>
+</html>

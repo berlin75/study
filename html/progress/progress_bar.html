@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf8">
+<title>css3 进度条</title>
+<style>
+html * {
+margin:0;
+padding:0;
+-webkit-font-smoothing:antialiased;
+font-family:'微软雅黑','Microsoft YaHei',Verdana,Helvetica,Arial,serif,sans-serife;
+font-size:14px;
+}
+body {
+color:#2d2d2d;
+background:#f2f1f1;
+}
+ul,ul li {
+list-style:none;
+}
+a:link {
+color:#2d2d2d;
+text-decoration:none;
+}
+a:visited {
+color:#2d2d2d;
+text-decoration:none;
+}
+a:hover {
+color:#09C;
+text-decoration:none;
+}
+a:active {
+color:#09C;
+text-decoration:none;
+}
+p {
+font-size:10px;
+}
+.main {
+width:100%;
+overflow:hidden;
+padding:20px;
+}
+.progress {
+width:400px;
+height:10px;
+margin:20px auto;
+overflow:hidden;
+}
+.progress span {
+display:block;
+width:0px;
+height:100%;
+color:#fff;
+font-size:10px;
+line-height:10px;
+text-align:right;
+background-color:#ddd;
+border-radius:10px;
+}
+.pro1 span {
+background-color:#0099CC;
+animation:move 1.5s ease-in-out forwards;
+}
+.pro1 span p {
+margin-right:10px;
+}
+.pro2 span {
+background-color:#008000;
+width:50%;
+}
+.pro3 span {
+background:linear-gradient(-45deg,#f00 25%,#ccc 0,#ccc 50%,#f00 0,#f00 75%,#ccc 0);
+background-size:10px 10px;
+width:40%;
+color:#000;
+}
+.pro4 span {
+background:linear-gradient(-45deg,#FF6D10 25%,#ddd 0,#ddd 50%,#FF6D10 0,#FF6D10 75%,#ddd 0);
+background-size:10px 10px;
+width:80%;
+animation:scroll 12s linear infinite;
+}
+@-webkit-keyframes move {
+from {
+width:0px;
+}
+to {
+width:30%;
+}
+}@-webkit-keyframes scroll {
+from {
+background-position:0 0;
+}
+to {
+background-position:100% 0
+}
+}
+</style>
+</head>
+<body>
+
+<section class="main">
+<div class="progress pro1">
+<span><p></p></span>
+</div>
+
+<div class="progress pro2">
+<span>50%</span>
+</div>
+
+<div class="progress pro3">
+<span></span>
+</div>
+
+<div class="progress pro4">
+<span></span>
+</div>
+</section>
+
+<script src="../../vendors/jquery-3.1.1.js"></script>
+<script>
+$(function() {
+var $span = $('.pro1 span');
+var boxWidth = $('.pro1').width();
+var width = 0,
+spanWidth = 0;
+var s = setInterval(function() {
+spanWidth = $span.width();
+width = Math.floor((spanWidth * 100) / boxWidth);
+$span.find('p').html(width + "%");
+}, 10)
+
+})
+</script>
+
+<br/><br/><textarea rows="4" cols="150">
+参考原代码 http://www.jq22.com/webqd1913
+
+</textarea>
+</body>
+</html>

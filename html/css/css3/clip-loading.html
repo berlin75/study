@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>css3 clip-loading</title>
+<style>
+	ul li{list-style: none;}
+	li{float: left;margin-right: 1rem;border: 1px solid;padding: .5rem 1rem;cursor: pointer;}
+	.container{position: relative;}
+	.circle{position: absolute;left: 50%;margin-left: -60px;top: 60px;width: 100px;height: 100px;border-radius: 60px;}
+	.c{border: 10px solid #ccc; border-radius: 0px;}
+	.c0{border: 10px solid black; z-index: 0;}
+	.c1{border: 10px solid red;z-index: 1;clip:rect(0px,70px,60px,60px);}
+	.c2{border: 10px solid green;z-index: 2;clip:rect(0px,90px,60px,60px);}
+	.c3{border: 10px solid yellow;z-index: 3;clip:rect(0px,120px,60px,60px);}
+	.c4{border: 10px solid blue;z-index: 4;clip:rect(0px,120px,120px,60px);}
+	.c1,.c2,.c3,.c4,.c5{display: none;}
+
+	.c5{border: 10px solid #00FFFF;z-index: 5;-webkit-animation: craw 2s linear;}	
+	@-webkit-keyframes craw {
+	    0% {clip:rect(0px,60px,60px,60px);}
+	    50%{clip:rect(0px,120px,60px,60px);}
+	    100%{clip:rect(0px,120px,120px,60px);}
+	}
+</style>
+</head>
+<body>
+<ul><li>black</li><li>red</li><li>green</li><li>yellow</li><li>blue</li><li>animate演示</li></ul>
+<div class="container">
+	<div class="circle c"></div>
+	<div class="circle c0"></div>
+	<div class="circle c1"></div>
+	<div class="circle c2"></div>
+	<div class="circle c3"></div>
+	<div class="circle c4"></div>
+	<div class="circle c5"></div>
+</div>
+<script src="../../../vendors/jquery-3.1.1.js"></script>
+<script>
+	$('li').click(function(){
+		$(this).css('border','2px solid orange').siblings().css('border','1px solid');
+		$('.circle').eq($(this).index()+1).toggle();
+	})
+</script>
+</body>
+</html>

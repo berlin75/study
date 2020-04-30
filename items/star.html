@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf8">
+<title>星级评价</title>
+<style>
+.rating-box {margin-top:2rem;text-align:center;}
+.rating { direction:rtl; }
+.rating>span { 
+	display:inline-block; 
+	color:#FFD119; 
+	font-size:1.5rem; 
+	font-weight:700; 
+	position:relative; 
+	transition:all .2s;
+	}
+.rating>span:hover:before,.rating>span:hover ~ span:before {
+	content:"\2605"; /*特殊字符或形状*/
+	color:#FFD119; 
+	position:absolute;
+}
+.rating>span.active:before { 
+	content:"\2605"; 
+	color:#FFD119; 
+	position:absolute;
+}
+
+.demo2{color:#FFD119;font-size:1.5rem;font-weight:700;}
+.demo2 span{cursor: pointer;}
+</style>
+</head>
+<body>
+<p>$(this).prevAll('span').removeClass('active'); $(this).addClass('active').nextAll('span').addClass('active');</p>
+<p>stararr.slice(5 - rate, 10 - rate)后面加入代码之后只能点击一次，第二次点击无效？？？？</p>
+
+<div class="rating-box">
+	<section class="rating">
+		<span class="">☆</span>
+		<span>☆</span>
+		<span>☆</span>
+		<span>☆</span>
+		<span>☆</span>
+	</section>
+</div>
+
+<div class="rating-box demo2"></div>
+
+<script src="../vendors/jquery-3.1.1.js"></script>
+<script>
+$(function() {
+	$('.rating > span').on('click', function() {
+		$(this).prevAll('span').removeClass('active');
+		$(this).addClass('active').nextAll('span').addClass('active');
+	})
+})
+
+var starstr = "★★★★★☆☆☆☆☆";
+var stararr = [
+	"<span>★</span>", "<span>★</span>", "<span>★</span>", "<span>★</span>", "<span>★</span>",
+ 	"<span>☆</span>", "<span>☆</span>", "<span>☆</span>", "<span>☆</span>", "<span>☆</span>"
+];
+
+function starr(rate){
+	$('.demo2').html(stararr.slice(5 - rate, 10 - rate));
+}
+//初始化
+starr(0);
+//点击选择
+$(".demo2 > span").click(function(){ console.log($(this).index());
+	var rate = $(this).index() + 1;    
+	starr(rate);
+});
+
+console.log("参考原代码 http://www.jq22.com/webqd2041");
+</script>
+
+</body>
+</html>

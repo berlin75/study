@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>表单属性</title>
+</head>
+
+<body>
+<form action="#" method="post" autocomplete='on'>
+<p>
+<label>name:</label>
+<input type="text"  autofocus="autofocus" placeholder="your name"  pattern="[A-z]{3,15}" title="your name" required="required" value="value-title-placeholder" />
+<font color="red">*</font> 3-15 letters
+</p>
+<p>
+upload:
+<input type="file" multiple="multiple"  title="your file" accept="image/*"/>
+</p>
+<p>
+<label>email:</label>
+<input type="email" multiple="multiple" placeholder="your email" title="your email" required="required"/>
+<font color="red">*</font> your email
+</p>
+<p>
+<label>Country:</label>
+<input type="text" name="country"  placeholder="your contry" pattern="[A-z]{3}" title="three letters" required="required"/>
+<font color="red">*</font> 3 letters
+</p>
+<P>
+<input type="image" alt="" src="../icon/seach.png" />
+</P>
+<p><input type="submit"  /></p>
+</form>
+<p>title属性可用于提示</p>
+<p>type为email等有自动验证功能，合理运用</p>
+<p>autofocus 属性规定在页面加载时，域自动地获得焦点。</p>
+<p>autocomplete 属性规定 form 或 input 域应该拥有自动完成功能。</p>
+<p>multiple属性允许file和email标签选择多个值</p>
+<p>pattern属性用于验证text/search/url/email/password/telephone的模式，即正则表达式</p>
+<p>placeholder属性提供用户一种提示，输入框内浅色字符串</p>
+<p>required属性规定必填的内容，验证非空输入</p>
+</body>
+</html>

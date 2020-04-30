@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>css3 clip loading</title>
+<style>
+* {margin: 0;padding: 0;list-style: none;}
+.container {width: 5rem;margin:1rem auto;}
+.notesite {position:relative;width:5rem;height:5rem;font-size: 5rem;cursor:default;}
+.percent {position: absolute;top: 50%;margin-top: -.8rem;left: 0;width:100%;z-index:2;font-size:1.5rem;text-align:center;}
+#slice {position:absolute;border: 0.5rem solid #00FFFF;width:4rem; height:4rem;
+    border-radius:2.5em;-webkit-animation: craw 10s linear;-webkit-animation-iteration-count: 1;
+}
+@-webkit-keyframes craw {
+    0% {clip:rect(0rem,5rem,0rem,2.5rem);}
+    50%{clip:rect(0rem,5rem,5rem,2.5rem);transform: rotate(0deg);}
+    100%{clip:rect(0rem,5rem,5rem,0rem);transform: rotate(90deg);}
+}
+/******************************方法二*************************************************/
+.load{width: 200px;height: 200px;border: 1px solid;position: relative;}
+.thumb img{width: 100px;height: 100px;position: absolute;left: 50%;top: 50%;margin-left: -50px;margin-top: -50px;z-index: 3;}
+.pie1,.pie2{position: absolute;left: 50%;margin-left: -50px;top: 0;width: 100px;height: 100px;
+			clip: rect(0,50px,100px,0); border-radius: 100px;border: none; }
+.pie1{background-color: #00ff3e;z-index: 1;}
+.pie2{background-color: #fff;z-index: 2;}
+</style>
+</head>
+<body>
+<h3>css3 clip loading：动画时间2s，为便于观察改为10s</h3>
+<div class="container">
+	<div class="notesite" dir="100">
+        <div class="percent">0</div>
+        <div id="slice"></div>
+    </div>
+</div>
+
+<script src="../../jquery-3.1.1.js"></script>
+<script>
+	$(document).ready(function() {
+	    count(0);
+	    function count(num){           
+	        var dir = $('.notesite').attr("dir");  
+	        $(".percent").html(num+'%');
+	        if(++num<=dir){       
+	            setTimeout(function(){count(num)},100); //2000ms从0加到100
+	        }       
+		}        
+	});
+</script>
+
+<!-- ***************************方法二 ****************************-->
+
+<div class="load" style="clear: both;">
+	<div class="pie1"></div>
+	<div class="pie2"></div>
+	<div class="thumb">
+		<img src="flower.gif">
+	</div>
+</div>
+
+<script>
+	function loading(e){
+		180>=e && e>=0 ? $('.pie1').css({transform:'rotate('+e+'deg)'}) : 360>+e && e>180 && ($('.pie1').css({transform:'rotate(180deg)'}),$('.pie2').css({background:'$00ff3e',transform:'rotate('+e+'deg)'}))
+	}
+</script>
+</body>
+</html>

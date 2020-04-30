@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>黑客帝国代码雨canvas</title>
+<style>
+	* {margin:0;padding:0;}
+	body{overflow: hidden;}
+	canvas{background:black;}
+</style>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+
+<script src="../../../vendors/jquery-3.1.1.js"></script>
+<script>
+	var ctx = canvas.getContext("2d");
+	var w = canvas.width = screen.width;
+	var h = canvas.height = screen.height;
+	var words = Array(256).join("1").split("");	//255
+	function draw(){
+		ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+		ctx.fillRect(0, 0, w, h);                //定时器不断地绘制矩形覆盖层叠加
+		var text = String.fromCharCode(65 + Math.ceil(Math.random()*26)); //A-z
+		ctx.fillStyle = "#0f0";
+		words.map(function(y,index){
+			var x = index * 10;
+			ctx.fillText(text, x, y);
+			words[index] = (y > 748 + Math.random()*452) ? 0 : y+10;
+		});
+	}
+	setInterval(draw, 50);
+
+</script>
+</body>
+</html>

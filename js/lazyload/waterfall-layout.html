@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>多栏列表瀑布流布局</title>
+<style>
+body {
+	background-color: #eee;
+	font-size: 84%;
+	text-align: justify;
+}
+.column {
+	display: inline-block;
+	vertical-align: top;
+}
+.pic_a {
+	display: block;
+	padding: 5px;
+	margin-bottom: 10px;
+	border: 1px solid #ccc;
+	background-color: #fff;
+	text-decoration: none;
+}
+.pic_a img {
+	display: block;
+	margin: 0 auto 5px;
+	border: 0;
+	vertical-align: bottom;
+}
+.pic_a strong {
+	color: #333;
+}
+</style>
+</head>
+<body>
+<h4 style="text-align: center;">基于多栏列表流体布局实现的瀑布流布局效果 <a href="http://www.zhangxinxu.com/wordpress/2012/03/%E5%A4%9A%E6%A0%8F%E5%88%97%E8%A1%A8%E5%8E%9F%E7%90%86%E4%B8%8B%E5%AE%9E%E7%8E%B0%E7%9A%84%E7%80%91%E5%B8%83%E6%B5%81%E5%B8%83%E5%B1%80-waterfall-layout/">博文链接</a></h4>
+<pre style="white-space: pre-wrap; word-break: break-all;">
+第一次进入的时候，根据浏览器宽度以及每列宽度计算出列表个数，然后不管三七二十一，每列先加载个5张图片再说。
+
+当滚动的时候，对每一列的底部位置做检测，如果在屏幕中或屏幕上方，则立即append一个新图片（注意：为了简化代码，提高性能，同时便于演示等，这里只append了一个）。因为，滚动时连续的，因此，我们实际看到的效果是图片不断load出来。
+
+当浏览器宽度改变的时候，页面上有个id为waterFallDetect空span标签，这个标签作用有两个：一是实现两端对齐效果，二是用来检测瀑布流布局是否需要刷新。
+
+检测原理如下：
+该span标签宽度与一个列表宽度一致，当浏览器宽度变小的时候，如果小到一定程度，显然，浏览器最右边的列表就会跑到下一行，把空span挤到后面去，空span发生较大的水平位移，显然，可以通知脚本，布局需要刷新；当浏览器宽度变大的时候，如果变大的尺寸超过一列的宽度，显然，这个空span灰跑到第一行去，同样是发生较大的水平位移，因此，又可以通知脚本刷新瀑布流布局了。
+
+这个方法的好处是几乎没有计算就可以一点不差地知道何时瀑布流布局需要刷新。这显然要比设置resize定时器+位置尺寸计算要简单高性能地多。
+
+浏览器宽度变小时触发瀑布流更新的原理示意 浏览器宽度变宽时触发的瀑布流更新原理示意
+
+滚动时的页面刷新是基于HTML字符串的处理，而不是更改每个DOM元素的位置（这是绝对定位实现的处理），因此，这里的效率显然更高。
+
+总结：基于多栏列表流体布局瀑布流效果优点
+简单：最大限度利用了浏览器的流体特性进行布局，省去了很多计算的麻烦；新人更易懂和上手
+更好的性能：这个体现在多处，如浏览器宽度改变，瀑布流刷新时候的效率等
+无需知晓尺寸：如果是要绝对定位实现瀑布流，必须知道每个小模块的高度以及宽度（否则无法定位），而基于列表的布局则无需知道高宽
+</pre>
+
+<div id="container"></div>
+<script>
+var waterFall = {
+	container: document.getElementById("container"),	
+	rootImage: "../../image/waterfall/",  // P_001.jpg ~ P_160.jpg		
+	scrollTop: document.documentElement.scrollTop || document.body.scrollTop,
+	columnNumber: 1,
+	columnWidth: 210,
+	indexImage: 0,
+	detectLeft: 0,	                      //("#waterFallDetect").offsetLeft
+	loadFinish: false,                    //自定义标识，是否所有数据加载完成了
+	
+	// 图片名前面补零
+	getIndex: function() {
+		// var index = this.indexImage;
+		// if (index < 10) {
+		// 	index = "00" + index;	
+		// } else if (index < 100) {
+		// 	index = "0" + index;	
+		// }
+		// return index;
+		return (Array(3).join(0) + this.indexImage).slice(-3);
+	},
+	
+	// 页面加载初始创建,每列先加载个5张图片
+	create: function() {
+		this.columnNumber = Math.floor(document.body.clientWidth / this.columnWidth);
+		
+		var start = 0, htmlColumn = '', self = this;
+		for (start; start < this.columnNumber; start+=1) {
+			htmlColumn = htmlColumn + '<span id="waterFallColumn_'+ start +'" class="column" style="width:'+ this.columnWidth +'px;">'+ 
+				function() {
+					var html = '', i = 0;
+					for (i=0; i<5; i+=1) {
+						self.indexImage = start + self.columnNumber * i;
+						var index = self.getIndex();
+						html = html + '<a href="###" class="pic_a"><img src="'+ self.rootImage + "P_" + index +'.jpg" /><strong>'+ index +'</strong></a>';
+					}
+					return html;	
+				}() +
+			'</span> ';	
+		}
+		htmlColumn += '<span id="waterFallDetect" class="column" style="width:'+ this.columnWidth +'px;"></span>';  //("#waterFallDetect")作用？？？？？？
+		
+		this.container.innerHTML = htmlColumn;
+		
+		this.detectLeft = document.getElementById("waterFallDetect").offsetLeft;
+		return this;
+	},
+
+	// 滚动加载
+	scroll: function() {
+		var self = this;
+		window.onscroll = function() {
+			// 为提高性能，滚动前后距离大于100像素再处理,判断是否符合加载条件符合再加载
+			var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+			if (!this.loadFinish && Math.abs(scrollTop - self.scrollTop) > 100) {
+				self.scrollTop = scrollTop;  //滚动之后保存scrollTop值
+				self.appendDetect();	
+			}
+			
+		};
+		return this;
+	},
+
+	// 是否滚动载入的检测
+	appendDetect: function() {
+		var start = 0;
+		for (start; start < this.columnNumber; start++) {
+			var eleColumn = document.getElementById("waterFallColumn_" + start);
+			if (eleColumn && !this.loadFinish) {
+				if (eleColumn.offsetTop + eleColumn.clientHeight < this.scrollTop + (window.innerHeight || document.documentElement.clientHeight)) {
+					this.append(eleColumn);    //调用append方法加载内容
+				}
+			}			
+		}		
+		return this; 
+	},
+	
+	// 滚动载入
+	append: function(column) {
+		this.indexImage += 1;
+		var html = '', index = this.getIndex(), imgUrl = this.rootImage + "P_" + index + ".jpg";
+		
+		var aEle = document.createElement("a");
+		aEle.href = "###";
+		aEle.className = "pic_a";
+		aEle.innerHTML = '<img src="'+ imgUrl +'" /><strong>'+ index +'</strong>';
+		column.appendChild(aEle);
+		
+		if (index >= 160) {
+			//alert("图片加载光光了！");
+			this.loadFinish = true;
+		}
+		
+		return this;
+	},
+
+	refresh: function() {
+		var arrHtml = [], arrTemp = [], htmlAll = '', start = 0, maxLength = 0;
+		for (start; start < this.columnNumber; start+=1) {
+			var arrColumn = document.getElementById("waterFallColumn_" + start).innerHTML.match(/<a(?:.|\n|\r|\s)*?a>/gi);
+			if (arrColumn) {
+				maxLength = Math.max(maxLength, arrColumn.length);
+				// arrTemp是一个二维数组
+				arrTemp.push(arrColumn);
+			}
+		}
+		
+		// 需要重新排序
+		var lengthStart, arrStart;
+		for (lengthStart = 0; lengthStart<maxLength; lengthStart++) {
+			for (arrStart = 0; arrStart<this.columnNumber; arrStart++) {
+				if (arrTemp[arrStart][lengthStart]) {
+					arrHtml.push(arrTemp[arrStart][lengthStart]);	
+				}
+			}	
+		}
+				
+		if (arrHtml && arrHtml.length !== 0) {
+			// 新栏个数		
+			this.columnNumber = Math.floor(document.body.clientWidth / this.columnWidth);
+			
+			// 计算每列的行数
+			var line = Math.floor(arrHtml.length / this.columnNumber);
+			
+			// 重新组装HTML
+			var newStart = 0, htmlColumn = '', self = this;
+			for (newStart; newStart < this.columnNumber; newStart+=1) {
+				htmlColumn = htmlColumn + '<span id="waterFallColumn_'+ newStart +'" class="column" style="width:'+ this.columnWidth +'px;">'+ 
+					function() {
+						var html = '', i = 0;
+						for (i=0; i<line; i+=1) {
+							html += arrHtml[newStart + self.columnNumber * i];
+						}
+						// 是否补足余数
+						html = html + (arrHtml[newStart + self.columnNumber * line] || '');
+						
+						return html;	
+					}() +
+				'</span> ';	
+			}
+			htmlColumn += '<span id="waterFallDetect" class="column" style="width:'+ this.columnWidth +'px;"></span>';
+		
+			this.container.innerHTML = htmlColumn;
+			
+			this.detectLeft = document.getElementById("waterFallDetect").offsetLeft;
+			
+			// 检测
+			this.appendDetect();
+		}
+		return this;
+	},
+	
+	// 浏览器窗口大小变换
+	resize: function() {
+		var self = this;
+		window.onresize = function() {
+			var eleDetect = document.getElementById("waterFallDetect"), 
+			    detectLeft = eleDetect && eleDetect.offsetLeft;
+			if (detectLeft && Math.abs(detectLeft - self.detectLeft) > 50) {
+				// 检测标签偏移异常，认为布局要改变
+				self.refresh();	
+			}
+		};
+		return this;
+	},
+
+	init: function() {
+		if (this.container) {
+			this.create().scroll().resize();	
+		}
+	}
+};
+waterFall.init();
+</script>
+</body>
+</html>

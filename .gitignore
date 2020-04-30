@@ -1,0 +1,11 @@
+shell/data/
+nodejs/crawler/keke123/pics/
+python/img/
+python/env/
+python/winenv
+python/wifi/43GMAP.rar
+python/wifi/jikefeng.txt
+python/winenv/
+**/node_modules/
+**/vendor
+**/__pycache__/

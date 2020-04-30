@@ -1,0 +1,17 @@
+var {App, static} = require("../..");
+var app = new App();
+
+// 加载static中间件
+app.use(static(__dirname+"/public"));
+
+app.get(function(req,res){
+    res.write("I am GET method result!");
+    res.end();
+})
+
+app.post(function(req,res){
+    res.write("I am POST method result!");
+    res.end();
+})
+
+app.listen(8888);

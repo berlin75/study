@@ -1,0 +1,61 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>canvas裁剪画布</title>
+<style>
+
+</style>
+</head>
+
+<body>
+<p>canvas裁剪画布</p>
+
+<button id="btn">裁剪</button>
+<canvas id="drawing" style="border:1px solid black">
+    <p>The canvas element is not supported!</p>
+</canvas>
+<script>
+var drawing = document.getElementById('drawing');
+if(drawing.getContext){
+    var context = drawing.getContext('2d');
+    drawing.style.background = '#f2f2f2';
+
+    context.shadowColor = "rgba(0,0,0,.5)";   
+    context.shadowOffsetX = 5;  
+    context.shadowOffsetY = 5;
+    context.shadowBlur = 2;
+    var fontsize = 30;
+    var str = "canvas 全局阴影";
+    context.font = fontsize + "px 宋体";
+    context.textAlign = "start";
+    context.textBaseline = "middle";
+    console.log(context.measureText(str).width);
+    while(context.measureText(str).width > 180){
+        fontsize--;
+        context.font = fontsize + "px  宋体";
+    }
+    console.log(context.measureText(str).width);
+    console.log(fontsize);    
+    context.fillStyle = "rgba(0,0,0,1)";
+    context.fillText(str, 20, 60);
+
+    context.shadowColor = "red";   
+    context.shadowOffsetX = 0;  
+    context.shadowOffsetY = 0;
+    context.shadowBlur = 0;
+
+    var oBtn =document.getElementById('btn');
+    oBtn.onclick = function(){
+      context.beginPath();
+      context.arc(50,50,40,0,2*Math.PI,false);
+      context.fillStyle = '#fff';
+      context.fill(); 
+      context.strokeStyle = "red";
+      context.stroke();
+      context.clip();      
+    }
+} 
+</script>
+</body>
+</html>

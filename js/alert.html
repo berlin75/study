@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>模态框-弹出层</title>
+<style>
+.mask{ background: rgba(0,0,0,.5); height: 1000px; width: 100%; position: absolute; left: 0; top: 0; z-index: 1000;}
+.alertbox{ position: fixed; left: 30%; top: 30%; z-index:1001; }
+.alertCon{ width: 670px; height: 380px; background: #fff;}
+.alertCon .alertTitle{text-indent: 1rem; height: 3rem;line-height: 3rem;margin-top: 0px; background: rgba(0,0,0,.1);}
+.alertCon form{width: 50%; margin: 5rem auto auto;text-align: center;}
+.alertCon input{margin-bottom: 1rem;}
+.close{ width: 1rem; height: 1rem; border: 1px solid; cursor: pointer; position: absolute; right: 10px; top: 10px; }
+
+.mask1{ background: rgba(32,28,43,.9); height: 1000px; width: 100%; position: absolute; left: 0; top: 0; z-index: 1000;}
+.alertbox1{ position: fixed; left: 20%; top: 15%; z-index:1001; }
+.alertCon1{ width: 670px; height: 380px; background: #fff;}
+.alertCon1 .alertTitle1{text-indent: 1rem; height: 3rem;line-height: 3rem;margin-top: 0px; background: rgba(0,0,0,.1);}
+.alertCon1 form{width: 50%; margin: 5rem auto auto;text-align: center;}
+.alertCon1 input{margin-bottom: 1rem;}
+.close1{ width: 1rem; height: 1rem; font-weight: bold; cursor: pointer; position: absolute; right: 10px; top: 10px; }
+</style> 
+</head> 
+<body>
+<p>
+方法一：bootstrap模态框组件	<br/>
+方法二：点击链接按钮js动态生成遮罩层和弹出层	<br/>
+方法三：点击链接按钮js改变原隐藏的元素display样式	<br/>
+方法四：div:target{display:block;} 结合锚点纯css实现模态框即弹出框	<br/>
+document.getElementsByTagName('html')['0'].style.overflow='hidden';  //背景锁定与滚动条引起的抖动问题
+</p>
+
+<button id="alertbtn">js弹出</button> 
+<button id="alertbtn1">display弹出</button>
+
+<div class="mask1" style="display: none;"></div>
+<div class="alertbox1" style="display: none;">
+	<div class='alertCon1'>
+		<p class='alertTitle1'>编辑:边框阴影</p>
+		<form>
+			用户名：<input type='text' placeholder='用户名' ><br/>
+			密&nbsp;&nbsp;码：<input type='password' ><br>
+			<input type='submit'>
+		</form>
+		<div class='close1'>×</div>
+	</div>
+</div>
+<script>
+	oMask1=document.getElementsByClassName("mask1")["0"];
+	oAlertbox1=document.getElementsByClassName('alertbox1')['0'];
+	oAlertbtn1=document.getElementById('alertbtn1');
+	oClose1=document.getElementsByClassName("close1")["0"];
+	oAlertbtn1.onclick=function(){
+		oMask1.style.display='block';
+		oAlertbox1.style.display='block';
+		document.getElementsByTagName('html')['0'].style.overflow='hidden';  //背景锁定与滚动条引起的抖动问题
+		//document.getElementsByTagName('body')['0'].style.border-right=widthScrollbar+'px solid transparent';
+	};
+	//获取关闭按钮
+	 oMask1.onclick=oClose1.onclick=function(){
+	  	oMask1.style.display='none';
+		oAlertbox1.style.display='none';
+		document.getElementsByTagName('html')['0'].style.overflow='';
+	 }
+</script>
+<p>1<br>1<br>1<br>1<br>1<br>1<br>1<br>1<br>1<br>1<br>1<br>1<br>1<br>1<br>1<br>1<br>1<br>1<br>1<br>1<br>1<br>1<br>1<br>1<br>1<br>1<br>1<br>1<br>1<br>1<br>1<br>1<br>1<br>1<br>1<br>1<br>1<br>1<br>1<br>1<br>1<br>1<br>1<br>1<br>1<br>1<br></p>
+<script>
+function openNew(alertCon){
+	 //获取页面body！内容！的高度和宽度
+	 var sHeight=document.documentElement.scrollHeight;
+	 var sWidth=document.documentElement.scrollWidth;
+	 //获取可视区域高度，宽度与页面内容的宽度一样
+	 var wHeight=document.documentElement.clientHeight;
+	 //创建遮罩层div并插入body
+	 var oMask=document.createElement("div");
+	 oMask.className="mask";
+	 oMask.style.height=sHeight+"px";
+	 //宽度直接用100%在样式里
+	 document.body.appendChild(oMask);
+	 //创建登录层div并插入body
+	 var oAlertbox=document.createElement("div");
+	 oAlertbox.className="alertbox";
+	 oAlertbox.innerHTML=alertCon;
+	 document.body.appendChild(oAlertbox);
+	 //获取login的宽度和高度并设置偏移值
+	 var dHeight=oAlertbox.offsetHeight;
+	 var dWidth=oAlertbox.offsetWidth;
+	 oAlertbox.style.left=(sWidth-dWidth)/2+"px";
+	 oAlertbox.style.top=(wHeight-dHeight)/2+"px";
+
+	 //获取关闭按钮
+	 var oClose=document.getElementsByClassName("close")["0"];
+	 oMask.onclick=oClose.onclick=function(){
+	  	document.body.removeChild(oMask);
+	  	document.body.removeChild(oAlertbox);
+	 }
+}
+window.onload=function(){
+ 	var oBtn=document.getElementById("alertbtn");
+ 	oBtn.onclick=function(){
+ 		var alertCon="<div class='alertCon'>";
+ 		alertCon+="<p class='alertTitle'>编辑:边框阴影</p>";
+	    alertCon+="<form><input type='text' placeholder='用户名' ><br/><input type='password' ><br>"
+	    alertCon+="<input type='submit'></form>";
+	    alertCon+="<div class='close'>×</div></div>";
+  		openNew(alertCon);
+ 	}
+}
+</script> 
+</body> 
+</html> 

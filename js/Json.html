@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Json eval</title>
+</head>
+
+<body>
+    <h2>通过Json字符串来创建对象</h2>
+    <p>
+    Firstname:<span id="fname"></span>
+    <br />
+    Lastname:<span id="lname"></span>
+    </p>
+
+<script>
+	var txt='{"persons":[' + 
+	        '{"firstname":"Bill","lastname":"Gates"},'+
+			'{"firstname":"Angelina","lastname":"Jolie"},'+
+		    '{"firstname":"George","lastname":"Bush"} ]}';
+	var obj=eval("("+txt+")");
+	
+	document.getElementById("fname").innerHTML=obj.persons[1].firstname;
+	document.getElementById("lname").innerHTML=obj.persons[1].lastname;
+</script>
+
+</body>
+</html>

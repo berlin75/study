@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html>
+<head><title>Javascript Inline Debugger 简易的javascript inline debugger代码</title></head>
+<body>
+<input type="button" value="hahaha" onclick="javascript: alert(this.value);" style="margin-left: 300px;" />
+</body>
+</html>
+<script>
+/*  
+It is a simple javascript inline debugger. You must add xhtml1-transitional dtd to your
+html document if you wanna to use the script.
+*/
+
+//--------------------------------------------------------------------------//
+// 公用的函数
+//--------------------------------------------------------------------------//
+// 判断是否是IE
+function isIE() {
+    return document.all && window.external;
+}
+
+// 去除字符串两边的空格
+String.prototype.trim = function() {
+    var re = /(^\s*)|(\s*)$/g;
+    return this.replace(re, "");
+}
+
+// 删除数组中某个元素
+Array.prototype.remove = function(i) {
+    var o = this[i];
+    for (var j = i; j < this.length - 1; j ++) {
+        this[j] = this[j + 1];
+    }
+    -- this.length; 
+    return o;
+}
+
+// 判断一个数组中是否存在相同的元素
+Array.prototype.search = function(o) {
+    for (var i = 0; i < this.length; i ++) {
+        if (this[i] == o) return i;
+    }
+    return -1;
+}
+
+// html编码
+function htmlEncode(s) {
+  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\"/g, "&quot;").replace(/\'/g, "&#34;");
+}
+
+// js编码
+function jsEncode(s) {
+  return s.replace(/\\/g, "\\\\").replace(/\n/g, "\\n").replace(/\"/g, "\\\"").replace(/\'/g, "\\\'");
+}
+
+//--------------------------------------------------------------//
+// 命令行窗口工具
+//--------------------------------------------------------------//
+function Console(parentNode, processInputProc) {
+    // 窗口
+    var panel = document.createElement("div");
+    panel.style.width = "250px";
+    panel.style.height = "250px";
+    panel.style.borderColor = "#666666";
+    panel.style.borderWidth = "1px";
+    panel.style.backgroundColor = "#ffffff";
+    panel.style.borderStyle = "solid";
+    panel.style.position = "absolute";
+    panel.style.zIndex = 100;
+    parentNode.appendChild(panel);
+
+    // 标题栏
+    var title = document.createElement("div");
+    title.style.width = "250px";
+    title.style.height = "15px";
+    title.style.backgroundColor = "#dddddd";
+    title.style.fontSize = "12px";
+    title.style.fontFamily = "verdana,tahoma";
+    panel.appendChild(title);
+
+    // 标题栏拖动窗口功能
+    var isDragging = false;
+    var startPos = new Position(panel.offsetLeft, panel.offsetTop);
+    var startMousePos = new Position(0, 0);
+
+    title.onmouseover = function(evt) {
+        this.style.cursor = "pointer";
+    }
+
+    title.onmousedown = function(evt) {
+        if (isDragging == true) return;
+        var event = evt || window.event;
+        startMousePos.x = event.clientX;
+        startMousePos.y = event.clientY;
+        isDragging = true;
+    }
+
+    title.onmousemove = function(evt) {
+        if (isDragging == false) return;
+        
+        activateWindow();
+        var event = evt || window.event;
+        panel.style.left = (event.clientX - startMousePos.x) + startPos.x + "px";
+        panel.style.top = (event.clientY - startMousePos.y) + startPos.y + "px";
+    }
+
+    title.onmouseup = function(evt) {
+        if (isDragging == false) return;
+
+        var event = evt || window.event;
+        startPos.x =  (event.clientX - startMousePos.x) + startPos.x;
+        panel.style.left = startPos.x + "px";
+        startPos.y = (event.clientY - startMousePos.y) + startPos.y;
+        panel.style.top = startPos.y + "px";
+        isDragging = false;
+    }
+
+    // 关闭窗口功能
+    var closeButton = document.createElement("div");
+    closeButton.style.width = "13px";
+    closeButton.style.height = "13px";
+    closeButton.style.backgroundColor = "#ffffff";
+    closeButton.style.styleFloat = closeButton.style.cssFloat = "left";
+    closeButton.style.fontSize = "12px";
+    closeButton.style.borderWidth = "1px";
+    closeButton.style.borderColor = "#999999";
+    closeButton.style.borderStyle = "solid";
+    closeButton.style.paddingButton = "2px";
+
+    closeButton.innerHTML = "<div style=\"margin-top: -2px;margin-left: 3px;\">x</div>";
+    title.appendChild(closeButton);
+
+    var isVisible = true;
+
+    // 窗口关闭
+    closeButton.onclick = function(evt) {
+        isVisible = false;
+        panel.style.display = "none";
+    }
+
+    // 标题栏文字
+    var titleLabel = document.createElement("div");
+    titleLabel.style.height = "14px";
+    titleLabel.style.width = "200px";
+    titleLabel.style.fontSize = "11px";
+    titleLabel.style.color = "#ffffff";
+    titleLabel.style.styleFloat = titleLabel.style.cssFloat = "left";
+    titleLabel.style.fontFamily = "verdana,tahoma";
+    titleLabel.innerHTML = "Javascript Inline Debugger";
+    //titleLabel.style.marginTop = isIE() ? -14 : "-14px";
+    titleLabel.style.marginLeft = isIE() ? 18 : "18px";
+    title.appendChild(titleLabel);
+
+    // 中间的显示部分
+    var showPanel = document.createElement("div");
+    showPanel.style.width = "250px";
+    showPanel.style.height = isIE() ? "221px" : "219px";
+    showPanel.style.fontSize = "11px";
+    showPanel.style.padding = "0";
+    showPanel.style.margin = "0";
+    showPanel.style.overflow = "auto";
+    showPanel.style.marginTop = isIE() ? -1 : "0";
+    panel.appendChild(showPanel);
+
+    // 命令输入框
+    var cmdArea = document.createElement("div");
+    panel.appendChild(cmdArea);
+
+    var cmdTextbox = document.createElement("input");
+    cmdTextbox.type = "text";
+    cmdTextbox.style.width = "250px";
+    cmdTextbox.style.height = "12px";
+    cmdTextbox.style.fontSize = "12px";
+    cmdTextbox.style.padding = "0";
+    cmdTextbox.style.margin = "0";
+    cmdTextbox.style.marginTop = isIE() ? -2 : "0";
+    cmdTextbox.style.borderWidth = "0";
+    cmdTextbox.style.borderTopWidth = "1px";
+    cmdTextbox.style.paddingTop = "2px";
+    cmdArea.appendChild(cmdTextbox);
+
+    // 窗口激活或者不激活
+    var isActive = false;
+
+    // 激活窗口
+    var activateWindow = function() {
+        if (! isVisible)  return;
+        if (isActive)  return;
+
+        cmdTextbox.focus();
+        title.style.backgroundColor = "#015DF4";
+        isActive = true;
+    }
+
+    panel.onclick = activateWindow;
+
+    // 不激活窗口
+    var deactivateWindow = function() {
+        if (! isVisible)  return;
+        if (! isActive)  return;
+
+        title.style.backgroundColor = "#cccccc";
+        isActive = false;
+    }
+
+    cmdTextbox.onfocus = activateWindow;
+    cmdTextbox.onblur = deactivateWindow;
+
+    // 输出函数
+    var dbgPrint = function(s) {
+        showPanel.innerHTML += htmlEncode(s).replace(/\n|(\r\n)/g, "<br />");
+        if (parseInt(showPanel.scrollHeight) > parseInt(showPanel.style.height)) {
+            showPanel.scrollTop += parseInt(showPanel.scrollHeight) - parseInt(showPanel.style.height);
+        }
+    }
+
+    // 调用输入处理回调函数
+    cmdTextbox.onkeydown = function(evt) {
+        var event = evt || window.event;
+        if (event.keyCode == 0x0d) {
+            processInputProc(this.value, dbgPrint);
+            this.value = "";
+        }
+    }
+}
+
+// 坐标类
+function Position(x, y) {
+    this.x = x;
+    this.y = y;
+}
+
+//--------------------------------------------------------------------------//
+// 内联调试器类
+//--------------------------------------------------------------------------//
+function InlineDebugger() {
+    var bpList = new Array();
+    var id_eval;
+
+    // 设置断点
+    var bp = function(funcName) {
+        // 检查eval是否被hook
+        if ((new String(eval)).indexOf("[native code]") < 0) {
+            return "error: eval function was hooked by other codes in the front.\n";    
+        }
+
+        // 保存未被hooked的eval
+        id_eval = eval;
+
+        var re = /^[a-zA-Z0-9_\.]+$/i;
+        if (! re.test(funcName)) {
+            return "error: bad argument of command bp \"" + funcName + "\".\n";
+        }
+
+        try {
+            id_eval("if (typeof(" + funcName + ") == \"object\" || typeof(" + funcName + ") == \"function\") {var obj = " + funcName + ";}");
+        } catch (e) {
+            return "error: " + e + ", invalid function name \"" + funcName + "\".\n";
+        }
+
+        if (obj == undefined) {
+            return "error: the argument of command bp \"" + funcName + "\" is not a function object.\n";
+        }
+
+        if ((new String(obj)).indexOf("function") < 0) {
+            return "error: the argument of command bp \"" + funcName + "\" is a property, a function is required.\n";
+        }
+
+        if (bpList.search(funcName) >= 0) {
+            return "error: there is a breakpoint on function \"" + funcName + "\"\n";
+        }
+
+        try {
+            var sc = "window." + funcName.replace(/\./g, "_") + "_bak = " + funcName + ";\n" + 
+                     funcName + " = " + 
+                     "function() {\n" +
+                     "    var args = \"\";\n" +
+                     "    for (var i = 0; i < arguments.length; i ++) {\n" +
+                     "        args += arguments[i] + (i == (arguments.length - 1) ? \"\" : \",\");\n" +
+                     "    }\n" +
+                     "    if (confirm(\"function \\\"" + funcName + "\\\" was called, execute it?\\n\\narguments:\\n\" + args + \"\\n\\ncaller:\\n\" + " + funcName + ".caller)) {\n" +
+                     "        id_eval(\"" + funcName.replace(/\./g, "_") + "_bak(\\\"\" + jsEncode(args) + \"\\\")\");\n" +
+                     "    }\n" +
+                     "};" +
+                     "\n";
+            id_eval(sc);
+            bpList.push(funcName);
+            return "* breakpoint on function \"" + funcName + "\" added successfully.\n";
+        } catch (e) {
+            return "unkown error: " + e + ".\n";
+        }
+    }
+
+    // 枚举所有的断点
+    var bl = function() {
+        if (bpList.length == 0) return "* no breakpoint.\n";
+        var bps = "* " + bpList.length + " breakpoints: \n";
+        for (var i = 0; i < bpList.length; i ++) {
+            bps += i + " - " + bpList[i] + "\n";
+        }
+        return bps;
+    }
+
+    // 清除某个断点
+    var bc = function(n) {
+        try {
+            n = parseInt(n);
+        } catch (e) {
+            return "error: bc command requires a numeric argument.\n";
+        }
+
+        if (bpList.length == 0)  return "error: no breakpoint.\n";
+
+        var funcName = bpList.remove(n);
+        try {
+            eval(funcName + " = window." + funcName.replace(/\./g, "_") + "_bak;");
+            return "* breakpoint on function \"" + funcName + "\" deleted successfully.\n";
+        } catch (e) {
+            return "error: " + e + ".\n";
+        }
+    }
+
+    // 帮助
+    var help = function() {
+        var s = "debug commands:\n\n" +
+                "bp <function name> - set a breakpoint on a function, e.g. \"bp window.alert\".\n" +
+                "bl - list all breakpoints.\n" +
+                "bc <breakpoint number> - remove a breakpoint by specified number, e.g. \"bc 0\".\n" +
+                "help - help information.\n"
+                "\n";
+        return s;
+    }
+
+    // 处理命令
+    this.exeCmd = function(cmd) {
+        cmd = cmd.trim();
+        var cmdParts = cmd.split(/\s+/g), cmdName, cmdArg;
+        if (cmdParts.length == 1) {
+            cmdName = cmd;
+        } else {
+            cmdName = cmdParts[0];
+            cmdArg = cmdParts[1];
+        }
+
+        switch (cmdName) {
+            case "bp":
+                return !cmdArg ? "error: bp command requires an argument.\n" : bp(cmdArg);
+                break;
+            case "bl":
+                return bl();
+                break;
+            case "bc":
+                return !cmdArg ? "error: bc command requires an argument \"number of breakpoint\".\n" : bc(cmdArg);
+                break;
+            case "help":
+                return help();
+                break;
+            default: return "error: command \"" + cmdName + "\" not found, you can get information by \"help\" command.\n";
+        }
+    }
+}
+
+//-----------------------------------------------------------------------------//
+// 主过程
+//-----------------------------------------------------------------------------//
+/*try {
+    debugger;
+} catch (e) {}*/
+var id = new InlineDebugger();
+var console = new Console(document.body, function(s, printProc){printProc(id.exeCmd(s));});    
+
+</script>
+</body>
+</html>

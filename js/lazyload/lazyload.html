@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>图片懒加载</title>
+<style>
+	div,ul,li,img{margin:0; padding:0; list-style:none;}
+	li{ width:640px; height:480px; background:url(../../image/7.gif) center center no-repeat; background-size:442px 244px;}
+	img{ width:100%; }
+</style>
+</head>
+<body>
+<h1>图片懒加载、延迟加载:延迟加载图片或触发、符合某些条件时才加载某些图片</h1>
+<ul>
+	<li data-src="../../image/l1.jpg"><img src="../../image/l1.jpg" title="测试" /></li>
+	<li data-src="../../image/l2.jpg"><img src="../../image/l2.jpg" title="测试" /></li>
+	<li data-src="../../image/l3.jpg"><img src="" title="测试" /></li>
+	<li data-src="../../image/l4.jpg"><img src="" title="测试" /></li>
+	<li data-src="../../image/l5.jpg"><img src="" title="测试" /></li>
+	<li data-src="../../image/l6.jpg"><img src="" title="测试" /></li>
+	<li data-src="../../image/l7.jpg"><img src="" title="测试" /></li>
+	<li data-src="../../image/l8.jpg"><img src="" title="测试" /></li>
+	<li data-src="../../image/l9.jpg"><img src="" title="测试" /></li>
+	<li data-src="../../image/l10.jpg"><img src="" title="测试" /></li>
+	<li data-src="../../image/l11.jpg"><img src="" title="测试" /></li>
+	<li data-src="../../image/l12.jpg"><img src="" title="测试" /></li>
+	<li data-src="../../image/l13.jpg"><img src="" title="测试" /></li>
+	<li data-src="../../image/l14.jpg"><img src="" title="测试" /></li>
+</ul>
+	
+<script>
+	var oUl=document.getElementsByTagName("ul")[0];
+	var aLi=oUl.getElementsByTagName("li");			
+	window.onscroll=function(){
+		for(var i=0; i<aLi.length;i++){  
+			chenckloac(aLi[i]);
+		}
+	}
+	function chenckloac(obj){
+		//浏览器可视区域高度
+		var h=window.innerHeight||document.documentElement.clientHeight||document.body.clientHeight; 
+		var toptop=obj.getBoundingClientRect().top; //元素顶端到可见区域顶端的距离
+		var oImg=obj.children[0];
+		if(toptop<=h){			                    //判断aLi[i]是否在可视区内决定是否加载图片
+			oImg.src=obj.dataset.src;
+		}
+	}
+</script>
+</body>
+</html>
+
+
+
+
+
+
+
+

@@ -1,0 +1,68 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>face</title>
+<style>
+#face{ width:300px; height:300px; background:yellow; border-radius:50%; box-shadow:3px 3px 5px #ccc; position:absolute; cursor:pointer;}
+.eye{ width:80px; height:60px; background:white; float:left; border-radius:50%; margin-top:80px; position:absolute; overflow:hidden; box-shadow:3px 3px 8px #ccc;}
+#eye1{ margin-left:60px;}
+#eye2{ margin-left:160px;}
+.black{ width:30px; height:30px; background:radial-gradient(#ccc 10%,#666 30%,#333 40%,#000 60%); border-radius:50%; position:absolute; top:15px; left:25px;}
+#nouse{ width:40px; height:40px; background:white; border-radius:50%; clear:both; margin:150px auto 0; box-shadow:3px 3px 5px #ccc inset;}
+#mouth{ width:150px; height:60px; margin:10px auto 50px; border-radius:50%; background:#F33; overflow:hidden; box-shadow:3px 3px 5px #ccc}
+.tooth{ width:20px; height:30px; background:white; float:left; margin-left:20px; box-shadow:3px 3px 5px #000; }
+.she{ width:50px; height:40px; background:#F00; border-radius:40%; clear:both; margin-left:50px; margin-top:40px;}
+</style>
+<script>
+window.onload=function(){
+	var face=document.getElementById('face');
+	var black=document.getElementsByClassName('black');
+	var black1=document.getElementById('black1');
+	var black2=document.getElementById('black2');
+	var mouth=document.getElementById('mouth');
+	face.onmouseover=function(){
+		black1.style.left=50+'px';
+		black2.style.left=0+'px';
+		mouth.style.height=40+'px';
+	};
+	face.onmouseout=function(){
+		black1.style.left=25+'px';
+		black2.style.left=25+'px';
+		mouth.style.height=60+'px';
+	};
+	face.onmousedown=function(event){
+		var disX=event.clientX-face.offsetLeft;
+		var disY=event.clientY-face.offsetTop;
+		document.onmousemove=function(event){
+			var X=event.clientX-disX;
+			var Y=event.clientY-disY;
+			face.style.left=X+'px';
+			face.style.top=Y+'px';
+		};
+		document.onmouseup=function(){
+			document.onmousemove=null;
+		};
+	};
+};
+</script>
+</head>
+
+<body>
+<div id="face">
+	<div class="eye" id="eye1">
+    	<div class="black" id="black1"></div>
+    </div>
+    <div class="eye" id="eye2">
+    	<div class="black" id="black2"></div>
+    </div>
+    <div id="nouse"></div>
+    <div id="mouth">
+    	<div class="tooth"></div>
+        <div class="tooth"></div>
+        <div class="tooth"></div>
+        <div class="she"></div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>script template</title>
+<style>
+.maglist{margin: 1rem;padding: 1rem;border: 1px solid #ccc;}
+span{color: red;}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script type="text/template" id="app_tpl">
+	<div class="maglist">
+		<div>
+			<span>{#name#}</span>
+			<small>-{#price#}</small>
+		</div>
+		<div>{#material#}</div>
+	</div>
+</script>
+
+<script type="text/javascript">
+	//封装工具函数
+	var util = {
+		tpl: function(id){
+			return document.getElementById(id).innerHTML;
+		},
+		ajax: function(url, callback){
+			var xhr = new XMLHttpRequest();
+			xhr.onreadystatechange = function(){
+				if(xhr.readyState === 4){
+					if(xhr.status === 200){
+						var data = JSON.parse(xhr.responseText);
+						console.log(typeof data);
+						callback&&callback(data);
+					}
+				}
+			}
+			xhr.open('get', url, true);
+			xhr.send(null);
+		}
+	};
+
+	function formString(tpl, data){
+		return tpl.replace(/\{#(\w+)#\}/g, function(match, $1){
+			// console.log(match, $1);
+			return data[$1] === undefined ? '' : data[$1];
+		});
+	}
+
+	var tpl = util.tpl('app_tpl')
+	util.ajax('data.json',function(data){
+		var result = '';
+		for(var i in data){
+			result += formString(tpl, data[i]);
+			console.log(result);
+		}
+		document.getElementById('app').innerHTML = result;
+	});
+
+
+</script>
+</body>
+</html>

@@ -1,0 +1,36 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>event鼠标位置</title>
+<style type="text/css">
+*{ margin:0px; padding:0px; }
+body{ height:1800px;}
+#div1{ width:100px; height:100px; background:red; 
+       position:absolute; border-radius:100px; text-align:center; line-height:100px;}
+</style> 
+<script type="text/javascript">
+function getPos(ev)
+	{
+		var scrollTop=document.documentElement.scrollTop||document.body.scrollTop;
+		var scrollLeft=document.documentElement.scrollLeft||document.body.scrollLeft;
+		return {x:ev.clientX+scrollLeft,y:ev.clientY+scrollTop};
+	}
+document.onmouseover=function(ev)
+{
+	var oDiv=document.getElementById("div1");
+	var oEvent=ev||event;
+	var pos=getPos(oEvent);  
+	oDiv.innerHTML=oEvent.clientX+","+oEvent.clientY;
+	oDiv.style.left=pos.x+"px";  
+	oDiv.style.top=pos.y+"px";
+}
+</script>
+</head>
+
+<body>
+<div id="div1">
+</div>
+<p>oEvent.clientX/Y是可视区域即窗口的位置 </p>
+</body>
+</html>

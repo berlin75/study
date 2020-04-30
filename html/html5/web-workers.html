@@ -1,0 +1,56 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8"/>
+<title>HTML5 web workers</title>
+<script>
+	function count(){
+		var number=document.getElementsByName("number")[0].value;
+		var r=0;
+		for(var i=0;i<=number;i++){
+			r+=i;
+		}
+		document.getElementsByName("result")[0].value=r;		
+	}
+
+</script>
+</head>
+<body>
+<p>web worker 是运行在后台的 JavaScript，不会影响页面的性能</p>
+<p>
+	<input type="number" name="number" value="10">
+	<input type="submit" name="submit" value="叠加求和" onclick="count()">
+	<input type="text" name="result" value="答案">
+</p>
+<p>
+<input type="text" name="time" value="0" onfocus="this.value=''">
+<input type="submit" name="start" value="开始计时" onclick="start()">
+<input type="submit" name="stop" value="计时结束" onclick="stop()">
+</p>
+<p>js测试从0加到100,计算这个过程需要的耗时</p>
+
+<script>
+var w;
+function start(){
+	alert("计时开始了吗？");
+	if(Worker){
+		if(!w){
+			w=new Worker("demo_workers.js");
+		}
+		w.onmessage = function (event) {
+			document.getElementsByName("time")[0].value=event.data;   //该代码在worker js文件中运行
+		};
+	}else{
+		alert("Sorry, your browser does not support Web Workers...");
+	}
+	alert("计时开始了吗？");   //先测试代码，该js内其他代码执行完毕再执行worker.js
+}
+
+function stop(){ 
+	w.terminate();
+}
+
+</script>
+
+</body>
+</html>

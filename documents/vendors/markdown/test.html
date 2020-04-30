@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Markdown.js</title>
+<script type="text/javascript" src="https://unpkg.com/showdown/dist/showdown.min.js"></script>
+<script src="../jquery-3.3.1.min.js"></script>
+<script>
+$(document).ready(function(){
+  //返回顶部动画代码
+  $('body').append('<div id="totop" title="返回顶部"></div>');
+  var h=window.innerHeight||document.documentElement.clientHeight||document.body.clientHeight; //浏览器可视区域高度
+  $('#totop').css({
+    'width': '47px', 'height': '78px','cursor': 'pointer',
+    'position': 'fixed', 'right': '10px', 'top': '500px',
+    'background': 'url(./image/top.png) no-repeat'
+  }).hover(function(){
+    $(this).css('background-image', 'url(./image/top-hover.gif)');
+  },function(){
+    $(this).css('background-image', 'url(./image/top.png)');
+  }).click(function(){
+    $(this).animate({top:'-100px'});
+    $("body").stop().animate({scrollTop: 0 });
+  });
+
+  function totopanimate(){
+    var scrollTop = document.documentElement.scrollTop||document.body.scrollTop; //滚动距离：可视区上面页面的高度
+    if(scrollTop > 100) { //滚动高度可调
+        $('#totop').stop().css('background-image', 'url(./image/top.png)').animate({top: '500px'});
+    } else {
+        $('#totop').stop().css('background-image', 'url(./image/top-hover.gif)').animate({top: '-100px'});
+    };
+    //返回顶部动画代码结束
+  }
+
+  // 侧边导航点击一级菜单
+  $('ol>li').click(function(){
+    var child = $(this).children('ul'); //console.log(child.height())
+    child.height() > 0 ? child.css({'max-height': '0px'}) : child.css({'max-height': '800px'});
+  })
+
+  // 侧边导航高度自适应
+  function sidenavheight(){
+    var h=window.innerHeight||document.documentElement.clientHeight||document.body.clientHeight;
+    $('ol').eq(0).height(h-50).css({'overflow-y':'scroll', 'overflow-x':'hidden'})
+  }
+  sidenavheight();
+
+  $(window).resize(function() {
+    sidenavheight();
+  })
+
+  /*检测元素是否在浏览器视口内部*/
+  function checkShow(obj) {
+      var scrollTop = $(window).scrollTop();  // 即页面向上滚动的距离
+      var windowHeight = $(window).height();  // 浏览器自身的高度
+      var objOffsetTop = $(obj).offset().top;    // obj相对于document顶部的位置,包含border
+      var objHeight = $(obj).outerHeight(true);  // 图片高度包括内外边距
+      //在2个临界状态之间的就为出现在视野中的
+      if(objOffsetTop < (scrollTop + windowHeight) && objOffsetTop + objHeight > scrollTop)
+      return $(obj).attr("id");
+  }
+
+  /* 侧边导航与内容联动 */
+  function related(){
+    //获取main元素内所有含有id属性的元素集合
+    //遍历集合中所有元素，选取所有在可视区内部的元素
+    //选取离窗口最近的元素的id属性，映射侧边导航栏中对应的链接
+    $('ol>li>ul').css('max-height', '0px');
+    var ids = [];
+    for(var ele of $('main div[id]')){
+      var checkresult = checkShow(ele);
+      checkresult && ids.push(checkresult);
+    }
+    // console.log(ids, ids[0])
+    $('ol a[href!="#'+ ids[0] +'"]').css('color', '');
+    var target = $('ol a[href="#'+ ids[0] +'"]').css('color', 'rgba(9,136,233,1)');
+    var parent = target.parents('ul')[0];
+    if(parent){  // 是二级导航的链接
+      $(parent).css({'max-height': '800px'});
+      $(parent).parent().siblings("li").children("ul").css({'max-height': '0px'});
+    }else{
+      $(target).parent().siblings("li").children("ul").css({'max-height': '0px'});
+      $(target).siblings("ul").css({'max-height': '800px'});
+    }
+  }
+
+  related();
+
+  function scrollfn(){
+    totopanimate()
+    related();
+  }
+
+  var timer;
+  $(window).scroll(function() {
+    clearTimeout(timer);
+    timer = setTimeout(scrollfn, 300);
+  })
+})
+
+</script>
+<style>
+body,main,h1,h1,h3,h4,h5,h6,ol,ul,li,pre,article,section,aside,header,footer,nav,textarea{
+	margin:0; padding:0;font-family:"微软雅黑", "宋体", simsun, sans-serif, Arial;
+}
+small{ font-size:0.5rem;}
+main,h1{width:80%; margin:1rem 0 2rem 2rem;}
+h1{ text-align:center; padding:15px 0; background:#0d89e9; color:white;}
+h2{ background:#FFFF00;text-indent:1rem; line-height:3rem; }
+h2:before{ content: "\27A4";color: #A101A9;}
+h3:before{ content:""; display:inline-block; width:0px; height:0px;
+		  border-top:8px solid transparent;border-right:10px solid transparent;border-bottom:8px solid transparent;
+		  border-left:10px solid red;}
+h3{ color:#fff;background: #0099cc;text-indent:1rem;line-height:2rem;margin: .8rem 0;}
+h4{ color:#fff;background: #7ec699;padding: .5rem;}
+
+/*右侧导航栏样式*/
+ol{ position:fixed; top:10px; right:50px; width:160px; padding:8px; border:1px solid #ddd;border-radius: 5px;}
+ol,li{list-style:none; }
+ol li{width: 100%;}
+ol a{text-decoration: none;display: block; padding: 2px 0; color: #000;}
+ol a:hover{color: rgba(255,83,0,1);}
+ol li ul li a{text-indent: .8rem;}
+ol>li>a:first-child{font-weight: bold;}
+ol>li>ul{ max-height:0; overflow:hidden; transition: all 1s ease-out;}
+ol>li:hover ul{ max-height: 800px; transition-timing-function: ease-in;}
+/*右侧导航栏样式over*/
+
+table{border-collapse: collapse;}
+table,th,td{border:1px solid rgba(0,0,0,.3);}
+td{padding: 2px 5px;}
+
+/*textarea高度自适应,js代码*/
+textarea{
+	width: 100%;
+	height:auto;
+	color: #fff;
+	background-color: #0f192a;
+	padding: 8px 8px 0 16px;
+}  
+</style>
+<style>
+/* 可以使用样式自定义markdown转换后的样式 */
+/* 引用样式 */
+blockquote {
+  border-left:#eee solid 5px;
+  padding-left:20px;
+}
+/* 列表样式 */
+ul li {
+  line-height: 20px;
+}
+
+/* 代码样式 */
+pre {
+  padding-left: 16px;
+  background: #0f192a;
+  color:#fff;
+}
+code {
+  font-size: 14px;
+  font-family: "Consolas", "Courier New", Courier, monospace;
+}
+</style>
+</head>
+<body>
+<!-- 设置id为oriContent，如果想实现实时更新，使用onkeyup方法 -->
+<textarea id="oriContent" style="height:0px;width:0px;" onkeyup="convert()">
+
+## react
+React起源于Facebook的内部项目,于2013年开源  
+React是一个声明式,高效高性能且灵活的用于构建用户界面UI的js库,代码逻辑非常简单,很多人认为React是MVC中的V
+
+React特点  
+1.声明式设计 −React采用声明范式,可轻松描述应用。  
+2.高效 −React通过对DOM的模拟,最大限度地减少与DOM的交互。  
+3.灵活 −React可以与已知的库或框架很好地配合。  
+4.JSX − JSX是js语法的扩展,React开发不一定使用JSX,但建议使用它。  
+5.组件 − 通过React构建组件,使得代码更加容易得到复用,能够很好的应用在大项目的开发中。  
+6.单向响应的数据流 − React实现了单向响应的数据流,从而减少了重复代码,这也是它为什么比传统数据绑定更简单。  
+
+React可直接下载使用,下载包中也提供了很多学习的实例,也可以直接使用Staticfile CDN的React CDN库
+src="https://cdn.staticfile.org/react/16.4.0/umd/react.development.js" // React的核心库  
+src="https://cdn.staticfile.org/react-dom/16.4.0/umd/react-dom.development.js"  // 提供与DOM相关的功能  
+src="https://cdn.staticfile.org/babel-standalone/6.26.0/babel.min.js" // 生产环境中不建议使用  
+官方提供的CDN地址：  
+src="https://unpkg.com/react@16/umd/react.development.js"  
+src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"  
+src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js" // 生产环境中不建议使用  
+Babel内嵌了对JSX的支持,在浏览器中使用Babel编译JSX效率非常低,Babel可以将ES6代码转为ES5代码,这样就能在不支持ES6浏览器上执行React代码
+
+通过npm使用React  
+建议在React中使用CommonJS模块系统,比如browserify或webpack
+
+```jsx
+<div id="container"></div>
+
+<script type="text/babel">
+class ProductCategoryRow extends React.Component {
+  render() {
+    const {category} = this.props
+    return (<tr><th colSpan="2">{category}</th></tr>);
+  }
+}
+
+class ProductRow extends React.Component {
+  render() {
+    const product = this.props.product;
+    const name = product.stocked ? product.name : <span style={{color: 'red'}}>{product.name}</span>;
+
+    return (
+      <tr>
+        <td>{name}</td>
+        <td>{product.price}</td>
+      </tr>
+    );
+  }
+}
+
+class ProductTable extends React.Component {
+  render() {
+    const filterText = this.props.filterText;
+    const inStockOnly = this.props.inStockOnly;
+
+    const rows = [];
+    let lastCategory = null;
+
+    this.props.products.forEach((product) => {
+      if (product.name.indexOf(filterText) === -1) return;
+      if (inStockOnly && !product.stocked) return;
+      if (product.category !== lastCategory) rows.push(<ProductCategoryRow category={product.category} key={product.category} />);
+      rows.push(<ProductRow product={product} key={product.name} />);
+      lastCategory = product.category;
+    });
+
+    return (<table><thead><tr><th>Name</th><th>Price</th></tr></thead><tbody>{rows}</tbody></table>);
+  }
+}
+
+class SearchBar extends React.Component {
+  constructor(props) {
+    super(props);
+    this.handleFilterTextChange = this.handleFilterTextChange.bind(this);
+    this.handleInStockChange = this.handleInStockChange.bind(this);
+  }
+  
+  handleFilterTextChange(e) {
+    this.props.onFilterTextChange(e.target.value);
+  }
+  
+  handleInStockChange(e) {
+    this.props.onInStockChange(e.target.checked);
+  }
+  
+  render() {
+    return (
+      <form>
+        <input type="text" placeholder="Search..." value={this.props.filterText} onChange={this.handleFilterTextChange} />
+        <p>
+          <input type="checkbox" checked={this.props.inStockOnly} onChange={this.handleInStockChange} />
+          {' '}
+          Only show products in stock
+        </p>
+      </form>
+    );
+  }
+}
+
+class FilterableProductTable extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      filterText: '',
+      inStockOnly: false
+    };
+    
+    this.handleFilterTextChange = this.handleFilterTextChange.bind(this);
+    this.handleInStockChange = this.handleInStockChange.bind(this);
+  }
+
+  handleFilterTextChange(filterText) {
+    this.setState({filterText: filterText});
+  }
+  
+  handleInStockChange(inStockOnly) {
+    this.setState({inStockOnly: inStockOnly})
+  }
+
+  render() {
+    return (
+      <div>
+        <SearchBar
+          filterText={this.state.filterText}
+          inStockOnly={this.state.inStockOnly}
+          onFilterTextChange={this.handleFilterTextChange}
+          onInStockChange={this.handleInStockChange}
+        />
+        <ProductTable
+          products={this.props.products}
+          filterText={this.state.filterText}
+          inStockOnly={this.state.inStockOnly}
+        />
+      </div>
+    );
+  }
+}
+
+const PRODUCTS = [
+  {category: 'Sporting Goods', price: '$49.99', stocked: true, name: 'Football'},
+  {category: 'Sporting Goods', price: '$9.99', stocked: true, name: 'Baseball'},
+  {category: 'Sporting Goods', price: '$29.99', stocked: false, name: 'Basketball'},
+  {category: 'Electronics', price: '$99.99', stocked: true, name: 'iPod Touch'},
+  {category: 'Electronics', price: '$399.99', stocked: false, name: 'iPhone 5'},
+  {category: 'Electronics', price: '$199.99', stocked: true, name: 'Nexus 7'}
+];
+
+ReactDOM.render(
+  <FilterableProductTable products={PRODUCTS} />,
+  document.getElementById('container')
+);
+
+</script>
+```
+
+```jsx
+<script src="https://cdn.staticfile.org/react/16.8.0/umd/react.development.js"></script>
+<script src="https://cdn.staticfile.org/react-dom/16.8.0/umd/react-dom.development.js"></script>
+<script src="https://cdn.staticfile.org/babel-standalone/6.26.0/babel.min.js"></script>
+<script src="../vendors/jquery-3.3.1.min.js"></script>
+  
+<div id="root"></div>
+
+<script type="text/babel">
+// 如果Promise对象正在抓取数据(pending状态),组件显示"正在加载";如果Promise对象报错(rejected状态),组件显示报错信息;如果Promise对象抓取数据成功(fulfilled状态),组件显示获取的数据
+class RepoList extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      loading: true,
+      error: null,
+      data: null
+    };
+    console.log(this.props.promise)
+  }
+
+  componentDidMount() {
+    this.props.promise.then(
+      value => this.setState({loading: false, data: value}),
+      error => this.setState({loading: false, error: error}));
+  }
+
+  render() {
+    if (this.state.loading) {
+      return <span>Loading...</span>;
+    }else if (this.state.error !== null) {
+      return <span>Error: {this.state.error.message}</span>;
+    }else {
+      var repos = this.state.data.items;
+      var repoList = repos.map((repo, index) => {
+        return (<li key={index}><a href={repo.html_url}>{repo.name}</a> ({repo.stargazers_count} stars) <br/> {repo.description}</li>);
+      });
+      return (
+        <main>
+          <h1>Most Popular JavaScript Projects in Github</h1>
+          <ol>{repoList}</ol>
+        </main>
+      );
+    }
+  }
+}
+
+ReactDOM.render(
+  <RepoList promise={$.getJSON('https://api.github.com/search/repositories?q=javascript&sort=stars')} />,
+  document.getElementById('root')
+);
+</script>
+```
+
+【 使用create-react-app快速构建React开发环境 】  
+通过create-react-app命令即无需配置就能快速构建React开发环境,自动创建的项目是基于Webpack+ES6,是创建新的单页应用的最佳方式  
+create-react-app不会处理后端逻辑或操纵数据库,只是创建一个前端构建流水线(build pipeline),所以可以使用它来配合任何后端,它在内部使用Babel和webpack  
+$ cnpm install -g create-react-app  
+$ create-react-app my-app  
+$ cd my-app/  
+$ npm start  
+浏览器中打开http://localhost:3000/  
+当准备好部署到生产环境时,执行npm run build会在build文件夹内生成应用的优化版本  
+
+项目的目录结构如下：  
+my-app/  
+  - README.md
+  - node_modules/
+  - package.json
+  - .gitignore
+  - public/
+  - - favicon.ico
+  - - index.html
+  - - manifest.json  # 指定了开始页面index.html,一切的开始都从这里开始,所以这个是代码执行的源头
+  - src/
+  - - App.css
+  - - App.js
+  - - App.test.js
+  - - index.css
+  - - index.js
+  - - logo.svg
+
+## jsx
+const element = < h1>Hello, world!< /h1>;  
+JSX是一个JS的语法扩展,建议在React中配合使用JSX,JSX可以生成react元素,JSX可以很好地描述UI应该呈现出它应有交互的本质形式。JSX可能会使人联想到模版语言,但它具有Js的全部功能。
+
+React认为渲染逻辑本质上与其他UI逻辑内在耦合,比如在UI中需要绑定处理事件、在某些时刻状态发生变化时需要通知到UI,以及需要在UI中展示准备好的数据。  
+React并没有采用将标记与逻辑进行分离到不同文件这种人为地分离方式,而是通过将二者共同存放在称之为组件的松散耦合单元之中来实现关注点分离
+
+在JSX中嵌入表达式  
+在JSX语法中可以在大括号内放置任何有效的js表达式,如2+2,user.firstName或formatName(user)都是有效的js表达式
+建议将内容包裹在括号中,虽然这样做不是强制要求的,但这可以避免遇到自动插入分号陷阱
+
+```jsx
+<div>
+  {/* 注释写在这里 */}
+  Hello, {name}!
+</div>
+
+<div>
+  {/* 多行注释 
+  也同样有效。 */}
+  Hello, {name}! 
+</div>
+```
+
+JSX防止注入攻击  
+可以安全地在JSX当中插入用户输入内容,直接使用用户输入内容是安全的,React DOM在渲染所有输入内容之前默认会进行转义,它可以确保在应用中永远不会注入那些并非自己明确编写的内容。所有的内容在渲染之前都被转换成了字符串,这样可以有效地防止XSS攻击。
+
+```jsx
+const title = response.potentiallyMaliciousInput;
+const element = <h1>{title}</h1>;
+```
+
+JSX表示对象  
+Babel会把JSX转译成一个名为React.createElement()函数调用,以下两种示例代码完全等效：
+
+```jsx
+const element = (
+  <h1 className="greeting">Hello, world!</h1>
+);
+const element = React.createElement(
+  'h1',
+  {className: 'greeting'},
+  'Hello, world!'
+);
+
+// React.createElement()会预先执行一些检查,以帮助编写无错代码,但实际上它创建了一个这样的对象,以下是简化过的结构
+const element = {
+  type: 'h1',
+  props: {
+    className: 'greeting',
+    children: 'Hello, world!'
+  }
+};
+```
+
+这些对象被称为React元素,它们描述了希望在屏幕上看到的内容。React通过读取这些对象,然后使用它们来构建DOM及保持随时更新
+
+在JSX类型中使用点语法  
+在JSX中也可以使用点语法来引用一个React组件。当在一个模块中导出许多React组件时,这会非常方便
+
+```jsx
+const MyComponents = {
+  DatePicker: function DatePicker(props) {
+    return <div>Imagine a {props.color} datepicker here.</div>;
+  }
+}
+
+function BlueDatePicker() {
+  return <MyComponents.DatePicker color="blue" />; // MyComponents.DatePicker 是一个组件
+}
+```
+</textarea>
+
+<main></main>
+<ol>
+  <li><a href="#top">顶部</a></li>
+  <li><a href="#jsx">jsx</a></li>
+  <li><a href="#element">element</a></li>
+</ol>
+
+<!-- <--写转化函数 -->
+<script type="text/javascript">
+var converter = new showdown.Converter();
+function convert(){
+  document.getElementsByTagName("main")[0].innerHTML = converter.makeHtml(document.getElementById("oriContent").value);
+}
+convert()
+</script>
+</body>
+</html>

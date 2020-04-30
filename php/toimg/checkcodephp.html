@@ -1,0 +1,152 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>php生成验证码图片</title>
+<style>
+</style>
+<script src="../../web/jquery-3.1.1.js"></script>
+</head>
+<body>
+
+<br/><br/>
+<img id="checkpic1" onclick="this.src='checkcode.php?'+Math.random();" src='checkcode.php' title="点击图像刷新" />
+<br/><br/>
+<img id="checkpic2" onclick="this.src='virifyImage.php?'+Math.random();" src='virifyImage.php' title="点击图像刷新" />
+<br/><br/>
+
+<div class="demo">
+ <h3>1、数字验证码</h3>
+ <p>
+	 验证码：<input type="text" class="input" id="code_num" name="code_num" maxlength="4" /> 
+	 <img src="code_num.php" id="getcode_num" title="看不清，点击换一张" align="absmiddle" />
+ </p>
+ <p><input type="button" class="btn" id="chk_num" value="提交" /></p>
+ </div>
+
+ <div class="demo">
+ <h3>2、数字+字母验证码</h3>
+ <p>验证码：<input type="text" class="input" id="code_char" maxlength="4" /> <img src="code_char.php" id="getcode_char" title="看不清，点击换一张" align="absmiddle" /></p>
+ <p><input type="button" class="btn" id="chk_char" value="提交" /></p>
+ </div>
+
+ <div class="demo">
+ <h3>3、中文验证码</h3>
+ <p>验证码：<input type="text" class="input" id="code_zh" maxlength="4" /> <img src="code_zh.php" id="getcode_zh" title="看不清，点击换一张" align="absmiddle" /></p>
+ <p><input type="button" class="btn" id="chk_zh" value="提交" /></p>
+ </div>
+ <div class="demo">
+ <h3>4、仿google验证码</h3>
+ <p>验证码：<input type="text" class="input" id="code_gg" maxlength="4" /> <img src="code_gg.php" id="getcode_gg" title="看不清，点击换一张" align="absmiddle" /></p>
+ <p><input type="button" class="btn" id="chk_gg" value="提交" /></p>
+ </div>
+ <div class="demo">
+
+ <h3>5、算术验证码</h3>
+ <p>验证码：<input type="text" class="input" id="code_math" maxlength="4" /> <img src="code_math.php" id="getcode_math" title="看不清，点击换一张" align="absmiddle" /></p>
+ <p><input type="button" class="btn" id="chk_math" value="提交" /></p>
+</div>
+ 
+<script>
+$(function() {
+ $("#getcode_num").click(function() { //数字验证
+  $(this).attr("src", 'code_num.php?' + Math.random());
+ });
+ $("#chk_num").click(function() {
+  var code_num = $("#code_num").val();
+  $.post("chk_code.php?act=num", {
+   code: code_num
+  },
+  function(msg) {
+   if (msg == 1) {
+    alert("验证码正确！");
+   } else {
+    alert("验证码错误！");
+   }
+  });
+ });
+ //数字+字母验证
+ $("#getcode_char").click(function() {
+  $(this).attr("src", 'code_char.php?' + Math.random());
+ });
+ $("#chk_char").click(function() {
+  var code_char = $("#code_char").val();
+  $.post("chk_code.php?act=char", {
+   code: code_char
+  },
+  function(msg) {
+   if (msg == 1) {
+    alert("验证码正确！");
+   } else {
+    alert("验证码错误！");
+   }
+  });
+ });
+ //中文验证码
+ $("#getcode_zh").click(function() {
+  $(this).attr("src", 'code_zh.php?' + Math.random());
+ });
+ $("#chk_zh").click(function() {
+  var code_zh = escape($("#code_zh").val());
+  $.post("chk_code.php?act=zh", {
+   code: code_zh
+  },
+  function(msg) {
+   if (msg == 1) {
+    alert("验证码正确！");
+   } else {
+    alert("验证码错误！");
+   }
+  });
+ });
+ //google验证
+ $("#getcode_gg").click(function() {
+  $(this).attr("src", 'code_gg.php?' + Math.random());
+ });
+ $("#chk_gg").click(function() {
+  var code_gg = $("#code_gg").val();
+  $.post("chk_code.php?act=gg", {
+   code: code_gg
+  },
+  function(msg) {
+   if (msg == 1) {
+    alert("验证码正确！");
+   } else {
+    alert("验证码错误！");
+   }
+  });
+ });
+ //算术验证
+ $("#getcode_math").click(function() {
+  $(this).attr("src", 'code_math.php?' + Math.random());
+ });
+ $("#chk_math").click(function() {
+  var code_math = $("#code_math").val();
+  $.post("chk_code.php?act=math", {
+   code: code_math
+  },
+  function(msg) {
+   if (msg == 1) {
+    alert("验证码正确！");
+   } else {
+    alert("验证码错误！");
+   }
+  });
+ });
+});
+</script>
+ 
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

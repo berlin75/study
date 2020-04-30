@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>template标签 模板元素</title>
+</head>
+<body>
+<!-- <img src="image/l12.jpg"> -->
+<h3>console.log</h3>
+<pre style="width: 100%;white-space: pre-wrap;word-wrap: break-word;">
+模板文档具有以下2个要求：
+
+    1.  <> "' 不被转成字符实体；
+
+    2. 含src特性的img标签不触发资源请求。
+
+
+三种方式的区别：
+    1. 不一样的childNodes
+
+     script、textarea和xmp方式存放模板文本时，通过 tplEl.childNodes.length 均返回1， tplEl.childNodes[0].nodeName 均返回#text。而template返回的是0。
+
+   2. 伪文档片段入口——content属性
+
+     通过innerHTML或innerText属性，template内部的模板文本将被视为普通文本来使用。但template元素为我们提供了另一种使用方式，那就是“文档片段”。
+
+     “文档片段”的[[Class]]为[object DocumentFragment]，“文档片段”具有文档片段的所有功能API，不同的是设置img元素的src属性不会发出资源请求、不执行Script和CSS规则，而[object HTMLDocument]“文档”则会发送img请求并在当前browsing context(即window对象上下文)内执行Script和CSS规则。
+
+由于appendChild方法实际上会对元素进行剪切操作，因此无法实现模板复用的效果。因此我们需要复制模板内的元素，然后再将元素副本添加到当前文档中
+</pre>
+
+<!-- 模板文本开始 -->
+<script type="text/template" id="tpl">
+	<img src="show.jpg" title="{{title}}"/>
+</script>
+<!-- 模板文本结束 -->
+<script>
+	// 获取模板对应方式
+	console.log("---------------script type='text/template'---------------------------------------");
+	var tplscript = document.getElementById('tpl');
+	console.log('tplscript.childNodes');
+	console.log(tplscript.childNodes);
+	console.log('tplscript.childNodes[0]');
+	console.log(tplscript.childNodes[0]);
+	console.log('tplscript.childNodes[0] type: '+typeof tplscript.childNodes[0]);
+
+	// 不能通过innerText获取，因为innerText无法获取<img/>等标签字符
+// 若模板中包含script闭合标签会造成标签结束符混乱的问题，因此通过该方式存放模板时，不能包含script结束标签
+	var tplscript = document.getElementById('tpl');
+	console.log('innerText');
+	console.log(tplscript.innerText);
+	console.log('innerHTML');
+	console.log(tplscript.innerHTML);
+	tplscript = tplscript.innerHTML.replace(/^[\s\u3000]*|[\s\u3000]*$/, '');
+	// Handlebars.compile(tplscript)({img: 'image/l12.jpg'});
+	//compile()方法用于在脚本执行过程中编译正则表达式,也用于改变和重新编译正则表达式,大量重复才能提高效率
+
+</script>
+
+<!-- 模板文本开始 -->
+<textarea style="display: none">
+	<img src="show.jpg" title="{{title}}"/>
+</textarea>
+<!-- 模板文本结束 -->
+<script>
+	// 获取模板对应方式
+	console.log("------------------textarea-----------------------------------------------------------");
+	// 若模板中包含textarea闭合标签会造成标签结束符混乱的问题，因此通过该方式存放模板时，不能包含textarea结束标签
+	//innerText获取也可以。但不能通过innerHTML获取，因为它会对<>"'等转换为字符实体
+	var tpltextarea = document.getElementsByTagName('textarea')[0];
+	console.log('tpltextarea.childNodes');
+	console.log(tpltextarea.childNodes);
+
+	console.log('value');
+	console.log(tpltextarea.value);
+	console.log('innerText');
+	console.log(tpltextarea.innerText);
+	console.log('innerHTML');
+	console.log(tpltextarea.innerHTML);
+	tpltextarea = tpltextarea.value.replace(/^[\s\u3000]*|[\s\u3000]*$/, '');
+</script>
+
+
+<!-- 模板文本开始 -->
+<template id="template">
+	<img src="show.jpg" title="{{title}}"/>
+</template>
+<!-- 模板文本结束 -->
+<script>
+	// 获取模板对应方式
+	//若模板中包含template闭合标签会造成标签结束符混乱的问题，因此通过该方式存放模板时，不能包含template结束标签
+	console.log("------------------template-----------------------------------------------------------");
+	var tplele = document.querySelector('#template');
+	console.log('tplele.childNodes');
+	console.log(tplele.childNodes);
+
+	console.log('innerHtml: ');
+	console.log(tplele.innerHTML);        //获取完整html片段
+	console.log('typeof innerHtml: ');
+	console.log(typeof tplele.innerHTML);
+	console.log('innerText: ');
+	console.log(tplele.innerText); 
+	console.log('typeof innerText: ');   
+	console.log('content: ');
+	console.log(tplele.content);          //返回一个文档片段，类似document
+	console.log('tplele.content type: '+typeof tplele.content);
+
+	var img = tplele.content.querySelector('img');
+	console.log(img.src);                  // 显示空字符串
+	console.log(img.getAttribute('src'));  // 显示dummy.png
+	img.src = img.getAttribute('src');
+	console.log(img.src);
+
+	//由于appendChild方法实际上会对元素进行剪切操作，因此无法实现模板复用的效果。因此我们需要复制模板内的元素，然后再将元素副本添加到当前文档中
+	// document.body.appendChild(img);        //添加到当前文档中才会发起资源请求
+
+	//整个template提供的DocumentFragment导出到当前document
+	var x = tplele.content
+	var clone = document.importNode(x, true)
+	document.body.appendChild(x)
+</script>
+
+</body>
+</html>

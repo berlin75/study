@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>html5画布Canvas</title>
+<style>
+canvas{ width:200px; height:100px; border:1px solid #c3c3c3; margin:5px;}
+</style>
+</head>
+
+<body>
+<canvas id="canvas1"></canvas>
+<canvas id="canvas2"></canvas>
+<canvas id="canvas3"></canvas>
+<canvas id="canvas4"></canvas>
+<canvas id="canvas5"></canvas>
+
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" height="190">
+  <polygon points="100,10 40,180 190,60 10,60 160,180"
+  style="fill:lime;stroke:purple;stroke-width:5;fill-rule:evenodd;" />
+</svg>
+<script>
+var c1=document.getElementById('canvas1');
+var cxt=c1.getContext('2d');  //创建context对象
+cxt.fillStyle='red';
+cxt.fillRect(0,0,40,40);
+cxt.fillText('hello',50,20,200);
+
+var c2=document.getElementById('canvas2');
+var cxt=c2.getContext('2d');
+cxt.moveTo(10,10);
+cxt.lineTo(150,50);
+cxt.lineTo(10,50);
+cxt.stroke();
+
+var c3=document.getElementById('canvas3');
+var cxt=c3.getContext('2d');
+cxt.fillStyle='red';
+cxt.beginPath();
+cxt.arc(70,18,15,0,Math.PI*2,true);
+cxt.closePath();
+cxt.fill();
+
+var c4=document.getElementById('canvas4');
+var cxt=c4.getContext('2d');
+var grd=cxt.createLinearGradient(0,0,175,50);
+grd.addColorStop(0,"#FF0000");
+grd.addColorStop(1,"#00FF00");
+cxt.fillStyle=grd;
+cxt.fillRect(0,0,175,50);
+
+var c5=document.getElementById("canvas5");
+var cxt=c5.getContext("2d");
+var img=new Image();
+img.src="flower.png";
+cxt.drawImage(img,0,0);
+</script>
+</body>
+</html>

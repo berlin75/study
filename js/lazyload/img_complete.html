@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>img_complete</title>
+</head>
+<body>
+<img id="img1" src="../img/1.jpg" width="300">
+<br/>
+
+<input type="button" name="" value="载入图片" onclick="addImg('../img/1.jpg')" />
+
+<script>
+console.log(img1.complete)
+img1.onload = function(){
+	console.log('img onload')
+	console.log(img1.complete)
+}
+
+
+function addImg(isrc){
+    var Img = new Image();
+    console.log(Img)
+    console.log(Img.complete)
+    Img.src = isrc;
+    console.log(Img.complete)
+    Img.onload = function (){
+          document.body.appendChild(Img);
+          console.log('img onload')
+    }
+}
+
+
+</script>
+</body>
+</html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>注册验证</title>
+<style type="text/css">
+	#main{ width:500px; height:300px; border:1px solid #ccc; }
+	#main span{ display:inline-block; width:85px; text-align:right; }
+	#main input{ width:200px; height:30px; line-height:30px;} 
+	#main #sbm{ background:#09C; color:white; text-align:center; 
+	            border:0; padding:0; font-size:1.25em; margin-left:95px;
+				width:200px; height:40px; line-height:40px;}
+	#main label{ color:red;}
+</style>
+<script type="text/javascript">
+	var email,pass,name,tele,lblemail,lblpass,lblname,lbltele;
+
+	function $(id){ return document.getElementById(id); }
+	
+	function check(){ 
+	  return checkEmpty();
+	  //return false;	      //false阻止提交
+	}
+	
+	function checkEmpty(){
+		console.log(email.value);
+		var reemail=/^\w+@[a-z0-9]+\.[a-z]+$/;
+		lblemail.innerHTML="";
+		if(email.value.trim().length==0){         //去左右空格
+			lblemail.innerHTML="Email不能为空！";
+			return false;
+		}else if(!reemail.test(email.value.trim())){
+			lblemail.innerHTML="Email格式不正确！";
+			return false;
+		}else{
+			lblemail.innerHTML="通过！";
+			return true;
+		}
+	}
+    window.onload=function(){   
+		email=$("email");
+		pass=$("pass");
+		name=$("name");
+		tele=$("tele");
+		lblemail=$("lblemail");
+		lblpass=$("lblpass");
+		lblname=$("lblname");
+		lbltele=$("lbltele");
+	}
+</script>
+</head>
+
+<body>
+<pre>
+	onsubmit="return check()"  
+	onblur="checkEmpty();" 
+
+	function check(){ 
+	  return checkEmpty();
+	  //return false;	      //false阻止提交
+	}
+
+</pre>
+<div id="main">
+	<form action="#" method="post" onsubmit="return check()">
+       <p><span>Email：</span>
+       <input type="text" id="email" onblur="checkEmpty();" value="" />
+       <label id="lblemail"></label>
+       </p>
+       
+       <p><span>密码：</span>
+       <input type="text" id="pass" value="" />
+       <label id="lblpass"></label>
+       </p>
+       
+       <p><span>真实姓名：</span>
+       <input type="text" id="name" value="" />
+       <label id="lblname"></label>
+       </p>
+       
+       <p><span>手机号码：</span>
+       <input type="text" id="tele" value="" />
+       <label id="lbltele"></label>
+       </p>
+       
+       <p><input type="submit" id="sbm" value="注册" />
+       </p>
+     </form>
+</div>
+</body>
+</html>

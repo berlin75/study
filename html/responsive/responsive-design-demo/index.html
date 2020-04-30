@@ -1,0 +1,138 @@
+<html>
+	<head>
+		<title>
+			Responsive Design Example
+		</title>
+		<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<style>
+		     html{font-family: "microsoft yahei",arial;font-size: 100%;}
+			body{margin:0;}
+			li{list-style: none;}
+			nav{background-color: #333;}
+			 nav li{display: inline-block;padding-right: 10px;}
+			 nav li a{text-decoration: none;color: white;font-size: 1.5em;}
+			 nav li a:hover,#menuIcon:hover{color:#DDD;}
+			#menuIcon{display: none;color: white;font-weight: bold;font-size: 2em;text-decoration: none;font-family: arial;}
+			aside{width: 15%;float: left;}
+			.post{width: 70%;margin: 0 auto;float: left;}
+			 .grid{}
+			 .grid .item{width: 25%;height: 150px;background-color: #DDD;display: inline-block;}
+			img{max-width: 100%;}
+			@media only screen and (max-width : 650px) {  
+				aside{display: none;}
+					.post{width: 100%;float: none;padding: 5px;
+						box-sizing: border-box;
+						-webkit-box-sizing: border-box;
+						-moz-box-sizing: border-box;
+					}
+					.grid{width: 100%;}
+					.grid .item{width: 32%;}
+				}
+			@media screen and (max-width: 500px){
+				nav ul{display: none;padding:0;margin: 0 5px;
+				}
+				#menuIcon{display: block;text-align: right;padding: 0 5px;border-bottom: 1px #9c9c9c solid;}
+				nav ul li{width: 100%;}
+				nav ul li:hover{background-color: #555;}
+			}
+			@media screen and (max-width: 420px){
+				.grid .item{width: 100%;margin-bottom: 5px;}
+			}
+			 footer{width: 100%;text-align: center;clear:both;}
+			 footer li{display: inline-block; }
+		</style>
+	</head>
+	<body>
+		<div id="main">
+			<nav>
+				 <a href="#" id="menuIcon">Ξ</a>  
+				<ul>
+					<li>
+						<a href="#">Home</a>
+					</li>
+					<li>
+						<a href="#">Articles</a>
+					</li>
+					<li>
+						<a href="#">Gallery</a>
+					</li>
+					<li>
+						<a href="#">Forum</a>
+					</li>
+					<li>
+						<a href="#">About</a>
+					</li>
+				</ul>
+			</nav>
+			<aside>
+				<ul>
+					<li><a href="#subtitle1">item1</a> </li>
+					<li><a href="#subtitle2">item2</a></li>
+					<li><a href="#subtitle3">item3</a></li>
+					<li><a href="#subtitle4">item4</a></li>
+					<li><a href="#subtitle5">item5</a></li>
+				</ul>
+			</aside>
+			<section class="post">
+				<article>
+					<h1>
+						Sample Title
+					</h1>
+					<p id="subtitle1"><strong>subtitle1</strong></p>
+					<p>
+						对于“插入”选项卡上的库，在设计时都充分考虑了其中的项与文档整体外观的协调性。 您可以使用这些库来插入表格、页眉、页脚、列表、封面以及其他文档构建基块。 您创建的图片、图表或关系图也将与当前的文档外观协调一致。 在“开始”选项卡上，通过从快速样式库中为所选文本选择一种外观，您可以方便地更改文档中所选文本
+					</p>
+					<p id="subtitle2"><strong>subtitle2</strong></p>
+					<section class="grid">
+						<div class="item">
+							#1
+						</div>
+						<div class="item">
+							#2
+						</div>
+						<div class="item">
+							#3
+						</div>
+					</section>
+					<p>
+					<p id="subtitle3"><strong>subtitle3</strong></p>
+						您可以使用这些库来插入表格、页眉、页脚、列表、封面以及其他文档构建基块。 您创建的图片、图表或关系图也将与当前的文档外观协调一致。 在“开始”选项卡上，通过从快速样式库中为所选文本选择一种外观，您可以方便地更改文档中所选文本的格式。您还可以使用“开始”选项卡上的其他控件来直接设置文本格式。大多数控件都允许您选择是使用当前主题外观，还是使用某种直接指定的格式。若要更改文档的整体外观，请在“页面布局”选项卡上选择新的“主题”元素。若要更改快速样式库中的可用外观，请使用“更改当前快速样式集”命令。主题库和快速样式库都提供了重置命令，因而您总是能够将文档外观还原为当前模板所包含的原始外观。对于“插入”选项卡上的库，在设计时都充分考虑了其中的项与文档整体外观的协调性。 您可以使用这些库来插入表格、页眉、页脚、列表、封面以及其他文档构建基块。
+					</p>
+					<p id="subtitle4"><strong>subtitle4</strong></p>
+					<img class="illustration" src="beauty.png" title="sample pic" alt="beauty"/>
+					<p id="subtitle5"><strong>subtitle5</strong></p>
+					<p>
+						您创建的图片、图表或关系图也将与当前的文档外观协调一致。 在“开始”选项卡上，通过从快速样式库中为所选文本选择一种外观，您可以方便地更改文档中所选文本的格式。您还可以使用“开始”选项卡上的其他控件来直接设置文本格式。大多数控件都允许您选择是使用当前主题外观，还是使用某种直接指定的格式。若要更改文档的整体外观，请在“页面布局”选项卡上选择新的“主题”元素。若要更改快速样式库中的可用外观，请使用“更改当前快速样式集”命令。主题库和快速样式库都提供了重置命令，因而您总是能够将文档外观还原为当前模板所包含的原始外观。对于“插入”选项卡上的库，在设计时都充分考虑了其中的项与文档整体外观的协调性。 您可以使用这些库来插入表格、页眉、页脚、列表、封面以及其他文档构建基块。 您创建的图片、图表或关系图也将与当前的文档外观协调一致。
+					</p>
+				</article>
+			</section>
+			<footer>
+				<hr>
+				<ul>
+					<li><small>Wayou &copy 2013|</small></li>
+					<li><small><a href="mailto:sample@somesite.com">Contact</a></small> </li>
+				</ul>
+			</footer>
+		</div>
+        <script src="http://libs.baidu.com/jquery/1.9.0/jquery.js" ></script>
+		<script type="text/javascript">
+		$(function(){
+			$("#menuIcon,nav ul li").click(function(){
+				if ($("#menuIcon").is(":visible")) {
+				$("nav ul").toggle(300);
+				};
+			});
+			$( window ).resize(function() {
+				if (!$("nav ul").is(":visible")) {
+					$('nav ul').attr('style', function(i, style)
+						{
+						    return style.replace(/display[^;]+;?/g, '');
+						});
+				};
+			});
+		})
+		</script>
+	</body>
+
+</html>

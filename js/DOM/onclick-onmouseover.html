@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>事件绑定方式</title>
+
+</head>
+
+<body>
+<p>window.onload=function(){};    内部函数是局部函数，不能在HTML代码作为事件处理函数</p>
+<input id="input1" type="button" value="1提取行间事件：点击显示!"  />
+<input id="input2" type="button" value="2提取行间事件：鼠标滑过显示匿名函数的用法"  />
+<input id="input3" type="button" value="3行间调用事件处理函数"  onclick="test();" />
+<input id="input4" type="button" value="4行间js代码" onclick="alert('成功')" />
+
+<script>
+window.onload=function(){
+	var butn1=document.getElementById("input1");
+	function tips()	{
+	  alert("提取行间事件：点击显示!");	
+	}
+	butn1.onclick=tips;
+
+	var butn2=document.getElementById("input2");
+	butn2.onmouseover=function()	{
+	   alert("提取行间事件：鼠标滑过显示匿名函数的用法");	
+	}
+
+	var test1 = function(){
+		alert('test1');
+	}
+
+	var b = 'hello';
+	console.log(b);
+
+}
+function test(){
+	alert('成功');
+}
+
+</script>
+</body>
+</html>

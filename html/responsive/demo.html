@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0" />
+<title>响应式设计网格视图W3C</title>
+<style>
+	*{box-sizing: border-box; margin: 0;padding: 0; }
+	ul,li{list-style: none;}
+	a{text-decoration: none;}
+	@font-face {
+	    font-family: 'IcoMoon-Free';
+	    src: url('/IcoMoon/Font/IcoMoon-Free.ttf') format('truetype');
+	    font-weight: normal;
+	    font-style: normal;
+	}
+
+	.icon {
+	    /* use !important to prevent issues with browser extensions that change fonts */
+	    font-family: 'IcoMoon-Free' !important;
+	    speak: none;
+	    font-style: normal;
+	    font-weight: normal;
+	    font-variant: normal;
+	    text-transform: none;
+	    line-height: 1;
+	    
+	    /* Enable Ligatures ================ */
+	    letter-spacing: 0;
+	    -webkit-font-feature-settings: "liga";
+	    -moz-font-feature-settings: "liga=1";
+	    -moz-font-feature-settings: "liga";
+	    -ms-font-feature-settings: "liga" 1;
+	    -o-font-feature-settings: "liga";
+	    font-feature-settings: "liga";
+
+	    /* Better Font Rendering =========== */
+	    -webkit-font-smoothing: antialiased;
+	    -moz-osx-font-smoothing: grayscale;
+	}
+	.icon-circle-down:before {content: "\ea43";}
+	.icon-menu2:before {content: "\e9be";}
+
+	[class*="col-"]{float: left;padding: 15px;}
+	.row:after{clear: both;content: "";display: block;}
+
+/**导航样式*/
+	header{border-bottom: 1px solid rgba(0,0,0,.1);}
+	.nav-header a{display: block;color: rgba(0,0,0,1);text-align: right;font-size: 1.2rem;font-weight: bold;}
+	.nav-header img{width: 3rem;vertical-align: middle;}
+	.nav-header .san{display: none;position: absolute;top: 2rem;font-weight: bold;}
+	.nav-header,.nav-body,.nav-center,.nav-right{padding: 0px;}
+	.nav-center>li{border-radius: 6px;text-align: center;font-size: 1.2rem;font-weight: bold;}
+	.nav-center li>a{display: block;color: rgba(0,0,0,1);}
+	.nav-center li:hover{background: rgba(9,136,233,1);}
+	.nav-center li:hover>a{color: #fff;}
+	.fonticon{font-size: .1rem;}
+	.dropmenu{position: relative;}
+	.dropmenu ul{position: absolute;left: 0px;display: none;border: 1px solid rgba(0,0,0,.1);width: 100%;background: #fff; }
+	.dropmenu li a{display: block;color: rgba(0,0,0,1);text-align: center;padding: .2rem;}
+	.nav-center .dropmenu li a{font-size: 1.2rem;font-weight: bold;}
+	.nav-center .dropmenu li:hover a{background: rgba(9,136,233,.6);}
+	.dropmenuline{border: 1px solid rgba(0,0,0,.1);}
+	
+	.nav-right>li>a{display: block;color: rgba(0,0,0,1);text-align: left;}
+/*主体样式*/
+	.menu li{ background:rgb(51, 122, 183); color:#ffffff; margin-bottom:7px; padding:8px;
+	          box-shadow:0 1px 3px rgba(0,0,0,0.12),0 1px 2px rgba(0,0,0,0.24);}
+	.menu li:hover{ background:#0099cc;}
+	main img{ max-width:100%; margin-top:10px;}
+	video{ max-width:100%; height:auto; /* height="480" width="480" */}
+	.picword{ background:rgb(51, 122, 183); padding:15px; color:#ffffff; text-align:center; font-size:1em;
+	         box-shadow:0 1px 3px rgba(0,0,0,0.12),0 1px 2px rgba(0,0,0,0.24);
+			 background-image:url("2.jpg"); background-repeat:no-repeat; 
+			 background-size:100% 100%;}
+/*页脚样式*/
+	footer{ background:#9933cc; color:#fff; padding:15px; margin:0px 15px;text-align:center;}
+
+	/*For desktop*/
+	@media only screen and (min-width:992px){
+		.col-1 {width: 8.33%;}
+		.col-2 {width: 16.66%;}
+		.col-3 {width: 25%;}
+		.col-4 {width: 33.33%;}
+		.col-5 {width: 41.66%;}
+		.col-6 {width: 50%;}
+		.col-7 {width: 58.33%;}
+		.col-8 {width: 66.66%;}
+		.col-9 {width: 75%;}
+		.col-10 {width: 83.33%;}
+		.col-11 {width: 91.66%;}
+		.col-12 {width: 100%;}
+		.dropmenu:hover ul{display: block;}	
+	}
+/*For tablets*/
+    @media only screen and (min-width:768px){
+		.col-t-1 {width: 8.33%;}
+		.col-t-2 {width: 16.66%;}
+		.col-t-3 {width: 25%;}
+		.col-t-4 {width: 33.33%;}
+		.col-t-5 {width: 41.66%;}
+		.col-t-6 {width: 50%;}
+		.col-t-7 {width: 58.33%;}
+		.col-t-8 {width: 66.66%;}
+		.col-t-9 {width: 75%;}
+		.col-t-10 {width: 83.33%;}
+		.col-t-11 {width: 91.66%;}
+		.col-t-12 {width: 100%;}
+	}
+/*For mobile phone*/
+	@media only screen and (max-width:768px){
+		[class*="col-"]{ width:100%;}
+		.nav-header .san{display: block;}	
+		.nav-body{display: none;}
+		.nav-center>li{text-align: left;}
+		.dropmenu ul{position: relative;}
+	}
+/*aside背景小图片max-device-width*/
+    @media only screen and (max-width:400px){
+		.picword{background-image:url("s2.jpg");}
+	}
+
+/*竖屏横屏*/
+	@media only screen and (orientation:portrait){
+		body{ background:rgba(0,0,0,.1);}
+	}
+</style>
+</head>
+
+<body>
+<header>
+	<nav class="row">
+		<div class="col-2 nav-header">
+			<a href="javascript:void(0);">
+				<img src="/study/logo.png" />Responsive
+			</a>			
+			<div class="san"><span class="icon icon-menu2"></span></div>
+		</div>
+		<div class="col-10 nav-body row">
+			<ul class="col-8 row nav-center">
+				<li class="col-2"><a href="javascript:void(0);">Home</a></li>
+				<li class="col-2"><a href="javascript:void(0);">produce</a></li>
+				<li class="col-2"><a href="javascript:void(0);">news</a></li>
+				<li class="col-2"><a href="javascript:void(0);">patners</a></li>
+				<li class="col-2 dropmenu">
+					<a href="javascript:void(0);">about <span class="icon icon-circle-down"></span></a>
+					<ul>
+						<li><a href="javascript:void(0);">sublist</a></li>
+						<li><a href="javascript:void(0);">sublist</a></li>
+						<li><a href="javascript:void(0);">sublist</a></li>
+						<li class="dropmenuline"></li>
+						<li><a href="javascript:void(0);">sublist</a></li>
+						<li><a href="javascript:void(0);">sublist</a></li>
+					</ul>
+				</li>
+				<li class="col-2 dropmenu" ><a href="javascript:void(0);">todo <small class="fonticon">▼</small></a>
+					<ul>
+						<li><a href="javascript:void(0);">sublist</a></li>
+						<li><a href="javascript:void(0);">sublist</a></li>
+						<li><a href="javascript:void(0);">sublist</a></li>
+						<li class="dropmenuline"></li>
+						<li><a href="javascript:void(0);">sublist</a></li>
+						<li><a href="javascript:void(0);">sublist</a></li>
+					</ul>
+				</li>
+			</ul>
+			<ul class="col-4 row nav-right">
+				<li class="col-4"><a href="javascript:void(0);">admin</a></li>
+				<li class="col-4"><a href="javascript:void(0);">信息中心</a></li>
+				<li class="col-4 dropmenu" ><a href="javascript:void(0);">会员 <small class="fonticon">▼</small></a>
+					<ul>
+						<li><a href="javascript:void(0);">个人空间</a></li>
+						<li class="dropmenuline"></li>
+						<li><a href="javascript:void(0);">注销登录</a></li>
+					</ul>
+				</li>
+			</ul>
+		</div>
+	</nav>
+</header>
+<main class="row">
+    <aside class="col-2 col-t-2 menu">
+    	<ul>
+        	<li>The first</li>
+            <li>The second</li>
+            <li>The third</li>
+            <li>The fourth</li>
+        </ul>
+    </aside>
+    <article class="col-10 col-t-10">
+    	<h2>This City</h2>
+        <p>Chania is the capital of the Chania region on the island of Crete. 
+        The city can be divided in two parts, the old town and the modern city.</p>
+        <p>Resize the browser window to see how the content respond to the resizing.</p>
+        <p>Chania is the capital of the Chania region on the island of Crete. 
+        The city can be divided in two parts, the old town and the modern city.</p>
+        <p>Resize the browser window to see how the content respond to the resizing.</p>
+        <img src="1.jpg" />
+        <video width="100%" controls>
+          <source src="lover-KATE.mp4" type="video/mp4">
+          Your browser does not support HTML5 video.
+        </video>
+        <div class="picword">
+        	<h2>What?</h2>
+			<p>Chania is a city on the island of Crete.</p>
+			<h2>Where?</h2>
+			<p>Crete is a Greek island in the Mediterranean Sea.</p>
+			<h2>How?</h2>
+			<p>You can reach Chania airport from all over Europe.</p>
+        </div>
+    </article>
+</main> 
+<footer>
+	<span style="font-family:Arial;">Copyright©2016All Rright Reserved</span>
+</footer>
+
+<script src="../jquery-3.1.1.js" ></script>
+<script>
+	$('.san').click(function(){
+		$('.nav-body').slideToggle();
+	});
+	$('.dropmenu').click(function(){
+		$(this).children('ul').slideToggle();
+	});
+</script>
+</body>
+</html>

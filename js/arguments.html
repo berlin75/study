@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>函数参数换肤</title>
+<link rel="stylesheet" type="text/css" href="public.css" />
+<link id="pf" rel="stylesheet" type="text/css" href="skin1.css" />
+
+<script>
+function xs()  {
+  	var di=document.getElementById("div1");
+  	di.style.display="block";
+}
+function yc(){
+  	var di=document.getElementById("div1");
+  	di.style.display="none";
+}
+function skin1(){
+  	var skin=document.getElementById("pf") ;
+  	skin.href="skin1.css"
+}
+function skin2(){
+  	var skin=document.getElementById("pf") ;
+  	skin.href="skin2.css"
+}
+</script>
+</head>
+
+<body>
+<button id="skin1" type="button" value="皮肤1" onclick="skin1()">皮肤1
+</button>
+<button id="skin2" type="button" value="皮肤2" onclick="skin2()">皮肤2
+</button>
+
+<p>多选框鼠标事件</p>
+<div>
+  密码：<input type="password"  />
+  <input type="submit" value="确定" />
+</div>
+<div>
+  <label onmouseover="xs()" onmouseout="yc()">
+    <input type="checkbox"/>
+    一周内免登录
+  </label>
+</div>
+<div id="div1">为了您的信息安全，请慎用！</div>
+</body>
+</html>

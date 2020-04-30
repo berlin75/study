@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf8">
+<title>呼吸灯特效</title>
+<style>
+body {
+	background:#333;
+}
+.breathe-btn {
+	width:100px;
+	height:10px;
+	margin:40px auto;
+	border:1px solid #2b92d4;
+	border-radius:5px;
+	cursor:pointer;
+	box-shadow:0 1px 2px rgba(0,0,0,.3);
+	background-image:-webkit-gradient(linear,left top,left bottom,from(#6cc3fe),to(#21a1d0));
+	-webkit-animation: ease-in-out breathe 2700ms infinite alternate;
+}
+@-webkit-keyframes breathe {
+	0% {
+		opacity:.2;
+		box-shadow:0 1px 2px rgba(255,255,255,0.1);
+	}
+	100% {
+		opacity:1;
+		border:1px solid rgba(59,235,235,1);
+		box-shadow:0 1px 30px rgba(59,255,255,1);
+	}
+}
+#login-btn{text-align: center;height: 2rem;line-height: 2rem;}
+#login-btn a{text-decoration: none;}
+</style>
+</head>
+<body>
+<div class="breathe-btn"></div>
+<div class="breathe-btn" id="login-btn"><a href="">login</a></div>
+</body>
+</html>

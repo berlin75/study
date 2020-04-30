@@ -1,0 +1,13 @@
+@charset "utf-8";
+/* CSS Document */
+div{margin: 1rem 0;}
+#div1{
+	width:200px;
+	height:100px;
+    background:#C90;
+	border:1px solid #333;
+	display:none;
+}
+#skin1{ background:#F9C;}
+#skin2{ background:#CCC;}
+

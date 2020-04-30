@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Vuejs</title>
+<script src="../../vendors/vue.min.js"></script>
+</head>
+<body>
+<div id="app">
+<input v-model="msg">
+<p>{{ msg }}</p>
+
+<input v-model.lazy="msg2">
+<p>{{ msg2 }}</p>
+
+<input type="number" name="age" v-model="num">
+<p>{{ num }}</p>
+
+<input type="number" name="age2" v-model.number="num2">
+<p>{{ num2 }}</p>
+</div>
+
+<script>
+var vm = new Vue({
+	el: '#app',
+	data: {
+		msg: 'test demo',
+		msg2: 'test demo2',
+		num: '12',
+		num2: '13'
+	}
+})
+
+alert(typeof document.getElementsByName('age')[0].value)
+alert(typeof document.getElementsByName('age2')[0].value)
+</script>
+</body>
+</html>

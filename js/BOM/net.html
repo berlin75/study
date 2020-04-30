@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">	
+<title>监测网络是否连接及网速的快慢状态</title>
+</head>
+<body>
+<ol></ol>
+
+<script>
+// 监测网络是否连接及网速的快慢状态
+// 调用的时候,直接调用network.start();
+
+function record(info){
+	if(info == '网速中断') info = `<span style="color:red">${info}</span>`;
+	if(info == '网速过慢') info = `<span style="color:orange">${info}</span>`;
+	if(info == '网速中等') info = `<span style="color:blue">${info}</span>`;
+	if(info == '网速极佳') info = `<span style="color:green">${info}</span>`;
+	var oLi = document.createElement('li');
+	oLi.innerHTML = new Date().toLocaleString() + ' - ' + info;
+	document.querySelector('ol').appendChild(oLi);
+}
+
+(function(){
+  var network = function(){
+    var monitor = this;
+    var speedInterval = null;
+    var networkInterval = null;
+    var reNetworkInterval = null;
+    var time = 1000*60;
+    // 获取网络连接状态
+    var getConnectState = function(){
+      return navigator.onLine ? 1 : 0;
+    }; 
+
+    // 网络中断
+    var disconnect = function(){
+      record("网速中断");
+      clearInterval(reNetworkInterval);
+      reNetworkInterval = null;
+      endSpeed();
+      endNetwork();
+      setTimeout(function(){
+        reNetworkInterval = setInterval(function(){
+          if (getConnectState() == 1) {
+            clearInterval(reNetworkInterval);
+            reNetworkInterval = null;
+            startSpeed();
+            startNetwork();
+          } else {
+            clearInterval(reNetworkInterval);
+            reNetworkInterval = null;
+            disconnect();
+          }
+        }, time);
+      }, 2 * time);
+    };
+    // 网络速度
+    var speed = {
+      // 网速过慢
+      bad : function(){
+        record("网速过慢");
+        setTimeout(function(){
+          if(getConnectState()) {
+            clearInterval(networkInterval);
+            networkInterval = null;
+            startSpeed();
+          } else {
+            disconnect();
+          }
+        }, 2 * time);
+      },
+      // 网速中等
+      medium : function(){
+        record("网速中等");
+      },
+      // 网速极佳
+      great : function(){
+        record("网速极佳");
+      }
+    };
+    // 开启速度监测
+    var startSpeed = function(){
+      clearInterval(speedInterval);
+      speedInterval = null;
+      if(getConnectState()) {
+        speedInterval = setInterval(function(){
+          var start = new Date().getTime();
+          if (getConnectState()) {
+            var img = document.getElementById("networkSpeedImage");
+            if (!!!img) {
+              img = document.createElement("IMG");
+              img.id = "networkSpeedImage";
+              img.style.display = "none";
+              document.body.appendChild(img);
+            }
+            try {
+              img.src = "http://www.baidu.com/img/baidu_jgylogo3.gif?_t=" + new Date().getTime();
+              img.onload = function(){
+                var end = new Date().getTime();
+                var delta = end - start;
+                if (delta > 200) {
+                  speed.bad();
+                } else if (delta > 100) {
+                  speed.medium();
+                } else {
+                  speed.great();
+                }
+              };
+            } catch(e){
+              speed.bad();
+            }
+          } else {
+            disconnect();
+          }
+        }, time);
+      }else {
+        disconnect();
+      }
+    };
+
+    // 停止速度监测
+    var endSpeed = function(){
+      clearInterval(speedInterval);
+      speedInterval = null;
+    };
+
+    // 开启网络连接监测
+    var startNetwork = function(){
+      if (getConnectState()) {
+        networkInterval = setInterval(function(){
+          if (getConnectState() == 0) {
+            disconnect();
+          }
+        }, time);
+      } else{
+        disconnect();
+      }
+    };
+
+    // 结束网络连接监测
+    var endNetwork = function(){
+      clearInterval(networkInterval);
+      networkInterval = null;
+    };
+
+    // 网络监控开始
+    this.start = function(){
+      startNetwork();
+      startSpeed();
+    };
+    // 停止网络监控
+    this.stop = function(){
+      endSpeed();
+      endNetwork();
+    };
+  };
+
+  window.network = new network();
+}).call(this);
+
+network.start();
+
+// network.stop();
+</script>
+</body>
+</html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>BOM</title>
+<style>
+
+</style>
+<script>
+window.onload=function()
+{
+	var oTxt=document.getElementById("txt1");
+	var oBtn=document.getElementById("btn1");
+	oBtn.onclick=function()
+	{
+		var oNewwin=window.open("about:blank","_blank");
+		oNewwin.document.write(oTxt.value);                //可以放入文字图片代码
+	};
+};
+
+alert(window.navigator.userAgent);                  //当前浏览器版本信息
+
+alert(window.location);
+
+</script>
+</head>
+
+<body>
+	<input type="button" value="打开窗口" onclick="window.open('http//www.baidu.com');" />
+    <input type="button" value="关闭窗口" onclick="window.close();"/>
+    <input type="button" value="aaa" onclick="window.location='http//www.baidu.com';"  />
+    <textarea id="txt1" rows="10" cols="40">试用试用</textarea>
+    <input id="btn1" type="button" value="运行" />
+    <input id="btn2" type="button" value="关闭窗口" />
+    
+    <div>
+    	<p>close在IE下会弹出提示框，在FF下不能关闭用户打开的窗口，只能是open打开的窗口，对于js打开的窗口IE的close不会再有提示
+    </div>
+ </body>
+</html>

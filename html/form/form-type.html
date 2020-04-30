@@ -1,0 +1,185 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>无标题文档</title>
+</head>
+
+<body>
+<h2>input元素默认输入类型text</h2>
+<form action="action_page.php">
+ First name:<br>
+<input type="text" name="firstname">
+<br>
+ Last name:<br>
+<input type="text" name="lastname">
+<p>文本字段的默认宽度是 20 个字符</p>
+<hr>
+
+<h2>radio单选按钮</h2>
+<input type="radio" name="sex" value="male" checked>Male
+<br>
+<input type="radio" name="sex" value="female">Female
+<hr>
+
+<h2>select元素下拉表单</h2>
+<select name="cars">
+<option value="volvo">Volvo</option>
+<option value="saab">Saab</option>
+<option value="fiat"  selected>Fiat</option>
+<option value="audi">Audi</option>
+</select>
+<p>selected 可以选定预选项</p>
+<hr>
+
+<h2>checkbox多选按钮</h2>
+<input type="checkbox" name="vehicle" value="Bike">I have a bike
+<br>
+<input type="checkbox" name="vehicle" value="Car">I have a car 
+<hr>
+
+<h2>输入类型number输入数字值,可限定范围</h2>
+Quantity (between 1 and 5):
+<input type="number" name="quantity" min="1" max="5">
+<hr>
+
+<h2>fieldset分组，legend标题</h2>
+<form action="action_page.php">    <!--表单处理程序在表单的 action 属性中指定-->
+<fieldset>
+<legend>Personal information:</legend>
+First name:<br>
+<input type="text" name="firstname" value="Mickey">
+<br>
+Last name:<br>
+<input type="text" name="lastname" value="Mouse">
+<br><br>
+<input type="submit" value="Submit">   <!--定义用于向表单处理程序（form-handler）提交表单的按钮-->
+</fieldset>
+</form>
+<br>
+<p>如果您省略了提交按钮的 value 属性，那么该按钮将获得默认文本submit</p>
+<hr> 
+
+
+<h2>textarea元素文本输入域，可输入多行文字</h2>
+<textarea name="message" rows="10" cols="30">
+The cat was playing in the garden.
+</textarea>
+<hr>
+
+<h2>可点击的按钮button元素</h2>
+<button type="button" onclick="alert('Hello World!')">Click Me!</button>
+<p>点击按钮弹出JavaScript 提醒，hello world！</p>
+
+<hr>
+
+<h2>datalist元素规定用户可用的预定义选项下拉表</h2>
+Browsers：<input type="text" list="browsers">
+<datalist id="browsers">
+   <option value="Internet Explorer">
+   <option value="Firefox">
+   <option value="Chrome">
+   <option value="Opera">
+   <option value="Safari">
+</datalist> 
+<input type="submit">
+<br>
+<p>其中list 属性必须引用 datalist 元素的 id 属性</p>
+<hr>
+
+<h2>输入类型password,password 字段中的字符会被做掩码处理（显示为星号或实心圆）。</h2>
+ User name:<br>
+<input type="text" name="username">
+<br>
+ User password:<br>
+<input type="password" name="psw">
+<hr>
+
+<p>限制输入:</p>
+<p>disabled	规定输入字段应该被禁用。</p>
+<p>max	规定输入字段的最大值。</p>
+<p>maxlength	规定输入字段的最大字符数。</p>
+<p>min	规定输入字段的最小值。</p>
+<p>pattern	规定通过其检查输入值的正则表达式。</p>
+<p>readonly	规定输入字段为只读（无法修改）。</p>
+<p>required	规定输入字段是必需的（必需填写）。</p>
+<p>size	规定输入字段的宽度（以字符计）。</p>
+<p>step	规定输入字段的合法数字间隔。</p>
+<p>value	规定输入字段的默认值。</p>
+<br>
+Quantity:
+<input type="number" name="points" min="0" max="100" step="10" value="30">
+<hr>
+
+<h2>输入类型data用于输入日期,有日期选择器 </h2>
+  Birthday:
+  <input type="date" name="bday">
+<br>
+<p>添加限制</p>
+  Enter a date before 1980-01-01:
+  <input type="date" name="bday" max="1979-12-31"><br>
+  Enter a date after 2000-01-01:
+  <input type="date" name="bday" min="2000-01-02"><br>
+<br>
+<h2>输入类型month允许选择年月</h2>
+  Birthday (month and year):
+  <input type="month" name="bdaymonth">
+
+<br>
+<h2>输入类型week允许选择年和周</h2>
+  Select a week:
+  <input type="week" name="week_year">
+
+<br>
+<h2>输入类型time允许选择时间</h2>
+  Select a time:
+  <input type="time" name="usr_time">
+<br>
+<h2>输入类型datetime允许有时区选日期择时间</h2>
+  Birthday (date and time):
+  <input type="datetime" name="bdaytime">
+
+<br>
+<h2>输入类型datetime允许有时区选日期择时间</h2>
+  Birthday (date and time):
+  <input type="datetime-local" name="bdaytime">
+<hr>
+<br>
+<h2>输入类型email用于包含电子邮件的输入字段,提交时自动对邮件地址验证</h2>
+  E-mail:
+  <input type="email" name="email">
+<hr>
+
+<h2>输入类型search用于搜索字段</h2>
+  Search Google:
+  <input type="search" name="googlesearch">
+<hr>
+
+<h2>输入类型tel用于包含电话号码的输入字段</h2>
+  Telephone:
+  <input type="tel" name="usrtel">
+<hr>
+
+<h2>输入类型url用于输入含有url字段</h2>
+  Add your homepage:
+  <input type="url" name="homepage">
+
+<hr>
+
+<h2>输入类型color用于包含有色的输入字段,有颜色选择器 </h2>
+  Select your favorite color:
+  <input type="color" name="favcolor">
+<hr>
+
+<h2>输入类型range用于包含一定范围值得输入字段,输入字段显示为滑块空件,可见min,max,step,value限制 </h2>
+  <input type="range" name="points" min="0" max="10">
+<hr>
+<h3>value属性规定输入字段的初始值;</h3>
+<h3>readonly 属性规定输入字段为只读（不能修改）,等同余readonly="readonly";</h3>
+<h3>disabled 属性规定输入字段是禁用的。被禁用的元素是不可用和点击的。被禁用的元素不会被提交.</h3>
+<h3>disabled 属性不需要值。它等同于 disabled="disabled",</h3>
+<h3>size属性规定输入字段的尺寸;</h3>
+<h3>maxlength 属性规定输入字段允许的最大长度;</h3>
+
+</body>
+</html>

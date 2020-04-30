@@ -1,0 +1,49 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>canvas 路径 非零环绕</title>
+<style>
+
+</style>
+</head>
+<body>
+<p>利用非零环绕原则和阴影来绘制一个镂空的剪纸效果</p>
+<canvas id="drawing" style="border:1px solid black">当前浏览器不支持canvas，请更换浏览器后再试</canvas>
+<script>
+var canvas = document.getElementById('drawing');
+if(drawing.getContext){
+    var cxt = drawing.getContext('2d');
+    cxt.fillStyle = "#FFF";
+    cxt.fillRect(0,0,300,150);
+    cxt.beginPath();
+    cxt.rect(0,0,300,150);
+    drawPathRect(cxt, 10, 10, 200, 80);
+    drawPathTriangle(cxt, 10, 140,30, 100,  50, 140);
+    cxt.arc(150, 120, 20, 0, Math.PI * 2, true);
+    cxt.closePath();
+    cxt.fillStyle = "#058";
+    cxt.shadowColor = "gray";
+    cxt.shadowOffsetX = 10;
+    cxt.shadowOffsetY = 10;
+    cxt.shadowBlur = 10;
+    cxt.fill();
+    //逆时针绘制矩形
+    function drawPathRect(cxt, x, y, w, h){
+        cxt.moveTo(x, y);
+        cxt.lineTo(x, y + h);
+        cxt.lineTo(x + w, y + h);
+        cxt.lineTo(x + w, y);
+        cxt.lineTo(x, y);
+    }
+    //逆时针绘制三角形
+    function drawPathTriangle(cxt, x1, y1, x2, y2, x3, y3){
+        cxt.moveTo(x1,y1);
+        cxt.lineTo(x3,y3);
+        cxt.lineTo(x2,y2);
+        cxt.lineTo(x1,y1);
+    }
+} 
+</script>
+</body>
+</html>

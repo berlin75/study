@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>HTML5/CSS3简易版俄罗斯方块 - div</title>
+<style>
+body {overflow: hidden;}
+#tetris {width: 360px;border: 1px solid rgba(0,0,0,.3);padding: 20px;margin:0 auto;}
+#canvas {width: 200px;height: 440px;background-color: #000;position: relative;color: #fff;}
+#canvas h1 {margin: 0;padding: 0;text-align: center;font-size: 30px;padding-top: 200px;}
+.piece {border: 1px solid white;position: absolute;}
+.square {position: absolute;width: 19px;height: 19px;border: 1px solid white;}
+.type0 { background-color: #A000F0;}    
+.type1 { background-color: #00F0F0;}     
+.type2 { background-color: #F0A000;} 
+.type3 { background-color: #0000F0;} 
+.type4 { background-color: #00F000;} 
+.type5 { background-color: #F00000;} 
+.type6 { background-color: #F0F000;}
+#next_shape {position: relative;background-color: #000;border: 1px solid white;width: 110px;height: 110px;}
+#info {background-color: #000;color: #fff;float: right;width: 110px;height: 420px;padding: 10px;}
+</style>
+</head>
+<body>
+<div id="tetris"> 
+  <div id="info">
+    <div id="next_shape">asdfasdf</div>
+    <p id="level">Level: <span></span></p>
+    <p id="lines">Lines: <span></span></p>
+    <p id="score">Score: <span></span></p>
+    <p id="time">Time: <span></span></p>
+  </div>
+  <div id="canvas"></div>
+</div>
+<p style="color:red;font-size:18px;font-weight:bold">方向键进行移动和翻转;esc pause</p>
+<script>
+// 10*22格，每格20*20
+var tetris = {    
+  board: [],
+  boardDiv: null,
+  canvas: null, 
+  pSize: 20,          // 格子尺寸
+  canvasHeight: 440,
+  canvasWidth: 200,
+  boardHeight: 0,
+  boardWidth: 0,
+  spawnX: 4,
+  spawnY: 1,
+  tempShapes:     null,
+  curShape:       null, 
+  curShapeIndex:  null, 
+  curX:           0,
+  curY:           0,
+  curSqs:         [],
+  nextShape:      null,
+  nextShapeDisplay: null,
+  nextShapeIndex: null, 
+  sqs:            [],
+  score:          0,
+  scoreDisplay:   null,
+  level:          1,
+  levelDisplay:   null,
+  numLevels:      10,
+  time:           0,
+  maxTime:        1000,
+  timeDisplay:    null,
+  isActive:       0,
+  curComplete:    false, 
+  timer:          null, 
+  sTimer:         null,
+  speed:          700,
+  lines:          0,
+  linesDisplay:   null,
+  shapes: [   // (x,y)+2*size=top,left
+    [ [-1,1],[0,1],[1,1],[0,0] ],   //T,  20,60 40,60 60,60 40,40表示三头
+    [ [-1,0],[0,0],[1,0],[2,0] ],   //l   20,40 40,40 60,40 80,40表示直条
+    [ [-1,-1],[-1,0],[0,0],[1,0] ], //J   20,20 20,40 40,40 60,40
+    [ [1,-1],[-1,0],[0,0],[1,0] ],  //L   60,20 20,40 40,40 60,40
+    [ [0,-1],[1,-1],[-1,0],[0,0] ], //L   40,20 60,20 20,40 20,20
+    [ [-1,-1],[0,-1],[0,0],[1,0] ], //Z   20,20 40,20 40,40 60,40
+    [ [0,-1],[1,-1],[0,0],[1,0] ]   //O   40,20 60,20 40,40 60,40
+  ],
+    
+  init: function() { 
+    this.canvas = document.getElementById("canvas");
+    this.initBoard();
+    this.initInfo();
+    this.initLevelScores();
+    this.initShapes(); 
+    this.bindKeyEvents();
+    this.play();
+  },
+  // 一维数组：标记游戏区的每个方格,被占的方格对应值为1
+  initBoard: function() {
+    this.boardHeight = this.canvasHeight/this.pSize;
+    this.boardWidth = this.canvasWidth/this.pSize;
+    var s = this.boardHeight * this.boardWidth;        // 格子总数量
+    for (var i=0; i < s; i++) this.board.push(0);
+  },
+
+  initInfo: function() {
+    this.nextShapeDisplay = document.getElementById("next_shape");
+    this.levelDisplay = document.getElementById("level").getElementsByTagName("span")[0];
+    this.timeDisplay = document.getElementById("time").getElementsByTagName("span")[0];
+    this.scoreDisplay = document.getElementById("score").getElementsByTagName("span")[0];
+    this.linesDisplay = document.getElementById("lines").getElementsByTagName("span")[0];
+    this.setInfo('time');
+    this.setInfo('score');
+    this.setInfo('level');
+    this.setInfo('lines');
+  },
+  setInfo: function(el){
+    this[el + 'Display'].innerHTML = this[el];
+  },
+
+  initLevelScores: function(){
+    for (var i = 1, c = 1; i <= this.numLevels; i++){  // 1,1 2,2 3,4 4,8 5,16
+      this['level' + i] = [c * 1000, 40 * i, 5 * i];   // for nxt level, row score, p sore, 
+      c = 2 * c;
+    }
+    // console.log(this.level1,this.level2,this.level10);  // [1000, 40, 5], [2000, 80, 10], [512000, 400, 50]
+  },
+
+  // 初始化游戏区和预览区
+  initShapes: function() {
+    this.curSqs = [];
+    this.curComplete = false;
+    this.shiftTempShapes();                          // 生成由0-6六个数字随机排序组成的数组this.tempShapes
+    this.curShapeIndex = this.tempShapes[0];
+    this.curShape = this.shapes[this.curShapeIndex]; // 从this.shapes中随机获取一个元素
+    this.initNextShape();
+    this.setCurCoords(this.spawnX, this.spawnY);     // 设置当前坐标,初始4,1
+    this.drawShape(this.curX, this.curY, this.curShape);
+  },
+  shiftTempShapes: function(){
+    try {
+      if (typeof this.tempShapes === "undefined" || this.tempShapes === null) {
+        this.initTempShapes();
+      } else {
+        this.tempShapes.shift();
+      } 
+    } catch (e) {
+      throw new Error("Could not shift or init tempShapes: " +e);
+    }
+  },
+  // 生成由0-6六个数字随机排序组成的数组this.tempShapes
+  initTempShapes: function(){
+    this.tempShapes = [];
+    for (var i =0; i < this.shapes.length; i++) this.tempShapes.push(i);
+    var k = this.tempShapes.length;
+    while ( --k ){ 
+      var j = Math.floor(Math.random()*(k + 1));
+      var tempk = this.tempShapes[k];
+      var tempj = this.tempShapes[j];
+      this.tempShapes[k] = tempj;
+      this.tempShapes[j] = tempk;
+    }
+  },
+  initNextShape: function() {
+    if(typeof this.tempShapes[1] === 'undefined') this.initTempShapes(); 
+    try {
+      this.nextShapeIndex = this.tempShapes[1];
+      this.nextShape = this.shapes[this.nextShapeIndex];
+      this.drawNextShape();
+    } catch(e) {
+      throw new Error("Could not create next shape. " + e);
+    }    
+  },
+  // 渲染预览区,this.nextShape： [ [-1,1],[0,1],[1,1],[0,0] ]
+  drawNextShape: function(){
+    var ns = [];
+    for (var i = 0; i < this.nextShape.length; i++){
+      ns[i] = this.createSquare(this.nextShape[i][0] + 2, this.nextShape[i][1] + 2, this.nextShapeIndex);
+    }
+    this.nextShapeDisplay.innerHTML = '';
+    for (var k = 0; k < ns.length; k++){
+      this.nextShapeDisplay.appendChild(ns[k]);
+    }
+  },
+  // 生成预览区(x,y)坐标的方格,this.createSquare(1, 3, 0)
+  createSquare: function(x, y, type){ 
+    var el = document.createElement('div');
+    el.className = 'square type' +type;
+    el.style.left = x * this.pSize + 'px';
+    el.style.top = y * this.pSize + 'px';
+    return el;
+  },
+  // 设置当前坐标,初始4,1
+  setCurCoords: function(x, y){
+    this.curX = x;
+    this.curY = y;
+  },
+  // 渲染游戏区新生成的方块的4个方格,xy设置绘制的原点4,1,[[],[],[],[]]
+  drawShape: function(x, y, p){
+    for (var i = 0; i < p.length; i++){
+      var newX = p[i][0] + x;    // xy可能为0或-1
+      var newY = p[i][1] + y;
+      this.curSqs[i] = this.createSquare(newX, newY, this.curShapeIndex);
+    }
+    for (var k = 0; k < this.curSqs.length; k++){
+      this.canvas.appendChild(this.curSqs[k]);
+    }
+  },
+  
+  bindKeyEvents: function(){
+    var me = this;
+    var event = "keypress";
+    if (this.isSafari() || this.isIE()) event = "keydown"; 
+    var cb = function(e){
+      me.handleKey(e);
+    };
+    window.addEventListener ? document.addEventListener(event, cb, false) : document.attachEvent('on' + event, cb);
+  },
+  handleKey: function(e){
+    switch (window.event.keyCode || e.keyCode){
+      case 37: this.move('L'); break;     // ArrowLeft
+      case 38: this.move('RT'); break;    // ArrowUp
+      case 39: this.move('R'); break;     // ArrowRight
+      case 40: this.move('D'); break;     // ArrowDown
+      case 27: this.togglePause(); break; // esc: pause
+    }
+  },
+  togglePause: function(){
+    if (this.isActive === 1){
+      this.clearTimers();
+      this.isActive = 0;
+    }else {
+      this.play();
+    }
+  },
+  move: function(dir){
+    var s = '';
+    var me = this;
+    var tempX = this.curX;
+    var tempY = this.curY;
+    switch(dir){
+      case 'L':
+        s = 'left';
+        tempX -= 1;
+        break;
+      case 'R':
+        s = 'left';
+        tempX += 1;
+        break;
+      case 'D':
+        s = 'top';
+        tempY += 1;
+        break;
+      case 'RT':
+        this.rotate();
+        return true;
+        break;
+      default: 
+        throw new Error('wtf');
+        break;
+    }
+    if (this.checkMove(tempX, tempY, this.curShape)){  // 触碰检测
+      // 方块移动
+      this.curSqs.forEach(function(item, index) {
+        var l = parseInt(item.style[s], 10);
+        dir === 'L' ? l -= me.pSize : l += me.pSize;
+        item.style[s] = l + 'px';
+      });
+      this.curX = tempX;
+      this.curY = tempY;
+    } else if (dir === 'D') {  // 碰到了
+      if (this.curY === 1 || this.time === this.maxTime) {  // 游戏区当前方块到了顶部或超过了最大时间则游戏结束
+        this.gameOver(); 
+        return false;
+      }
+      this.curComplete = true;
+    }
+  },
+  rotate: function(){
+    if (this.curShapeIndex !== 6) {  //shape O
+      var temp = [];
+      this.curShape.forEach(function(item, index){       // 旋转方块
+        temp.push([item[1] * -1, item[0]]);
+      });
+      if (this.checkMove(this.curX, this.curY, temp)) {
+        this.curShape = temp;
+        this.removeCur();
+        this.drawShape(this.curX, this.curY, this.curShape);
+      } 
+    }
+  },
+  removeCur: function(){
+    var me = this;
+    this.curSqs.forEach(function(item, index){
+      me.canvas.removeChild(item);
+    });
+    this.curSqs = [];
+  },
+  checkMove: function(x, y, p){
+    if (this.isOB(x, y, p) || this.isCollision(x, y, p)) return false;
+    return true;
+  },
+  // this.boardWidth == 10 this.boardHeight == 22
+  boardPos: function(x, y){ 
+    return this.board[x + (y * this.boardWidth)];
+  },
+  // 碰撞检测(方块原点坐标xy, 方块形状数据) 4, 2, [[0,-1], [1,-1],[0,0], [1,0]]
+  isCollision: function(x, y, p) { 
+    var me = this;
+    var bool = false;
+    p.forEach(function(item, index){
+      var newX = item[0] + x;
+      var newY = item[1] + y;
+      if (me.boardPos(newX, newY) === 1) bool = true;  // 新的点意见被占用
+    });
+    return bool;
+  },
+  // 越界检测
+  isOB: function(x, y, p){
+    var w = this.boardWidth - 1;
+    var h = this.boardHeight - 1;
+    var bool = false;
+    p.forEach(function(item, index){
+      var newX = item[0] + x;
+      var newY = item[1] + y;
+      if(newX < 0 || newX > w || newY < 0 || newY > h) bool = true;
+    });
+    return bool;
+  },
+  gameOver: function(){
+    this.clearTimers();
+    this.canvas.innerHTML = "<h1>GAME OVER</h1>";
+  },
+
+  play: function(){
+    var me = this;
+    if (this.timer === null) this.initTimer();
+    var gameLoop = function(){
+      me.move('D');
+      if(me.curComplete){   // 当前方块结束
+        me.markBoardShape(me.curX, me.curY, me.curShape);  // 标记已落地方块的位置对应this.board中值为1,表示已占用
+        me.curSqs.forEach(function(item, index){
+          me.sqs.push(item);
+        });
+        me.calcScore({shape: true});
+        me.checkRows();
+        me.checkScore();
+        me.initShapes();
+        me.play();
+      } else {
+        me.pTimer = setTimeout(gameLoop, me.speed);
+      }
+    };
+    this.pTimer = setTimeout(gameLoop, me.speed);  // speed:700
+    this.isActive = 1;
+  },
+  initTimer: function(){
+    var me = this;
+    var tLoop = function(){
+      me.incTime();
+      me.timer = setTimeout(tLoop, 2000);
+    };
+    this.timer = setTimeout(tLoop, 2000);
+  },
+  incTime: function(){
+    this.time++;
+    this.setInfo('time');
+  },
+  clearTimers: function(){
+    clearTimeout(this.timer);
+    clearTimeout(this.pTimer);
+    this.timer = null;
+    this.pTimer = null;
+  },
+
+  markBoardShape: function(x, y, p){
+    var me = this;
+    p.forEach(function(item, index){
+      var newX = item[0] + x;
+      var newY = item[1] + y;
+      me.markBoardAt(newX, newY, 1);
+    });
+  },
+  markBoardAt: function(x, y, val){
+    this.board[this.getBoardIdx(x, y)] = val;
+  },
+  getBoardIdx: function(x, y){
+    return x + (y * this.boardWidth);
+  },
+
+  calcScore: function(args){
+    var lines = args.lines || 0;
+    var shape = args.shape || false;
+    var speed = args.speed || 0;
+    var score = 0;
+    
+    if (lines > 0) {
+      score += lines * this["level" + this.level][1];
+      this.incLines(lines);
+    }
+    if (shape) score += shape * this["level" + this.level][2];  
+    /*if (speed > 0){ score += speed * this["level" +this .level[3]];}*/
+    this.incScore(score);
+  },
+
+  incScore: function(amount){
+    this.score = this.score + amount;
+    this.setInfo('score');
+  },
+  incLines: function(num){
+    this.lines += num;
+    this.setInfo('lines');
+  },
+  
+  checkScore: function(){
+    if (this.score >= this["level" + this.level][0]) this.incLevel();
+  },
+  incLevel: function(){
+    this.level++;
+    this.speed = this.speed - 75;
+    this.setInfo('level');
+  },
+
+  checkRows: function(){
+    var me = this;
+    // 获取当前方块中方格y坐标最小值
+    var start = this.boardHeight;
+    this.curShape.forEach(function(item, index){
+      var n = item[1] + me.curY;
+      if (n < start) start = n;
+    });
+    
+    var c = 0;
+    var stopCheck = false;
+    for (var y= this.boardHeight - 1; y >=0; y--){  // 遍历游戏区每一层
+      switch(this.getRowState(y)){
+        case 'F':  // 全占用
+          this.removeRow(y);
+          c++;
+          break;
+        case 'E':  // 没占用
+          if (c === 0) stopCheck = true;
+          break;
+        case 'U':
+          if (c > 0) this.shiftRow(y, c);
+          break;
+        default:
+          break;
+      }
+      if (stopCheck === true) break;
+    }    
+    if (c > 0) this.calcScore({ lines: c});
+  },
+  // 检查某一行中方格的数量
+  getRowState: function(y){
+    var c = 0;
+    for (var x = 0; x < this.boardWidth; x++){
+      if (this.boardPos(x, y) === 1) c++;
+    }
+    if (c === 0) return 'E'
+    if (c === this.boardWidth) return 'F';
+    return 'U';
+  },
+  // 某一行占满时移除该行
+  removeRow: function(y){
+    for (var x =0; x < this.boardWidth; x++){
+      this.removeBlock(x, y);
+    }
+  },
+  removeBlock: function(x, y){
+    var me = this;
+    this.markBoardAt(x, y, 0);
+    this.sqs.forEach(function(item, index){
+      if (me.getPos(item)[0] === x && me.getPos(item)[1] === y){
+        me.canvas.removeChild(item);
+        me.sqs.splice(index, 1);
+      }
+    });
+  },
+  shiftRow: function(y, amount){
+    var me = this;
+    for (var x = 0; x < this.boardWidth; x++){
+      this.sqs.forEach(function(item, index){
+        if (me.isAt(x, y, item)) me.setBlock(x, y + amount, item);
+      });
+    }
+    me.emptyBoardRow(y);
+  },
+  getPos: function(block){
+    var p = [];
+    p.push(parseInt(block.style.left, 10) / this.pSize);
+    p.push(parseInt(block.style.top, 10) / this.pSize);
+    return p;
+  },
+  isAt: function(x, y, block){
+    return this.getPos(block)[0] === x && this.getPos(block)[1] === y;
+  },
+  emptyBoardRow: function(y){
+    for (var x = 0; x < this.boardWidth; x++){
+      this.markBoardAt(x, y, 0);
+    }
+  },
+  setBlock: function(x, y, block){
+    this.markBoardAt(x, y, 1);
+    var newX = x * this.pSize;
+    var newY = y * this.pSize;
+    block.style.left = newX + 'px';
+    block.style.top = newY + "px";
+  },
+
+  isIE: function(){
+    return this.bTest(/IE/);
+  },
+  isFirefox: function(){
+    return this.bTest(/Firefox/);
+  },
+  isSafari: function(){
+    return this.bTest(/Safari/);
+  },
+  bTest: function(rgx){
+    return rgx.test(navigator.userAgent);
+  }
+  /*debug: function(){
+  var me = this;
+  var str = '';
+  for (var i = 0; i < me.board.length; i++){
+    if(i % me.boardWidth === 0){
+       if (me.board[i] === 1) {
+          str += ' X ';
+       }
+       else {
+          str += "&nbsp; * &nbsp;";
+       }
+       var par = document.creatElement('p');
+       par.innerHTML = str;
+       me.boardDiv.innerHTML = '';
+       me.boardVid.apendChild(par);
+    }, */
+};
+tetris.init(); 
+
+// 返回原数组中没有重复的元素组成的新数组
+if(!Array.prototype.remDup){
+  Array.prototype.remDup = function(){
+    var temp = [];
+    for(var i =0; i < this.length; i++){
+      var bool = true;
+      for (var j = i+1; j < this.length; j++){
+        if(this[i] === this[j])  bool = false; 
+      }    
+      if(bool === true) temp.push(this[i]); 
+    }
+    return temp;
+  }
+}
+</script>
+
+</body>
+</html>

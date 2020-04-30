@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf8">
+<title>js控制输入</title>
+<style></style>
+</head>
+<body>
+<div>
+	<p> value.replace(/[^\a-\z\A-\Z0-9\u4E00-\u9FA5\ ]/g,'') <br/>
+	键盘输入，鼠标右键粘贴输入，编辑菜单粘贴输入 onkeyup onpaste oncontextmenu(只有FF中支持contextmenu属性)<br/>
+	if(oEvent.keyCode!=8&&oEvent.keyCode<48||oEvent.keyCode>57){   //排除退格键，应加上小键盘的数字
+		return false;               //输入的不是数字是才阻止
+	}<br/>
+	===============================================================================================</p>
+
+	<p>只能输入数字type="number": <input type="number" > </p>
+
+	JS 控制不能输入特殊字符
+<input type="text" class="domain" onkeyup="this.value=this.value.replace(/[^u4e00-u9fa5w]/g,'')" > `^没有排除<br><br>
+
+	JS 控制文本框只能输入中文、英文、数字、空格
+<input onkeyup="value=value.replace(/[^\a-\z\A-\Z0-9\u4E00-\u9FA5\ ]/g,'')" onpaste="value=value.replace(/[^\a-\z\A-\Z0-9\u4E00-\u9FA5\ ]/g,'')" oncontextmenu="value=value.replace(/[^\a-\z\A-\Z0-9\u4E00-\u9FA5\ ]/g,'')">
+<br><br>
+
+JS 控制文本框只能输入中文、英文、数字、小数点
+<input onkeyup="value=value.replace(/[^\a-\z\A-\Z0-9\u4E00-\u9FA5\.]/g,'')" onpaste="value=value.replace(/[^\a-\z\A-\Z0-9\u4E00-\u9FA5\.]/g,'')" oncontextmenu="value=value.replace(/[^\a-\z\A-\Z0-9\u4E00-\u9FA5\.]/g,'')">
+
+
+	
+</div>
+<script src="../../vendors/jquery-3.1.1.js"></script>
+<script>
+
+</script>
+
+	<br/><br/><textarea rows="40" cols="150">
+	参考原代码 http://www.jq22.com/webqd2291
+
+JS 控制不能输入特殊字符
+<input type="text" class="domain" onkeyup="this.value=this.value.replace(/[^u4e00-u9fa5w]/g,'')" >
+
+<br><br>JS 控制文本框只能输入数字
+<input onkeyup="value=value.replace(/[^0-9]/g,'')" onpaste="value=value.replace(/[^0-9]/g,'')" oncontextmenu="value=value.replace(/[^0-9]/g,'')">
+
+<br><br>JS 控制文本框只能输入数字、小数点
+<input onkeyup="value=value.replace(/[^\0-9\.]/g,'')" onpaste="value=value.replace(/[^\0-9\.]/g,'')" oncontextmenu="value=value.replace(/[^\0-9\.]/g,'')">
+
+<br><br>JS 控制文本框只能输入英文
+<input onkeyup="value=value.replace(/[^\a-\z\A-\Z]/g,'')" onpaste="value=value.replace(/[^\a-\z\A-\Z]/g,'')" oncontextmenu="value=value.replace(/[^\a-\z\A-\Z]/g,'')">
+
+<br><br>JS 控制文本框只能输入英文、数字
+<input onkeyup="value=value.replace(/[^\a-\z\A-\Z0-9]/g,'')" onpaste="value=value.replace(/[^\a-\z\A-\Z0-9]/g,'')" oncontextmenu="value=value.replace(/[^\a-\z\A-\Z0-9]/g,'')">
+
+<br><br>JS 控制文本框只能输入中文
+<input onkeyup="value=value.replace(/[^\u4E00-\u9FA5]/g,'')" onpaste="value=value.replace(/[^\u4E00-\u9FA5]/g,'')" oncontextmenu="value=value.replace(/[^\u4E00-\u9FA5]/g,'')">
+
+<br><br>JS 控制文本框只能输入中文、英文、数字
+<input onkeyup="value=value.replace(/[^\a-\z\A-\Z0-9\u4E00-\u9FA5]/g,'')" onpaste="value=value.replace(/[^\a-\z\A-\Z0-9\u4E00-\u9FA5]/g,'')" oncontextmenu="value=value.replace(/[^\a-\z\A-\Z0-9\u4E00-\u9FA5]/g,'')">
+
+<br><br>JS 控制文本框只能输入中文、英文、数字、空格
+<input onkeyup="value=value.replace(/[^\a-\z\A-\Z0-9\u4E00-\u9FA5\ ]/g,'')" onpaste="value=value.replace(/[^\a-\z\A-\Z0-9\u4E00-\u9FA5\ ]/g,'')" oncontextmenu="value=value.replace(/[^\a-\z\A-\Z0-9\u4E00-\u9FA5\ ]/g,'')">
+
+<br><br>JS 控制文本框只能输入中文、英文、数字、小数点
+<input onkeyup="value=value.replace(/[^\a-\z\A-\Z0-9\u4E00-\u9FA5\.]/g,'')" onpaste="value=value.replace(/[^\a-\z\A-\Z0-9\u4E00-\u9FA5\.]/g,'')" oncontextmenu="value=value.replace(/[^\a-\z\A-\Z0-9\u4E00-\u9FA5\.]/g,'')">
+
+	</textarea>
+</body>
+</html>

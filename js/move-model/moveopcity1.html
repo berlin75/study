@@ -1,0 +1,52 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>透明度运动淡入淡出模型</title>
+<style type="text/css">
+*{ margin:0px; padding:0px; }
+#div1{ width:200px; height:200px; background:red; opacity:0.3; filter:alpha(opacity:30);}
+</style> 
+<script type="text/javascript">
+window.onload=function()
+{
+	var oDiv1=document.getElementById("div1");
+	oDiv1.onmouseover=function()
+	{ move(100);       }
+	oDiv1.onmouseout=function()
+	{ move(30); }
+
+	var timer=null;
+	var alpha=30;
+	function move(iTarget)
+	{
+		clearInterval(timer);
+		timer=setInterval(function()
+		{
+			var speed=alpha<iTarget?10:-10;
+			if(alpha==iTarget) 
+			{ 
+				clearInterval(timer); 
+			}
+			else 
+			{
+				alpha+=speed;
+				oDiv1.style.opacity=alpha/100;
+				oDiv1.style.filter="alpha(opacity:"+alpha+")";
+				
+				var oDiv2=document.getElementById("div2");
+				oDiv2.innerHTML="透明度："+alpha+" 速度："+speed;
+			}
+		},30);
+	}
+}
+</script>
+</head>
+
+<body>
+<div id="div1">
+</div>
+<div id="div2" style="width:300px; height:30px; border:1px solid black; margin-top:5px;"></div>
+<p>透明度运动的alpha比较适合取整数值，因为计算机的小数难免存在细小的误差</p>
+</body>
+</html>

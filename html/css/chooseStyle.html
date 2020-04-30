@@ -1,0 +1,183 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>radio checkbox样式美化</title>
+<style>
+/*样式一************************************************************/
+.demo--p{font-size:18px;margin-top:30px;color:rgba(0,0,0,1)}
+.demo--label{margin:20px 20px 0 0;}
+.demo--radio{display:none}
+.demo--radioInput{
+	display:inline-block;width:16px;height:16px;line-height:1;margin: -1px 10px 0 0;
+	vertical-align:middle;background-color:#fff;border:1px solid rgba(0,0,0,0.15);border-radius:100%;
+}
+.demo--radio:checked + .demo--radioInput{border-color: #00A1E9;}
+.demo--radio:checked + .demo--radioInput:after{
+	content:"";display:inline-block;width:12px;height:12px;margin:2px;background-color:#00A1E9;border-radius:100%;
+}
+.demo--checkbox.demo--radioInput,.demo--radio:checked + .demo--checkbox.demo--radioInput:after{border-radius:0}
+ 
+</style>
+</head>
+<body>
+<h3>css无图片美化</h3>
+<article>
+	<div>
+	    <p class="demo--p">约吗?</p>
+	    <label class="demo--label">
+	        <input class="demo--radio" type="radio" name="demo--radio" checked="checked">
+	        <span class="demo--radioInput"></span>约
+	    </label>
+	    <label class="demo--label">
+	        <input class="demo--radio" type="radio" name="demo--radio">
+	        <span class="demo--radioInput"></span>不约，叔叔我们不约
+	    </label>
+	</div>
+	<div>
+	    <p class="demo--p">你喜欢的电影明星是？</p>
+	    <label class="demo--label">
+	    	<input class="demo--radio" type="checkbox" name="demo-checkbox1" checked="checked">
+	        <span class="demo--checkbox demo--radioInput"></span>苍井空
+	    </label>
+	    <label class="demo--label">
+	        <input class="demo--radio" type="checkbox" name="demo-checkbox2">
+	        <span class="demo--checkbox demo--radioInput"></span>波多野结衣
+	    </label>
+	    <label class="demo--label">
+	        <input class="demo--radio" type="checkbox" name="demo-checkbox3">
+	        <span class="demo--checkbox demo--radioInput"></span>罗玉凤
+	    </label>
+	</div>
+</article>
+
+<hr><h3>css无图片美化二:长方形旋转45度，一半边框</h3>
+<style>
+/*样式2************************************************************/
+.div2 {position: relative;line-height: 30px;}
+.div2 input[type="radio"] {width: 20px;height: 20px;opacity: 0;}
+.div2 label {
+	width: 20px;height: 20px;position: absolute;left: 5px;top: 3px;border-radius: 50%;border: 1px solid #999;
+}
+.div2 input:checked+label { background-color: #fe6d32;border: 1px solid #fe6d32;}
+.div2 input:checked+label::after {
+    content: "";width: 5px;height: 10px;position: absolute;top: 3px;left: 6px;
+    border: 2px solid #fff;border-top: none;border-left: none;transform: rotate(45deg)
+}
+</style>
+<article>
+	<div class="div2">
+	    <input id="item1" type="radio" name="item" value="选项一" checked>
+	    <label for="item1"></label>
+	    <span>选项一</span>
+	</div>
+	<div class="div2">
+	    <input id="item2" type="radio" name="item" value="选项二">
+	    <label for="item2"></label>
+	    <span>选项二</span>
+	</div>
+</article>
+
+<hr><h3>css单选框美化,scss预处理,hidden属性</h3>
+<style>
+/*css单选框美化，貌似无效*/
+/*.radio-beauty-container { 
+	font-size: 0; $bgc: green; %common { padding: 2px; background-color: $bgc; background-clip: content-box; } .radio-name { vertical-align: middle; font-size: 16px; } .radio-beauty { width: 18px; height: 18px; box-sizing: border-box; display: inline-block; border: 1px solid $bgc; vertical-align: middle; margin: 0 15px 0 3px; border-radius: 50%; &:hover { box-shadow: 0 0 7px $bgc; @extend %common; } } input[type="radio"]:checked+.radio-beauty { @extend %common; }
+}*/
+
+.radio-name { vertical-align: middle;} 
+.radio-beauty { 
+	width: 18px; height: 18px; box-sizing: border-box; display: inline-block; 
+	border: 1px solid green; vertical-align: middle; margin: 0 15px 0 3px; border-radius: 50%; 
+} 
+.radio-beauty:hover { box-shadow: 0 0 7px green; }
+input[type="radio"]:checked+.radio-beauty { padding: 2px; background-color: green; background-clip: content-box; }
+</style>
+<div class="radio-beauty-container"> 
+	<label> 
+		<span class="radio-name">前端工程师</span> 
+		<input type="radio" name="radioName" id="radioName1" hidden checked="checked" /> 
+		<label for="radioName1" class="radio-beauty"></label> 
+	</label> 
+	<label> 
+		<span class="radio-name">后端工程师</span> 
+		<input type="radio" name="radioName" id="radioName2" hidden/> 
+		<label for="radioName2" class="radio-beauty"></label> 
+	</label> 
+	<label> 
+		<span class="radio-name">全栈工程师</span> 
+		<input type="radio" name="radioName" id="radioName3" hidden/> 
+		<label for="radioName3" class="radio-beauty"></label> 
+	</label>
+</div>
+
+<hr><h3>css带图片美化</h3>
+<style>
+/*样式3***********************************************************/
+.form-group{padding: .5rem 0;}
+section input[type=radio]{display: none;}
+.iconradio{display: inline-block;width: 24px;height: 18px;background: url(/icon/inputradio.gif) 24px 0px;}
+section input[type=radio]:checked + .iconradio{background-position: 0px 0px;}
+
+section input[type=checkbox]{display: none;}
+.iconcheckbox{display: inline-block;width: 20px;height: 20px;background: url(/icon/checkbox_01.gif) 0px 1px;vertical-align: bottom;}
+section input[type=checkbox]:checked + .iconcheckbox{background-position: 0px 21px;}
+</style>
+<section>
+	<div class="form-group">
+		<span>性别：</span>	
+		<label for="sex1">	
+			<input type="radio" name="sex" id="sex1" value="1" checked="checked">
+			<span class="iconradio"></span>男
+		</label>	
+		<label for="sex2">
+			<input type="radio" name="sex" id="sex2" value="2">
+			<span class="iconradio"></span>女
+		</label>
+	</div>
+	<div class="form-group">
+		<span>爱好：</span>
+		<label for="love1">
+	        <input type="checkbox" name="love" id="love1" value="1" checked="checked">
+	        <span class="iconcheckbox"></span>电影
+    	</label>
+    	<label for="love2">
+	        <input type="checkbox" name="love" id="love2" value="2">
+	        <span class="iconcheckbox"></span>小说
+    	</label>
+    </div>
+</section>
+
+<hr><h3>css带图片美化下拉框</h3>
+<style>
+/*下拉框样式***********************************************************/
+.styled-select select {
+   background: transparent;
+   width: 268px;
+   padding: 5px;
+   font-size: 16px;
+   border: 1px solid #ccc;
+   height: 34px;
+   -webkit-appearance: none; 
+}
+.styled-select {
+   width: 240px;
+   height: 34px;
+   overflow: hidden;
+   background: url(/icon/select.jpg) no-repeat right #ddd;
+}
+</style>
+<article>
+	<p>自定义美化下拉框</p>
+	<div class="styled-select">
+		<select>
+			<option>the first option</option>
+			<option>The second option</option>
+			<option>The third option</option>
+		</select>
+	</div>
+</article>
+
+
+</body>
+</html>

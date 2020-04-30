@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>动态组件</title>
+<script src="../../vendors/vue.min.js"></script>
+</head>
+<body>
+<div id="demo">
+	<component :is='currentView'></component>
+</div>
+<hr/>
+<div id="example">
+	<component :is='currentView'></component>
+</div>
+
+<script>
+var home = {
+	template: `<h1>home view</h1>`
+}
+
+var admin = {
+	template: `<h1>admin view</h1>`
+}
+
+var vm = new Vue({
+	el: '#demo',
+	data: { currentView: 'home'},
+	components: { home, admin}
+})	
+
+var vm1 = new Vue({
+	el: '#example',
+	data: { currentView: admin}
+})
+
+
+</script>	
+
+</body>
+</html>

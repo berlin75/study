@@ -1,0 +1,92 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>操纵DOM</title>
+<style type="text/css">
+    li { line-height:30px; }
+</style>
+<script type="text/javascript">
+window.onload=function(){	
+	var oUl0=document.getElementById("ul0");
+	var oBtn1=document.getElementById("btn1");
+	var oTxt1=document.getElementById("txt1");
+	
+    oBtn1.onclick=function(){
+		var oLi=document.createElement("li");
+		var aLi=oUl0.getElementsByTagName("li");
+		oLi.innerHTML=oTxt1.value;
+		if(aLi.length>0){
+		   oUl0.insertBefore(oLi,aLi[0]);
+		}else{
+			oUl0.appendChild(oLi);
+		}
+//			oUl0.appendChild(oLi);
+		oTxt1.value="";
+				
+	    for(var i=0;i<aLi.length;i++){
+		   if(i%2==0){
+		  		aLi[i].style.background="#ccc";
+		  	}else{
+		  		aLi[i].style.background="#fff";
+		  	}
+	    }
+	}
+	
+	var oUl1=document.getElementById("ul1");
+	var aLi1=oUl1.getElementsByTagName("li");
+	var aA=oUl1.getElementsByTagName("a");
+	for(var n1=0;n1<aA.length;n1++){
+		aA[n1].onclick=function(){
+			this.parentNode.style.display="none";
+		}
+	}
+	for(var n=0;n<aLi1.length;n++){		
+		if(n%2==0)  aLi1[n].style.background="#ccc";
+	}
+			
+	var oUl2=document.getElementById("ul2");
+	var aA2=oUl2.getElementsByTagName("a");
+	var aLi2=oUl2.getElementsByTagName("li");
+	for(var n2=0;n2<aA2.length;n2++){
+		aA2[n2].onclick=function(){
+			oUl2.removeChild(this.parentNode);
+			for(var m=0;m<aLi2.length;m++){
+				if(m%2==0){
+				  	aLi2[m].style.background="#ccc";
+				}else{
+				  	aLi2[m].style.background="#fff";
+				}
+			}
+		}
+	}	
+}
+</script>
+</head>
+
+<body>
+<input id="txt1" type="text" />
+<input id="btn1" type="button" value="creatLi" />
+<ul id="ul0"></ul>
+
+<hr />
+<ul id="ul1">
+  <li>11111<a href="javascript:;">删除</a></li>
+  <li>22222<a href="javascript:;">删除</a></li>
+  <li>33333<a href="javascript:;">删除</a></li>
+  <li>44444<a href="javascript:;">删除</a></li>
+  <li>55555<a href="javascript:;">删除</a></li>
+  <li>66666<a href="javascript:;">删除</a></li>
+</ul>
+
+<hr />
+<ul id="ul2">
+  <li>11111<a href="javascript:;">删除</a></li>
+  <li>22222<a href="javascript:;">删除</a></li>
+  <li>33333<a href="javascript:;">删除</a></li>
+  <li>44444<a href="javascript:;">删除</a></li>
+  <li>55555<a href="javascript:;">删除</a></li>
+  <li>66666<a href="javascript:;">删除</a></li>
+</ul>
+</body>
+</html>

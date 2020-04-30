@@ -1,0 +1,22 @@
+html5提供了File API允许js读取本地文件，但并不能直接访问本地文件，而是要依赖于用户行为，
+比如用户在type='file'控件上选择了某个文件或者用户将文件拖拽到浏览器上
+File API主要是用来获取本地文件系统中文件的reference，通过File API我们可以获得一个代表本地文件的js对象，
+而FileReader通过该File对象即可异步地读取本地文件的内容
+FlieReader类型实现的是一种异步文件读取机制。可以把FileReader想象成XMLHttpRequest，
+区别只是它读取的是文件系统，而不是远程服务器。为了读取文件中的数据
+
+File Api给js提供了以下几个接口来访问本地文件系统:
+1、File- 单个文件;从Blob接口继承而来的，增加了name、file size、mimetype,lastModifiedDate等只读文件属性。
+2、FileList- 一个类数组File对象集合；
+3、Blob - 文件对象的二进制原始数据,并且允许我们通过JS对其数据以字节为单位进行“切割”
+4、FileReader接口提供了异步读取文件的方法和包含读取结果的事件模型
+
+FileList[index]           // 得到第index个文件
+Blob.size                 // blob对象的只读属性，二进制对象数据的字节数大小
+Blob.type                 //表示二进制对象的类型 (如果是File对象分割的,会继承type属性) 
+Blob.slice(start, length) // 将当前文件切割分割,并将结果返回,返回的仍然是一个Blob类型 
+File.size                 // 继承自Blob，意义同上  
+File.slice(start, length) // 继承自Blob，意义同上  
+File.name                 // 只读属性，文件名  
+File.type                 // 只读属性，文件的MIME类型  
+File.urn                  // 只读属性，代表该文件的URN，几乎用不到，暂且无视 

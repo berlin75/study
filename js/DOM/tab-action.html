@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>表格操纵</title>
+<style type="text/css">
+	#tab1,#tab2{ border-collapse:collapse;}
+	#tab1,#tab2,th,td{width:600px; border:1px solid black ;}
+	#tab2{ margin-top:20px;}
+</style>
+<script type="text/javascript">
+window.onload=function(){
+	var oTab=document.getElementById("tab1");
+	var aCell=oTab.getElementsByTagName("td");
+	
+//		var aTd=oTab.getElementsByTagName("td");
+//		var aTh=oTab.getElementsByTagName("th");
+//		var aCell=aTh.concat(aTd);
+	for(var i=0;i<oTab.rows.length;i++){ 
+		if(i%2==0){
+			oTab.rows[i].style.background="#cccccc";
+		}
+	}
+	
+	for(var i=0;i<aCell.length;i++){
+		aCell[i].onmouseover=function (){
+			this.style.background="yellow";
+		}
+		aCell[i].onmouseout=function(){
+			this.style.background="";
+		}
+    }
+	
+	var oTab2=document.getElementById("tab2");
+	var aRow=oTab2.tBodies[0].rows;
+	var oldColor="";
+	function changelinecolor(){
+		for(var i=0;i<aRow.length;i++){
+			if(i%2){aRow[i].style.background="#cccccc";}
+			aRow[i].onmouseover=function(){
+				oldColor=this.style.background;  //变黄之前把颜色临时存储在设定的变量中
+				this.style.background="yellow";
+			}
+			aRow[i].onmouseout=function(){
+				this.style.background=oldColor;   
+			}
+		}
+	 }
+	var otxt1=document.getElementById("txt1");
+	var otxt2=document.getElementById("txt2");
+	var obtn=document.getElementById("btn");
+	var id=aRow.length+1;
+	obtn.onclick=function(){
+		var newRow=document.createElement("tr");
+		
+		var oTd=document.createElement("td");
+//			oTd.innerHTML=aRow.length+1;    //中间删除一列之后再添加会有id重复
+		oTd.innerHTML=id++;            //防止id重复使用
+		newRow.appendChild(oTd);
+		
+		var oTd=document.createElement("td");
+		oTd.innerHTML=otxt1.value;
+		newRow.appendChild(oTd);
+		
+		var oTd=document.createElement("td");
+		oTd.innerHTML=otxt2.value;
+		newRow.appendChild(oTd);
+		
+		var oTd=document.createElement("td");
+		oTd.innerHTML="<a href='javascript:;'>Dele</a>";
+		newRow.appendChild(oTd);
+		
+		oTd.getElementsByTagName("a")[0].onclick=function(){
+			oTab2.tBodies[0].removeChild(this.parentNode.parentNode);
+		}
+		
+		oTab2.tBodies[0].appendChild(newRow);
+		
+		otxt1.value=otxt2.value="";
+		changelinecolor();
+	}
+	changelinecolor();	
+	
+//		alert(oTab.getElementsByTagName("tr")[1].getElementsByTagName("td")[1].innerHTML);
+//	    alert( document.getElementById("tab1").rows[1].cells[1].innerHTML);
+
+}
+</script>
+</head>
+
+<body>
+<p>单元格hover</p>
+<table id="tab1">
+  <tr>
+    <th >ID</th>
+    <th >姓名</th>
+    <th >年龄</th>
+  </tr>
+  <tr>
+    <td>1</td>
+    <td>张三</td>
+    <td>27</td>
+  </tr>
+  <tr>
+    <td>2</td>
+    <td>李四</td>
+    <td>25</td>
+  </tr>
+  <tr>
+    <td>3</td>
+    <td>王五</td>
+    <td>30</td>
+  </tr>
+  <tr>
+    <td>4</td>
+    <td>刘六</td>
+    <td>22</td>
+  </tr>
+</table>
+<br />
+<hr />
+姓名：<input id="txt1" type="text"  />
+年龄：<input id="txt2" type="text"  />
+<input id="btn" type="button" value="添加"  />
+<table id="tab2">
+  <tr>
+    <th >ID</th>
+    <th >姓名</th>
+    <th >年龄</th>
+    <th >操作</th>
+  </tr>
+  <tr>
+    <td>1</td>
+    <td>张三</td>
+    <td>27</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>2</td>
+    <td>李四</td>
+    <td>25</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>3</td>
+    <td>王五</td>
+    <td>30</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>4</td>
+    <td>刘六</td>
+    <td>22</td>
+    <td>&nbsp;</td>
+  </tr>
+</table>
+
+</body>
+</html>

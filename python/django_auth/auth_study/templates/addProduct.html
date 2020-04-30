@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>添加商品</title>
+</head>
+<body>
+<form action="/auth/addProduct/" method="post">
+    {% csrf_token %}
+    名称：<input type="text" name="name"/>
+    价格：<input type="text" name="price"/>
+    详细信息: <textarea name="detail"></textarea>
+    <input type="submit" value="添加">
+</form>
+</body>
+</html>

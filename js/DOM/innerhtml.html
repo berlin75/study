@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>innerHTML</title>
+<style>
+	div{width:100px ; height:100px; border:1px solid black;}
+</style>
+<script>
+	window.onload=function()	{
+		var obtn=document.getElementById("btn1");
+		var otxt=document.getElementById("txt1");
+		var odiv=document.getElementById("div1");
+		obtn.onclick=function()		{
+		 	odiv.innerHTML=otxt.value;
+		}
+	}
+</script>
+</head>
+
+<body>
+    <input id="txt1" type="text" />
+    <input id="btn1" type="button"  value="设置文字"/>
+    <br /><br />
+    <div    id="div1">
+    </div>
+</body>
+</html>

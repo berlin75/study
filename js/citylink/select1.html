@@ -1,0 +1,46 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>select数组</title>
+<script>
+	function selProvince(prov){
+		var index=prov.selectedIndex;
+		var option=prov.options[index];
+		alert(option.text);
+	}
+	
+	var selProv;
+	window.onload=function(){    //数组中存对象
+		selProv=document.getElementById("selProv");
+		var provinces=new Array();
+		provinces["湖南省"]="湖南省";
+		provinces["湖北省"]="湖北省";
+		provinces["广东省"]="广东省";
+		provinces["广西省"]="广西省";
+		provinces["江西省"]="江西省";
+		provinces["河南省"]="河南省";
+		provinces["河北省"]="河北省";
+		for(var obj in provinces){ //获取对象的属性
+			selProv.add(new Option(obj));  //添加
+		}
+	}
+</script>
+</head>
+
+<body>
+<span>省：</span>
+<select id="selProv" onchange="selProvince(this)">
+</select>
+
+<span>市：</span>
+<select id="selCity">
+</select>
+
+<span>区：</span>
+<select id="selPart">
+</select>
+
+<p>for in 循环历遍对象的属性</p>
+</body>
+</html>

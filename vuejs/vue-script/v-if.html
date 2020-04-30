@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>v-if</title>
+<script src="../../vendors/vue.min.js"></script>
+</head>
+<body>
+<div id="app">
+	<button @click="isshow = !isshow">toggle</button>
+	<p v-if="isshow">显示还是隐藏，这是一个问题</p>
+	<p v-show="isshow">显示还是隐藏，这是一个问题</p>
+</div>
+
+<script>
+var vm = new Vue({
+	el: '#app',
+	data: {
+		isshow: true
+	}
+})
+</script>
+</body>
+</html>

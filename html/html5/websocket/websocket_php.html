@@ -1,0 +1,67 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>websocket_php</title>
+</head>
+<body>
+<pre>
+相关文件：server.php  websocket.class.php
+执行方法:
+首先先修改server.php与index.html的ip
+通过命令行执行 php e:wamp64/www/study/web/html5/websocket/server.php
+然后通过浏览器打开websocket_php.html
+</pre>
+<audio src="../../media/news.mp3" id="newsbgm" preload>您的浏览器不支持 audio 标签</audio>
+<textarea class="log" style="width: 100%; height: 300px;">
+=======websocket======
+</textarea>
+<input type="button" value="连接" onClick="link()"> 
+<input type="button" value="断开" onClick="dis()">
+<input type="text" id="text">
+<input type="button" value="发送" onClick="send()">
+
+<script type="text/javascript" src="../../../vendors/jquery-3.1.1.js"></script>
+<script type="text/javascript">
+var socket;
+function link(){
+  socket = new WebSocket('ws://127.0.0.1:8080');
+  socket.onopen=function(){
+    log('连接成功');
+  }
+  socket.onmessage=function(msg){
+    newstips();
+    log('获得消息:' + msg.data);
+    console.log(msg);
+  }
+  socket.onclose=function(){
+    log('断开连接');
+  }
+}
+
+function dis(){
+  socket.close();
+  socket=null;
+}
+
+function log(var1){
+  $('.log').append(var1+"\r\n");
+}
+
+function send(){
+  socket.send($('#text').val());
+}
+
+function send2(){
+  var json = JSON.stringify({'type':'php','msg':$('#text2').attr('value')})
+  socket.send(json);
+}
+
+function newstips(){
+  // $('#newsbgm').attr('autoplay', 'autoplay');
+  newsbgm.play();
+}
+
+</script>
+</body>
+</html>

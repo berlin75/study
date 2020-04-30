@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf8">
+<title>FileReader顺序进度条</title>
+<style>
+#DropZone {width:400px;height:100px;background:#f8f8f8;border:1px dotted #333;text-align:center;line-height:100px;color:#aaa;display:inline-block;}
+.drag_hover {background:#FAD6F9;}
+.show {margin-top:20px;position:relative;width:950px;}
+.show .item {position:absolute;width:250px;height:250px;}
+.show img {max-width:224px;max-height:224px;cursor: pointer;box-shadow:0px 1px 1px 1px #AAA3A3;}
+.show img:hover {box-shadow:0px 1px 1px 2px #83ABD2;}
+.show .big {z-index:2;}
+.show .big img {max-width:none;max-height:none;cursor: pointer;box-shadow:2px 2px 10px 2px #666;}
+
+</style>
+</head>
+<body>
+
+<form>  
+    <fieldset>  
+        <legend>分度读取文本文件：</legend> 
+        <div> 
+            <input type="file" id="File" />  
+            <input type="button" value="中断" id="Abort" /> 
+        </div> 
+        <div>  
+            <label>读取进度：</label><progress id="Progress" value="0" max="100"></progress>  
+        </div>  
+        <div class="show" id="Status"></div> 
+        <ul class="show" id="Errors"></ul>
+        <div class="show" id="Preview"></div> 
+    </fieldset>  
+</form> 
+
+<script src="../../vendors/jquery-3.1.1.js"></script>
+<script>
+//FileReader进度条
+function fileup(e) {  
+    e = e || window.event;         
+    var f = e.target.files[0];  //FileList Objects                  
+    if(!f.type.match(/text\/.*/i)) {     
+        document.getElementById('Errors').innerHTML = '<li>' + f.name +'不是文本文件.</li>';
+        return;              
+    }  
+    console.log(f);
+
+    var start = 0;
+    var step = 1024*1024;   //每次读取的数据大小
+    var loaded = 0;
+    var total = f.size; 
+    var times = 0;
+    var content = '';
+
+    var reader = new FileReader();  //创建一个FileReader实例
+    console.log(reader);
+
+    function readblob(start){                      
+        times += 1;                    
+        var blob = blobSlice(f, start, start + step + 1);   
+        reader.readAsText(blob);    //调用readAsText方法读取文件
+    }
+    readblob(0);   //读取第一块 
+
+    reader.onprogress = function(e){
+        loaded += e.loaded;     
+        document.getElementById('Progress').value = (loaded / total) * 100;   //更新进度条
+        var percent = ((loaded / total) * 100).toFixed(0);
+        percent = percent>100 ? 100 : percent;             //可能会出现101%的情况
+        document.getElementById('Status').innerHTML = percent + '%';
+        alert("onprogress");
+    };
+
+    reader.onload = function(){  //获取成功读取到的文件内容
+        if(loaded < total) {  
+            readblob(loaded);  
+        } else {  
+            loaded = total;  
+        } 
+        document.getElementById('Preview').innerHTML = this.result;
+        alert("onload");
+    }
+    reader.onloadstart=function(e){  
+        alert("onloadstart");  
+    } 
+    reader.onloadend=function(e){  
+        alert("onloadend");  
+    } 
+
+} 
+
+function blobSlice(blob,startByte,endByte){
+    if(blob.slice){
+        return  blob.slice(startByte,endByte);
+    }     
+    if(blob.mozSlice){     // 兼容firefox
+        return  blob.mozSlice(startByte,endByte);
+    }   
+    if(blob.webkitSlice){  // 兼容webkit
+        return  blob.webkitSlice(startByte,endByte);
+    }
+    return null;
+} 
+       
+if(window.File && window.FileList && window.FileReader && window.Blob) {  
+    document.getElementById('File').addEventListener('change', fileup, false);  
+} else {  
+    document.write('您的浏览器不支持File Api');  
+}   
+
+</script>
+
+</body>
+</html>

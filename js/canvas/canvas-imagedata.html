@@ -1,0 +1,49 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>canvas使用图像数据</title>
+<style>
+
+</style>
+</head>
+<body>
+<p>实现一个灰阶过滤效果，通过getImageData()取得每个像素的红、绿、蓝三种颜色的色值后，计算出它们的平均值，再把这个平均值设置为每个颜色的值，再调用putImageData()把图像绘制到画布上</p>
+<canvas id="drawing1" style="border:1px solid black">
+    <p>The canvas element is not supported!</p>
+</canvas>
+<canvas id="drawing2" style="border:1px solid black">
+    <p>The canvas element is not supported!</p>
+</canvas>
+<script>
+var drawing1 = document.getElementById('drawing1');
+if(drawing1.getContext){
+  var cxt1 = drawing1.getContext('2d');
+  var img = new Image();
+  img.src="../../image/chunfen.jpg";
+  img.onload = function(){
+      cxt1.drawImage(img,0,0);
+      var imageData = cxt1.getImageData(0,0,img.width,img.height); 
+      setImage(imageData);
+  }
+} 
+var drawing2 = document.getElementById('drawing2');
+if(drawing2.getContext){
+  var cxt2 = drawing2.getContext('2d');
+  function setImage(imageData){
+    var data = imageData.data;
+    for(var i = 0, len = data.length; i < len; i+=4){
+        var red = data[i];
+        var green = data[i+1];
+        var blue = data[i+2];
+        var alpha = data[i+3];
+        var average = Math.floor((red+green+blue)/3);
+        data[i] = data[i+1] = data[i+2] = average;
+    }
+    imageData.data = data;
+    cxt2.putImageData(imageData,0,0);
+  }    
+} 
+</script>
+</body>
+</html>

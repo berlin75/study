@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>css3 loading</title>
+<style>
+div{ margin-right:30px; }
+p{ clear:both; }
+
+.div0{  width: 100px; height: 100px; position: relative; border:1px solid #ccc; float:left;}
+.div0 span{ display: inline-block; width: 30px;  height: 10px; background: lightgreen;  position: absolute;
+            border-top-left-radius: 5px; border-bottom-left-radius: 5px;
+            -webkit-animation: load 1.04s ease infinite;
+           }
+.div0 span:nth-child(1){ left: 0; top: 50%; margin-top:-5px; -webkit-animation-delay:0.13s; }
+.div0 span:nth-child(2){ left: 10px; top: 20px; -webkit-transform: rotate(45deg); -webkit-animation-delay:0.26s; }
+.div0 span:nth-child(3){ left: 50%; top: 10px;  margin-left: -15px;  -webkit-transform: rotate(90deg); -webkit-animation-delay:0.39s;  }
+.div0 span:nth-child(4){  top: 20px;  right:10px; -webkit-transform: rotate(135deg); -webkit-animation-delay:0.52s; }
+.div0 span:nth-child(5){ right: 0; top: 50%; margin-top:-5px; -webkit-transform: rotate(180deg); -webkit-animation-delay:0.65s; }
+.div0 span:nth-child(6){  right: 10px;  bottom:20px; -webkit-transform: rotate(225deg); -webkit-animation-delay:0.78s; }
+.div0 span:nth-child(7){ bottom: 10px; left: 50%; margin-left: -15px;  -webkit-transform: rotate(270deg); -webkit-animation-delay:0.91s;  }
+.div0 span:nth-child(8){ bottom: 20px; left: 10px; -webkit-transform: rotate(315deg); -webkit-animation-delay:1.04s; }
+
+.div1{ width:150px; height:150px; position:relative; border:1px solid #ccc; float:left; }
+.div1 span{ display:inline-block; width:10px; height:30px; position:absolute; background:lightgreen; 
+	border-top-left-radius:5px;border-top-right-radius:5px;animation:load 0.7s ease infinite;}
+.div1 .s1{ top:25px; left:70px; transform:rotate(0deg); animation-delay:0s; }
+.div1 .s2{ top:35px; left:95px; transform:rotate(45deg); animation-delay:0.1s; }
+.div1 .s3{ top:60px; left:105px; transform:rotate(90deg); animation-delay:0.2s;}
+.div1 .s4{ top:85px; left:95px; transform:rotate(135deg); animation-delay:0.3s;}
+.div1 .s5{ top:95px; left:70px; transform:rotate(180deg); animation-delay:0.4s;}
+.div1 .s6{ top:85px; left:45px; transform:rotate(-135deg); animation-delay:0.5s;}
+.div1 .s7{ top:60px; left:35px; transform:rotate(-90deg); animation-delay:0.6s;}
+.div1 .s8{ top:35px; left:45px; transform:rotate(-45deg); animation-delay:0.7s;}
+@keyframes load{
+	0%{opacity:1;}
+	100%{opacity:0.2;}
+}
+
+.div2{ width:150px; height:150px; position:relative; border:1px solid #ccc; float:left; }
+.div2 span{ display:inline-block; width:10px; height:30px; position:absolute; background:lightgreen; 
+	border-top-left-radius:5px;border-top-right-radius:5px;animation:load 0.7s ease infinite;}
+.div2 span:nth-child(1){ top:25px; left:70px; transform:rotate(0deg); animation-delay:0s; }
+.div2 span:nth-child(2){ top:35px; left:95px; transform:rotate(45deg); animation-delay:0.1s; }
+.div2 span:nth-child(3){ top:60px; left:105px; transform:rotate(90deg); animation-delay:0.2s;}
+.div2 span:nth-child(4){ top:85px; left:95px; transform:rotate(135deg); animation-delay:0.3s;}
+.div2 span:nth-child(5){ top:95px; left:70px; transform:rotate(180deg); animation-delay:0.4s;}
+.div2 span:nth-child(6){ top:85px; left:45px; transform:rotate(-135deg); animation-delay:0.5s;}
+.div2 span:nth-child(7){ top:60px; left:35px; transform:rotate(-90deg); animation-delay:0.6s;}
+.div2 span:nth-child(8){ top:35px; left:45px; transform:rotate(-45deg); animation-delay:0.7s;}
+
+.div3{ width:200px; height:200px; position:relative; border:1px solid #ccc; float:left; }
+.div3 span{ display:inline-block; width:5%; height:25%; position:absolute; background:lightgreen; 
+	border-top-left-radius:5px;border-top-right-radius:5px;animation:load 0.7s ease infinite;}
+.div3 span:nth-child(1){ top:0%; left:50%; transform:rotate(0deg); animation-delay:0s; }
+.div3 span:nth-child(2){ top:15%; left:85%; transform:rotate(45deg); animation-delay:0.1s; }
+.div3 span:nth-child(3){ top:50%; left:100%; transform:rotate(90deg); animation-delay:0.2s;}
+.div3 span:nth-child(4){ top:85%; left:85%; transform:rotate(135deg); animation-delay:0.3s;}
+.div3 span:nth-child(5){ top:100%; left:50%; transform:rotate(180deg); animation-delay:0.4s;}
+.div3 span:nth-child(6){ top:85%; left:15%; transform:rotate(-135deg); animation-delay:0.5s;}
+.div3 span:nth-child(7){ top:50%; left:0%; transform:rotate(-90deg); animation-delay:0.6s;}
+.div3 span:nth-child(8){ top:15%; left:15%; transform:rotate(-45deg); animation-delay:0.7s;}
+
+.div4{ width:200px; height:200px; position:relative; border:1px solid #ccc; float:left; }
+.div4 span{ display:inline-block; width:5%; height:25%; position:absolute; background:lightgreen; 
+	border-top-left-radius:5px;border-top-right-radius:5px;animation:load 0.7s ease infinite;}
+.div4 span:nth-child(1){ top:25%; left:50%; transform:rotate(0deg); animation-delay:0s; }
+.div4 span:nth-child(2){ top:32.5%; left:67.5%; transform:rotate(45deg); animation-delay:0.1s; }
+.div4 span:nth-child(3){ top:50%; left:75%; transform:rotate(90deg); animation-delay:0.2s;}
+.div4 span:nth-child(4){ top:67.5%; left:67.5%; transform:rotate(135deg); animation-delay:0.3s;}
+.div4 span:nth-child(5){ top:75%; left:50%; transform:rotate(180deg); animation-delay:0.4s;}
+.div4 span:nth-child(6){ top:67.5%; left:32.5%; transform:rotate(-135deg); animation-delay:0.5s;}
+.div4 span:nth-child(7){ top:50%; left:25%; transform:rotate(-90deg); animation-delay:0.6s;}
+.div4 span:nth-child(8){ top:32.5%; left:32.5%; transform:rotate(-45deg); animation-delay:0.7s;}
+
+.div5{ width:100px; height:100px; position:relative; border:1px solid #ccc; float:left; }
+.div5 span{ display:inline-block; width:7%; height:25%; position:absolute; background:lightgreen; 
+	border-top-left-radius:5px;border-top-right-radius:5px;animation:load 0.7s ease infinite;}
+.div5 span:nth-child(1){ top:12.5%; left:50%; transform:rotate(0deg); animation-delay:0s; }
+.div5 span:nth-child(2){ top:20%; left:67.5%; transform:rotate(45deg); animation-delay:0.1s; }
+.div5 span:nth-child(3){ top:37.5%; left:75%; transform:rotate(90deg); animation-delay:0.2s;}
+.div5 span:nth-child(4){ top:55%; left:67.5%; transform:rotate(135deg); animation-delay:0.3s;}
+.div5 span:nth-child(5){ top:62.5%; left:50%; transform:rotate(180deg); animation-delay:0.4s;}
+.div5 span:nth-child(6){ top:55%; left:32.5%; transform:rotate(-135deg); animation-delay:0.5s;}
+.div5 span:nth-child(7){ top:37.5%; left:25%; transform:rotate(-90deg); animation-delay:0.6s;}
+.div5 span:nth-child(8){ top:20%; left:32.5%; transform:rotate(-45deg); animation-delay:0.7s;}
+</style>
+</head>
+<body>
+<h3>div中的span元素绝对定位，结合transform:rotate(n deg)，animation改变span的透明度，设定每个span不同的动画延迟</h3>
+<p>1,2数字定位，3，5内部点百分比定位,4外部点百分比定位，5效果最佳，可以按比例缩放</p>
+
+<div class="div0">原版
+		<span></span><span></span><span></span><span></span>
+		<span></span><span></span><span></span><span></span>
+	</div>
+
+<div class="div1">1
+	<span class="s1"></span><span class="s2"></span><span class="s3"></span><span class="s4"></span>
+	<span class="s5"></span><span class="s6"></span><span class="s7"></span><span class="s8"></span>
+</div>
+
+<div class="div2">2
+	<span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+</div>
+
+<div class="div3">3
+	<span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+</div>
+
+<div class="div4">4
+	<span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+</div>
+
+<div class="div5">5
+	<span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+</div>
+
+</body>
+</html>

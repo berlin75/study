@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>css3 切角效果 linear-gradient</title>
+<style>
+body{
+	background-color: rgba(0,201,87,1);
+	background-image: radial-gradient(circle, rgba(255,255,255,.6), rgba(255,255,255,.1));
+}
+
+div{margin: 2rem auto;}
+#div1{
+	background: #A101A9;
+	background: linear-gradient(135deg, transparent 15px, #A101A9 0),
+	  			linear-gradient(225deg, transparent 15px, #A101A9 0) top right,
+	  			linear-gradient(45deg, transparent 15px, #A101A9 0) bottom left,
+	  			linear-gradient(-45deg, transparent 15px, #A101A9 0) bottom right;
+	  background-size: 50% 50%;
+	  background-repeat: no-repeat;
+	  max-width: 12em;
+	  padding: 3em 3.6em;
+	  color: #ccc;
+	  font-size: 150%/1.6;
+}
+#div2{
+	background: #A101A9;
+	background: radial-gradient(circle at top left,transparent 15px, #A101A9 0) top left,
+	  			radial-gradient(circle at top right, transparent 15px, #A101A9 0) top right,
+	  			radial-gradient(circle at bottom left, transparent 15px, #A101A9 0) bottom left,
+	  			radial-gradient(circle at bottom right, transparent 15px, #A101A9 0) bottom right;
+	  background-size: 50% 50%;
+	  background-repeat: no-repeat;
+	  max-width: 12em;
+	  padding: 3em 3.6em;
+	  color: #ccc;
+	  font-size: 150%/1.6;
+}
+</style>
+</head>
+<body>
+	<p style="color: yellow">background-position的 top right bottom left 将元素均匀地划分为四个区域</p>
+	<div id="div1">切角效果展示-直角</div>
+	<div id="div2">切角效果展示-圆角</div>
+</body>
+</html>

@@ -1,0 +1,303 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>color</title>
+<style>
+*{list-style: none;padding: 0;margin: 0;font-family: "Microsoft YaHei","微软雅黑","黑体";}
+#list {background-color: #000;padding-bottom: 1rem;padding-top: 3rem;margin-bottom: 3rem}
+#list2 {background-color: #000;padding-bottom: 1rem;padding-top: 3rem;}
+.color-list li {
+	float: left;
+	width: 300px;
+	height: 50px;
+	line-height: 50px;
+	margin-left: 20px;
+	margin-top: 20px;
+	color: #fff;
+	font-size: 1rem;
+	text-align: left;
+	padding-left: .5rem;
+	text-shadow: 1px 1px black, 2px 2px black;
+}
+.clearfix:after {     
+    content: "";
+    display: block;
+    clear: both;
+    visibility: hidden;
+    font-size: 0;
+    height: 0;
+}
+
+</style>
+</head>
+
+<body>
+<div id="showcolor" style="width:100%;border:5px solid #ff5300;position:fixed;background: white;">
+	<input type="color" autofocus="true" style="width:200px;cursor:pointer">
+	<input type="text" id="inputcolor" placeholder="输入颜色值回车" style="height:1.5rem;">
+</div>
+
+<script>
+var inputcolor = document.querySelector("#inputcolor");
+inputcolor.onkeydown=function(e){ //enter提交
+    var ev=e||window.event;
+    if (ev.keyCode==13) {
+        document.querySelector("#showcolor").style.background = inputcolor.value;
+    };
+}
+</script>
+
+<div id="list"></div>
+<div id="list2"></div>
+
+<script src="../vendors/jquery-3.1.1.js"></script>
+<script>
+var color = [
+  '#9933cc,紫色 purple rgba(153,51,204,1)'
+, '#A101A9,紫 rgba(161,1,169,1)'
+, '#a020f0,紫 rgba(160,32,240,1)'
+, '#8a2be2,紫罗兰 rgba(138,43,226,1)'
+, '#9933fa,湖紫 rgba(153,51,250,1)'
+, '#da70d6,淡紫 rgba(218,112,214,1)'
+, '#dda0dd,梅红 rgba(221,160,221,1)'
+, '#00ff00,green rgba(0,255,0,1) '
+, '#7cfc00,草地绿 rgba(124,252,0,1)'
+, '#7fff00,黄绿 rgb(127,255,0,1)'
+, '#308014,暗绿 rgba(48,128,20,1)'
+, '#228b22,森林绿 rgba(34,139,34,1)'
+, '#00c957,翠绿 rgba(0,201,87,1)'
+, '#34ada1,绿 rgba(52,173,161,1) '
+, '#1da362,绿 rgba(29,163,98,1) '
+, '#92dd49,绿 rgba(146,221,73,1) '
+, '#7fffd4,碧绿 rgba(127,255,212,1) '
+, '#00FFFF,青cyan aqua rgba(0,255,255,1)'
+, '#082e54,靛青 rgba(8,46,84,1)'
+, '#0000ff,blue rgba(0,0,255,1) '
+, '#009CAD,蓝 rgba(0,156,175,1)'
+, '#27AFFB,蓝 rgba(39,175,251,1)'
+, '#5A38B3,蓝 rgba(90,56,179,1)'
+, '#0d89e9,蓝 rgba(13,137,233,1) '
+, '#5a9dda,蓝 rgba(90,157,218,1) '
+, '#567dbe,蓝 rgba(86,125,190,1) '
+, '#0988e9,蓝 rgba(9,136,233,1) '
+, '#0099cc,天蓝 rgba(0,153,204,1)'
+, '#5EC4EA,浅蓝 rgba(94,196,234,1)'
+, '#abcdef,浅蓝 #abcdef'
+, '#0096dd,浅蓝 rgba(0,150,221,1)'
+, '#121a2a,靑褐 rgba(18,26,42,1) '
+, '#FFFF00,yellow rgba(255,255,0,1)'
+, '#ffffcd,白杏仁 rgba(255,235,205,1)'
+, '#ffd700,金黄 rgba(255,215,0,1)'
+, '#FDB812,黄 rgba(253,184,18,1)'
+, '#FDD528,黄 rgba(253,213,40,1)'
+, '#f6ae00,黄 rgba(246,174,0,1)'
+, '#e5c55e,黄 rgba(229,197,94,1)'
+, '#ff5300,橙 rgba(255,83,0,1)'
+, 'orange,桔色 rgba(255,165,0,1)'
+, '#F84600,橙 rgba(248,70,0,1)'
+, '#DA552A,橙 rgba(218,85,42,1)'
+, '#BB3500,橙 rgba(187,53,0,1)'
+, '#b03060,栗色 rgba(176,48,96,1)'
+, '#872657,草莓色 rgba(135,38,87,1)'
+, '#fce6c9,蛋壳白 rgba(252,230,201,1)'
+, '#9B161D,红 rgba(155,22,29,1)'
+, '#A51C30,红 rgba(165,28,48,1)'
+, '#ff0000,red rgba(255,0,0,1)'
+, '#d40203,红 rgba(212,2,3,1)' 
+, '#d21d1a,红 rgba(210,29,26,1)'
+, '#cd0000,红 #cd0000'
+, '#9c0000,中国红 rgba(156,0,0,1)'
+, '#ff00ff,洋红 megenta rgba(255,0,255)'
+, '#FFC0CB,pink rgba(255,192,203,1) '
+, 'deeppink,深粉deeppink'
+, '#FE2485,粉 rgba(254,36,133,1)'
+, '#E56690,粉 rgba(229,102,144,1)'
+, '#F1EBDF,灰 rgba(241,235,223,1)'
+, '#f2f2f2,灰 rgba(242,242,242,1)'
+, '#f5f5f5,灰 #f5f5f5'
+, 'silver,银色 rgba(192,192,192,1)'
+, '#808080,灰：gray rgba(128,128,12)'
+, '#ccc,灰 rgba(204,204,204,1)'
+, '#ddd,灰 rgba(1)'
+, '#999,gray rgba(153,153,153,1)'
+, '#666,灰 rgba(102,102,102,1)'
+, '#333,灰 rgba(51,51,51,1)'
+, '#616161,灰 rgba(97,97,97,1)'
+, '#fafff0,象牙白 rgba(250,255,240,1)'
+];
+$(function () {
+	var content = '';
+	for (var i = 0; i < color.length; i++) {
+		var colorcode = color[i].split(",")[0];
+		content += '<li style="background-color:' + colorcode + '">'+ color[i] +'</li>'; 
+	}
+	$('#list').html('<ul class="color-list clearfix">' + content + '</ul>');
+});
+
+</script>
+
+<script>
+var color2 = [
+'AliceBlue,#F0F8FF'
+,'AntiqueWhite,#FAEBD7'
+,'Aqua,#00FFFF'
+,'Aquamarine,#7FFFD4'
+,'Azure,#F0FFFF'
+,'Beige,#F5F5DC'
+,'Bisque,#FFE4C4'
+,'Black,#000000'
+,'BlanchedAlmond,#FFEBCD'
+,'Blue,#0000FF'
+,'BlueViolet,#8A2BE2'
+,'Brown,#A52A2A'
+,'BurlyWood,#DEB887'
+,'CadetBlue,#5F9EA0'
+,'Chartreuse,#7FFF00'
+,'Chocolate,#D2691E'
+,'Coral,#FF7F50'
+,'CornflowerBlue,#6495ED'
+,'Cornsilk,#FFF8DC'
+,'Crimson,#DC143C'
+,'Cyan,#00FFFF'
+,'DarkBlue,#00008B'
+,'DarkCyan,#008B8B'
+,'DarkGoldenRod,#B8860B'
+,'DarkGray,#A9A9A9'
+,'DarkGrey,#A9A9A9'
+,'DarkGreen,#006400'
+,'DarkKhaki,#BDB76B'
+,'DarkMagenta,#8B008B'
+,'DarkOliveGreen,#556B2F'
+,'DarkOrange,#FF8C00'
+,'DarkOrchid,#9932CC'
+,'DarkRed,#8B0000'
+,'DarkSalmon,#E9967A'
+,'DarkSeaGreen,#8FBC8F'
+,'DarkSlateBlue,#483D8B'
+,'DarkSlateGray,#2F4F4F'
+,'DarkSlateGrey,#2F4F4F'
+,'DarkTurquoise,#00CED1'
+,'DarkViolet,#9400D3'
+,'DeepPink,#FF1493'
+,'DeepSkyBlue,#00BFFF'
+,'DimGray,#696969'
+,'DimGrey,#696969'
+,'DodgerBlue,#1E90FF'
+,'FireBrick,#B22222'
+,'FloralWhite,#FFFAF0'
+,'ForestGreen,#228B22'
+,'Fuchsia,#FF00FF'
+,'Gainsboro,#DCDCDC'
+,'GhostWhite,#F8F8FF'
+,'Gold,#FFD700'
+,'GoldenRod,#DAA520'
+,'Gray,#808080'
+,'Grey,#808080'
+,'Green,#008000'
+,'GreenYellow,#ADFF2F'
+,'HoneyDew,#F0FFF0'
+,'HotPink,#FF69B4'
+,'IndianRed,#CD5C5C'
+,'Indigo,#4B0082'
+,'Ivory,#FFFFF0'
+,'Khaki,#F0E68C'
+,'Lavender,#E6E6FA'
+,'LavenderBlush,#FFF0F5'
+,'LawnGreen,#7CFC00'
+,'LemonChiffon,#FFFACD'
+,'LightBlue,#ADD8E6'
+,'LightCoral,#F08080'
+,'LightCyan,#E0FFFF'
+,'LightGoldenRodYellow,#FAFAD2'
+,'LightGray,#D3D3D3'
+,'LightGrey,#D3D3D3'
+,'LightGreen,#90EE90'
+,'LightPink,#FFB6C1'
+,'LightSalmon,#FFA07A'
+,'LightSeaGreen,#20B2AA'
+,'LightSkyBlue,#87CEFA'
+,'LightSlateGray,#778899'
+,'LightSlateGrey,#778899'
+,'LightSteelBlue,#B0C4DE'
+,'LightYellow,#FFFFE0'
+,'Lime,#00FF00'
+,'LimeGreen,#32CD32'
+,'Linen,#FAF0E6'
+,'Magenta,#FF00FF'
+,'Maroon,#800000'
+,'MediumAquaMarine,#66CDAA'
+,'MediumBlue,#0000CD'
+,'MediumOrchid,#BA55D3'
+,'MediumPurple,#9370DB'
+,'MediumSeaGreen,#3CB371'
+,'MediumSlateBlue,#7B68EE'
+,'MediumSpringGreen,#00FA9A'
+,'MediumTurquoise,#48D1CC'
+,'MediumVioletRed,#C71585'
+,'MidnightBlue,#191970'
+,'MintCream,#F5FFFA'
+,'MistyRose,#FFE4E1'
+,'Moccasin,#FFE4B5'
+,'NavajoWhite,#FFDEAD'
+,'Navy,#000080'
+,'OldLace,#FDF5E6'
+,'Olive,#808000'
+,'OliveDrab,#6B8E23'
+,'Orange,#FFA500'
+,'OrangeRed,#FF4500'
+,'Orchid,#DA70D6'
+,'PaleGoldenRod,#EEE8AA'
+,'PaleGreen,#98FB98'
+,'PaleTurquoise,#AFEEEE'
+,'PaleVioletRed,#DB7093'
+,'PapayaWhip,#FFEFD5'
+,'PeachPuff,#FFDAB9'
+,'Peru,#CD853F'
+,'Pink,#FFC0CB'
+,'Plum,#DDA0DD'
+,'PowderBlue,#B0E0E6'
+,'Purple,#800080'
+,'RebeccaPurple,#663399'
+,'Red,#FF0000'
+,'RosyBrown,#BC8F8F'
+,'RoyalBlue,#4169E1'
+,'SaddleBrown,#8B4513'
+,'Salmon,#FA8072'
+,'SandyBrown,#F4A460'
+,'SeaGreen,#2E8B57'
+,'SeaShell,#FFF5EE'
+,'Sienna,#A0522D'
+,'Silver,#C0C0C0'
+,'SkyBlue,#87CEEB'
+,'SlateBlue,#6A5ACD'
+,'SlateGray,#708090'
+,'SlateGrey,#708090'
+,'Snow,#FFFAFA'
+,'SpringGreen,#00FF7F'
+,'SteelBlue,#4682B4'
+,'Tan,#D2B48C'
+,'Teal,#008080'
+,'Thistle,#D8BFD8'
+,'Tomato,#FF6347'
+,'Turquoise,#40E0D0'
+,'Violet,#EE82EE'
+,'Wheat,#F5DEB3'
+,'White,#FFFFFF'
+,'WhiteSmoke,#F5F5F5'
+,'Yellow,#FFFF00'
+,'YellowGreen,#9ACD32'
+]
+
+$(function () {
+	var content = '';
+	for (var i = 0; i < color2.length; i++) {
+		var colorcode = color2[i].split(",")[0];
+		content += '<li style="background-color:' + colorcode + '">'+ color2[i] +'</li>'; 
+	}
+	$('#list2').html('<ul class="color-list clearfix">' + content + '</ul>');
+});
+
+</script>
+</body>
+</html>

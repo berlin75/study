@@ -1,0 +1,36 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>content属性和伪类选择器</title>
+<style>
+h2:before {content:url(../image/light.gif);}
+h1{ quotes:"(" ")";  }
+h1::before{ content:open-quote; }
+h1::after{ content:close-quote; }
+.a1:after{content: " (" attr(href) ")" ;}
+.a2:after{ content:attr(href); }  
+
+a[href^="http"]:empty::before { content: attr(href);}
+
+.msg{width: 15rem;height: 2rem;margin: 5rem 0;line-height: 2rem;text-align:center;border:1px solid;cursor: pointer;position: relative;} 
+.msg:hover:before{content: attr(data-msg);display: block;width: 150%;height: 2rem;line-height: 2rem;position: absolute;top: -2.5rem;left: 0px;border:1px solid green;}
+
+ul li:first-child ~ li{color: red}
+</style>
+</head>
+<body>
+<h1>使用quotes:"(" ")"的方法</h1>
+<h2>使用content:url(../image/light.gif)的方法</h2>
+<p>
+	<a href="www.baidu.com" class="a1">百度</a>
+	<a href="www.baidu.com" class="a2">百度</a>
+	<a href="https://www.baidu.com"></a>
+</p>
+
+<section class="msg" data-msg="请注意这是提示信息,请注意这是提示信息" title="title msg">鼠标悬浮实现一个提示的文字</section>
+
+<ul class="nav"> <li>a</li> <li>b</li> <li>c</li> <li>d</li> <li>e</li></ul>
+
+</body>
+</html>

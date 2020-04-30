@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>上传多文件</title>
+</head>
+<body>
+<form action="rel_upload.php" method="post" enctype="multipart/form-data" >
+	<input type="hidden" name="MAX_FILE_SIZE" value="102400" />
+	<p>
+		<label for="upload_file" >upload_file[]+multiple pic:</label>
+    	<input type="file" accept="image/png,image/gif,image/jpeg" multiple="multiple" name="upload_file[]" id="upload_file"/>
+    </p>
+    <p>
+    	<input type="submit" value="上传" />
+    </p>
+</form>
+
+<pre>
+上传错误：
+1.地址栏进入 if(!$_FILES) exit('页面错误!');
+2.没有选择文件 $_FILES只有error不为空
+3.文件过大 $_FILES只有name和error不为空
+4.文件类型
+5.is_uploaded_file($_FILES['upload_file']['tmp_name'][$key])
+
+</pre>
+
+onsubmit="upload();"
+<script src="../jquery-3.1.1.js"></script>
+<script>
+	// function upload(){
+	// 	var oFiles = document.querySelector('#file1');
+	// 	var formData = new FormData();
+	// 	for (var i = 0, file; file = oFiles[i]; i++) {
+	// 		formData.append(file.name, file);
+	// 	}
+	// 	var xhr = new XMLHttpRequest();
+	// 	xhr.onload=function(){
+	// 		alert("上传成功！");
+	// 	}
+
+	// 	xhr.open("post","ajax_upload.php",true);
+	// 	xhr.send(formData);
+	// }
+	
+</script>
+</body>
+</html>

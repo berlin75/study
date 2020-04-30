@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf8">
+<title>霓虹灯文字特效</title>
+<style>
+
+</style>
+</head>
+<body>
+
+<script src="../../vendors/vendors/jquery-3.1.1.js"></script>
+<script>
+var str = "欢迎您的到来！wahahaha";
+var strlen = str.length;
+document.write("<div id='a' style='font-size:40px;'>" + str + "</div>");
+var col = new Array("#FFCC00", "#3333FF", "#FFCC00", "#FF0000", "#FFCC00", "#CC33FF");
+var ic = 0;
+
+function Dcolor() {
+	var Strname = "";
+	for (i = 0; i < strlen; ++i) {
+		var Strname = Strname + "<font color=" + col[ic] + ">" + str.substring(i, i + 1) + "</font>";
+		ic = ic + 1;
+		if (ic == col.length) ic = 0;
+	}
+	a.innerHTML = Strname;
+	setTimeout("Dcolor()", 200);
+}
+Dcolor();
+
+console.log('参考原代码 http://www.jq22.com/webqd1828');
+</script>
+
+</body>
+</html>

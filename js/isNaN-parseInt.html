@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>求和</title>
+<script>
+	window.onload=function()
+	{
+		var obtn=document.getElementById("btn");
+		obtn.onclick=function()
+		{
+			var Otxt1=document.getElementById("txt1").value;
+			var Otxt2=document.getElementById("txt2").value;
+			var n1=parseInt(Otxt1);
+			var n2=parseInt(Otxt2);
+			if(isNaN(n1)){alert("您输入的第一个数字不正确");}
+			else if(isNaN(n2)){alert("您输入的第二个数字不正确");}
+			else {alert(n1+n2);}
+			
+		}
+
+/***************************************************/
+//		var oTxt1=document.getElementById("txt1");
+//		var oTxt2=document.getElementById("txt2");
+//		var oBtn1=document.getElementById("btn1");
+//		oBtn1.onclick=function()
+//		{
+//			if(isNaN(parseInt(oTxt1.value))){ alert("第一个数字输入不正确");}
+//			else if(isNaN(parseInt(oTxt2.value))) { alert("第二个数字输入不正确");}
+//			else 
+//			{
+//				var sum=parseInt(oTxt1.value)+parseInt(oTxt2.value)
+//				alert(sum);
+//			}
+//	    }
+
+}
+</script>
+</head>
+
+<body>
+    <input id="txt1" type="text"  />
+    <input id="txt2"  type="text"  />
+    <input id="btn" type="button" value="sum"  />
+   
+    <p>parseInt()函数解析字符串并返回一个整数，第一个不是数字则返回NaN</p>
+    <p>isNaN(a) 返回true说明变量a是非数字</p>
+</body>
+</html>

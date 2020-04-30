@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Tetris</title>
+    <link rel="stylesheet" type="text/css"  href="./tetris.css" />
+</head>
+<body>
+	<audio id="audio_move" src="music/move.mp3" preload="auto"></audio>
+  <audio id="audio_collision" src="music/collision.mp3" preload="auto"></audio>
+  <audio id="audio_gameover" src="music/gameover.mp3" preload="auto"></audio>
+  <audio id="audio_score" src="music/cash.mp3" preload="auto"></audio>
+  <audio id="audio_pop" src="music/pop.ogg" preload="auto"></audio>
+<div class="wrap">
+  <canvas id="tetris" width="300" height="600"></canvas> 
+  <div class="rightBlock">
+    <canvas id="block" width="120" height="120"></canvas> 
+    <br/>
+    <br/>
+    <br/>
+    <label>SPEED:</label>
+    <br/>
+    <input type="TEXT" readonly="readonly" id="speedShow" value="1" />
+    <br/>
+    <br/>
+    <br/>
+    <label>LEVELS:</label>
+    <br/>
+    <input type="TEXT" readonly="readonly" id="levelShow" value="0" />
+    <br/>
+    <br/>
+    <br/>
+    <label>SCORES:</label>
+    <br/>
+    <input type="TEXT" readonly="readonly" id="scoreShow" value="0"/>
+    <br/>
+    <br/>
+    <br/>
+    <input type="checkbox" id="autoPlay" disabled="disabled"><label>Auto Play</label>
+    <br/>
+    <br/>
+    <br/>
+    <label id="playControl" > 开 始 </label>
+    <br/>
+    <br/>
+    <br/>
+    <input type="checkbox" id="audioOpen" disabled="disabled"><label>audio open</label>
+  </div>
+</div>
+</body>
+</html>
+<script type="text/javascript" src="./index.js"></script>

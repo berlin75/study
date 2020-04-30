@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>Flash图片轮换效果</title>
+<style>
+*{margin:0;padding:0;border:none;box-sizing:border-box;list-style:none;}
+main{margin:10px;position:relative;}
+
+#bigpic{width:400px;height:320px;position:relative;overflow:hidden;}
+#singlepic{position:absolute;left:0px;top:0px;}
+#singlepic li img{display:block;width:400px;height:320px;}
+
+#supbar{position:absolute;z-index:9;width:400px;height:320px;}
+#supbar p{float:left;width:200px;height:320px;}
+#supbar p span{display:none;width:60px;height:60px;position:absolute;top:150px;cursor:pointer;}
+.leftbtn{left:10px;background:url(imgs/btn.gif) no-repeat;}
+.rightbtn{right:10px;background:url(imgs/btn.gif) no-repeat 0 -60px;}
+#supbar p:hover span{display:block;}
+
+#picinfor{width:400px;position:absolute;bottom:0px;z-index:8;padding:5px;color:#ccc;font-size:0.8rem;}
+#picinfor .picword{float:left;}
+#picinfor .picnum{float:right;}
+
+#smallpic{width:400px;height:116px;background:gray;position:relative;overflow:hidden;}
+#longpic{position:absolute;left:0px;top:0px;}
+#longpic li{float:left;padding:10px 0 10px 10px;}
+#longpic li img{width:120px;height:96px;}
+
+#subbar{position:absolute;z-index:9;width:400px;}
+#subbar p{width:120px;height:96px;margin:10px;background:rgba(0,0,0,0.6);}
+#subbar p:nth-of-type(1){float:left;}
+#subbar p:nth-of-type(2){float:right;}
+#smallpic:hover #subbar{display:none;}
+</style>
+<script src="../../../vendors/jquery-3.1.1.js"></script>
+<script src="startmove.js"></script>
+<script>
+	$(document).ready(function(){ 
+		var singlepic=document.getElementById('singlepic');
+		$('#singlepic').append($('#singlepic li').clone());
+		singlepic.height=320*singlepic.children.length+'px';
+		
+		var dir=-1;
+		function singlemove(){
+			if(dir==-1){   //向上切换
+				if(singlepic.offsetTop>=(-320*6)){ console.log(dir);
+					singlepic.style.top=singlepic.offsetTop+320*dir+'px';				
+				}else{
+					singlepic.style.top='0px';
+				}
+			}else if(dir==1){  //向下切换
+				if(singlepic.offsetTop){
+				
+				}
+			}
+		}	
+		singlepic.timer=setInterval(singlemove,2000);
+		
+		var longpic=document.getElementById('longpic');
+		$('#longpic').append($('#longpic li').clone());
+		$('#longpic').prepend($('#longpic li:last').clone());		
+		longpic.width=130*longpic.children.length+'px';
+		longpic.timer=setInterval(longmove,2000);
+		
+		function longmove(){
+			if(longpic.offsetLeft>=-130*6){    
+				longpic.style.left=longpic.offsetLeft-130+'px';
+			}else{
+				longpic.style.left='0px';
+			} 
+		}
+		
+		var main=document.getElementsByTagName('main')[0];
+		$('main').hover(function(){
+			clearInterval(singlepic.timer);
+			clearInterval(longpic.timer);
+		},function(){
+			singlepic.timer=setInterval(singlemove,2000);
+			longpic.timer=setInterval(longmove,2000);
+		});
+		
+		
+	});
+</script>
+</head>
+
+<body>
+<main>
+	<div id="bigpic">
+		<ol id="singlepic">
+			<li><img src="imgs/1.jpg" /></li>
+			<li><img src="imgs/2.jpg" /></li>
+			<li><img src="imgs/3.jpg" /></li>
+			<li><img src="imgs/4.jpg" /></li>
+			<li><img src="imgs/5.jpg" /></li>
+			<li><img src="imgs/6.jpg" /></li>
+		</ol>
+		<div id="supbar">
+			<p><span class="leftbtn"></span></p>
+			<p><span class="rightbtn"></span></p>
+		</div>
+		<div id="picinfor">
+			<p class="picword">加载图片信息</p>
+			<p class="picnum">加载图片数量</p>			
+		</div>
+	</div>
+
+	<div id="smallpic">
+		<ul id="longpic">
+			<li><img src="imgs/1.jpg" /></li>
+			<li><img src="imgs/2.jpg" /></li>
+			<li><img src="imgs/3.jpg" /></li>
+			<li><img src="imgs/4.jpg" /></li>
+			<li><img src="imgs/5.jpg" /></li>
+			<li><img src="imgs/6.jpg" /></li>	
+		</ul>
+		<div id="subbar"><p></p><p></p></div>
+	</div>
+</main>
+
+<br/>
+<p>1.display:inline-block;和float:left;display会产生右边距，而float不会</p>
+<p>2.jquery $('#longpic')和document.getElementById('longpic')有差别</p>
+<p>3.js原生对象和jQuery对象的类型不同，所支持的方法也不同,所以不能混合使用</p>
+<p>4.setTimeout和setInterval，在使用函数名作为调用句柄时都不能带参数</p>
+<br/>
+</body>
+</html>

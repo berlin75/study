@@ -1,0 +1,61 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>cookie1</title>
+<script>
+function setCookie(name,value,iDay){
+	var oDate=new Date();
+	oDate.setDate(oDate.getDate()+iDay);  //字符串编码
+	document.cookie=name+ "=" +escape(value)+((iDay==null) ? "" : ";expires="+oDate.toGMTString());
+}
+
+function getCookie(name){
+	if (document.cookie.length>0){
+		document.getElementById("show").innerHTML="Cookie : "+document.cookie;
+		start=document.cookie.indexOf(name + "="); //检索目标字符串在字符串中首次出现的位置
+			if (start!=-1){ 
+				start=start + name.length+1 ;
+				end=document.cookie.indexOf(";",start);  //cookie以分号结尾
+				if (end==-1) { end=document.cookie.length; } 
+				return unescape(document.cookie.substring(start,end)); //提取字符串中间的字符，解码
+			} 
+	  }
+	return "";
+}
+
+function checkCookie(){
+	user=getCookie('user');
+	passw=getCookie('passw');
+	if (user!=null && user!=""&&passw!=null && passw!=""){
+		alert('Welcome again: '+user+'! Your passw: '+passw);
+	}
+	else{
+		user=prompt('Please enter your name:',"");
+		passw=prompt('Please enter your passw:',"");
+		if (user!=null && user!=""){
+			setCookie('user',user,365);
+		}
+		if (passw!=null && passw!=""){
+			setCookie('passw',passw,365);
+		}
+	}
+	  
+}
+
+function removeCookie(){
+	setCookie('user',user,-1);
+	setCookie('passw',passw,-1);
+	alert('Removed cookie!');
+}
+</script>
+</head>
+
+<body onload="checkCookie()">
+
+<div id="show" style="width:100%;height:50px;line-height:50px;text-indent:2em;border:1px solid;">No cookie</div>
+
+<button onclick="removeCookie()" style="margin-top:10px;">RemoveCookie</button>
+
+</body>
+</html>

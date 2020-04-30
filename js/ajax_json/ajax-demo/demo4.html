@@ -1,0 +1,93 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>跨域cros</title>
+</head>
+
+<body>
+<h2>信息查询</h2>
+<label>请输入编号：</label>
+<input type="text" id="keyword" value="101">
+<button type="button" id="search">查询</button>
+<p id="searchResult"></p>
+
+<h2>信息创建</h2>
+<p><label>请输入姓名：</label><input type="text" id="staffname"></p>
+<p><label>请输入编号：</label><input type="text" id="staffnumber"></p>
+<p><label>请选择性别：</label><select id="staffsex"><option>男</option><option>女</option></select></p>
+<p><label>请输入职位：</label><input type="text" id="staffjob"></p>
+<p><button type="button" id="save">保存</button></p>
+<p id="createResult"></p>
+
+<script src="../../../vendors/jquery-3.1.1.js"></script>
+<script>
+$(document).ready(function(e) {
+    $("#search").click(function(){   //127.0.0.1和localhost是不同的域名
+		$.ajax({
+			type:"GET", 
+			url:"http://127.0.0.1/study/js/ajax_json/ajax-demo/server4.php?number="+$("#keyword").val(),
+			dataType:"json",
+			success:function(data){
+				if(data.success){
+					$("#searchResult").html(data.msg);
+				}else{
+					$("#searchResult").html("出现错误："+data.msg);
+				}
+			},
+			error:function(jqXHR){
+				alert("发生错误："+jqXHR.status);
+			}
+		
+		});
+	});
+	$("#save").click(function(){
+		$.ajax({
+			type:"POST",
+			url:"http://127.0.0.1/study/js/ajax_json/ajax-demo/server4.php",
+			dataType:"json",
+			data:{
+				name:$("#staffname").val(),
+				number:$("#staffnumber").val(),
+				sex:$("#staffsex").val(),
+				job:$("#staffjob").val()
+			},
+			success:function(data){
+				if(data.success){
+					$("#createResult").html(data.msg);
+				}else{
+					$("#createResult").html("出现错误："+data.msg);
+				}
+			},
+			error:function(jqXHR){
+				alert("发生错误："+jqXHR.status);
+			}
+		
+		});
+	});
+});
+
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>表单数字验证错误处理</title>
+</head>
+<body>
+<p>表单错误验证：try throw catch</p>
+请输入 5 到 10 之间的数字：
+<input id="demo" type="text">
+<button type="button" onclick="myFunction()">确定</button>
+<p id="mess"></p>
+
+
+<script>
+function myFunction(){
+  try{ 
+	var x=document.getElementById("demo").value;
+	if(x=="")     throw "没有输入";
+	if(isNaN(x))  throw "请输入数字";
+	if(x>10||x<5) throw "数字必须是5到10";
+  }catch(err){
+	var y=document.getElementById("mess");
+	y.innerHTML="错误提示：" + err ;
+  }
+}
+</script>
+</body>
+</html>

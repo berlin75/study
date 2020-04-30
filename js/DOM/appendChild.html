@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>appendChild</title>
+</head>
+<body>
+
+<ul id="myList">
+	<li>Coffee</li>
+	<li>Tea</li>
+</ul>
+<hr/>
+<ul id="myList2">
+	<li>注意标签之间的空格</li>
+	<li>lastchild在标签之间有空格、换行时会是文本节点空格</li>
+</ul>
+<hr/>
+<ul id="myList3"><li>wine</li><li>Milk</li></ul>
+
+<button onclick="myFunction()">appendChild追加节点</button>
+<button onclick="myFunction2()">appendChild移动节点 文本节点</button>
+<button onclick="myFunction3()">appendChild移动节点</button>
+
+<script>
+function myFunction(){
+	var node = document.createElement("LI");
+	var textnode = document.createTextNode("Water");
+	node.appendChild(textnode);
+	document.getElementById("myList").appendChild(node);
+
+	console.log(typeof node);           // object
+	console.log(node);                  // <li>Water</li>
+	console.log(node.toString());       // [object HTMLLIElement]
+	console.log(JSON.stringify(node));  // {}
+
+	// DOM节点对象转换成字符串
+	function nodeToString ( targetnode ) {    
+	   var tmpNode = document.createElement( "div" );  
+	   tmpNode.appendChild( targetnode.cloneNode( true ) );  
+	   var str = tmpNode.innerHTML;  
+	   tmpNode = targetnode = null;  // prevent memory leaks in IE  
+	   return str;  
+	}  
+  	
+  	var testnode = node;
+	var escapedStr = nodeToString( testnode ).replace( "<" , "<" ).replace( ">" , ">");  
+	console.log(typeof escapedStr, escapedStr);  // string <li>Water</li>
+
+	// innerHtml转换成DOM节点对象
+	function innerHtmlToDom( html ){
+		var tmpNode = document.createElement( "div" );
+		tmpNode.innerHTML = html;
+		return tmpNode;
+	}	
+	var html = "<li>coco</li>";
+	document.getElementById("myList").appendChild(innerHtmlToDom( html ));
+}
+
+function myFunction2(){ 
+	var node=document.getElementById("myList2").lastChild;
+	document.getElementById("myList").appendChild(node);
+}
+
+function myFunction3(){
+	var node=document.getElementById("myList3").lastChild;
+	document.getElementById("myList").appendChild(node);
+}
+</script>
+
+
+</body>
+</html>

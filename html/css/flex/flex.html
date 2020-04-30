@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>flex布局</title>
+<style>
+*{margin: 0;padding: 0;}
+body{padding: 1rem;}
+p{margin: 1rem 0;}
+ul{
+	list-style: none;border: 1px solid;width: 30%;height: 100px;margin-bottom: 2rem;
+	display: flex;
+}
+li{width: 50px;height: 50px;background: lightgreen;margin: .5rem;}
+</style>
+</head>
+<body>
+
+<p><button onclick="addItem()">增加或减少项目</button></p>
+<p><button onclick="changeLi()">改变li-0高度</button></p>
+<p><button onclick="change('flex-direction')">flex-direction</button><span> row</span></p>
+<p><button onclick="change('flex-wrap')">flex-wrap</button><span> nowrap</span></p>
+<p><button onclick="change('justify-content')">justify-content</button><span> flex-start</span></p>
+<p><button onclick="change('align-items')">align-items</button><span> stretch</span></p>
+<p><button onclick="change('align-content')">align-content</button><span> stretch</span></p>
+<p><button onclick="flexGrow()">li-0 flex-grow</button><span> 0</span></p>
+<p><button onclick="flexShrink()">li-1 flex-shrink</button><span> 1</span></p>
+<p><button onclick="alignSelf()">li-2 align-self</button><span> auto</span></p>
+
+<ul id="container">
+	<li>1</li>
+	<li>2</li>
+	<li>3</li>
+	<li>4</li>
+</ul>
+
+<script src="../../../vendors/jquery-3.1.1.js"></script>
+<script>
+	function addItem(){
+		var len = $("#container").children().length;
+		len < 8 
+			? $("#container").append('<li>5</li><li>6</li><li>7</li><li>8</li>')
+			: $("#container").html('<li>1</li><li>2</li><li>3</li><li>4</li>');
+	}
+
+	function changeLi(){
+		var first = $("#container li").first();
+		first.css('height') == '50px' ? first.css('height', '80px') : first.css('height', '50px');
+	}
+
+	function change(prop){ 
+		var arr = prop.split('-');
+		arr = arr.map(str => str.substring(0,1).toUpperCase()+str.substring(1));
+	    arr = arr.join('');
+
+		var propObj = {
+			FlexDirection: ["row", "row-reverse", "column", "column-reverse"],
+			FlexWrap: ["nowrap", "wrap", "wrap-reverse"],
+			JustifyContent: ["flex-start","flex-end","center","space-between","space-around"],
+			AlignItems: ["flex-start","flex-end","center","baseline","stretch"],
+			AlignContent: ["flex-start","flex-end","center","space-between","space-around","stretch"],
+		};
+
+		var propArr = propObj[arr];
+		var index;
+		for(var i = 0, len = propArr.length; i < len; i++){
+			if($("#container").css(prop) == propArr[i]){
+				index = i;
+				break;
+			}
+		}
+		if(++index >= len) index = 0;
+		$("#container").css(prop, propArr[index]);
+
+		$(event.target).siblings("span").html(" " + propArr[index]);
+	}
+
+	var grow = 0;
+	function flexGrow(){
+		var first = $("#container li").first();
+		grow++;
+		first.css('flex-grow', grow);
+		$(event.target).siblings("span").html(" " + grow);
+	}
+
+	function flexShrink(){
+		var second = $("#container li").eq(1);
+		var shrink = second.css('flex-shrink') == 1 ? 0 : 1;
+		second.css('flex-shrink', shrink);
+		$(event.target).siblings("span").html(" " + shrink);
+	}
+
+	var alignSelfindex = 0;
+	function alignSelf(){
+		var arr = ["auto","flex-start","flex-end","center","baseline","stretch"];
+		var len = arr.length;
+		var third = $("#container li").eq(2);
+		if(++alignSelfindex >= len) alignSelfindex = 0;
+		third.css('align-self', arr[alignSelfindex]);
+		$(event.target).siblings("span").html(" " + arr[alignSelfindex]);
+	}
+</script>
+</body>
+</html>

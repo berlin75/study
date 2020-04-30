@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>沙漏</title>
+<style>
+*{margin: 0;padding: 0;}
+body{
+    background: #3c3b52;
+    background-image: -webkit-radial-gradient(top, circle cover, #3c3b52 0%, #252233 80%);
+}
+.div{
+    width: 50px;
+    height: 120px;
+    margin: 100px auto;
+    animation: div 2s linear infinite;
+}
+.div1{
+    width: 44px;
+    height: 57px;
+    margin: auto;
+    position: relative;
+    border: solid 3px #1987ff;
+    border-bottom-style:  none;
+    border-radius:  0 0 50% 50%/0 0 60% 60%;
+    overflow: hidden;
+}
+.div1 div{
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: #ffff00;
+    animation: div1 2s linear infinite;
+}
+.div2{
+    width: 44px;
+    height: 57px;
+    margin: auto;
+    position: relative;
+    border: solid 3px #1987ff;
+    border-top-style:  none;
+    border-radius: 50% 50% 0 0/60% 60% 0 0;
+    overflow: hidden;
+}
+.div2 div{
+    position: absolute;
+    top: 100%;
+    width: 100%;
+    height: 100%;
+    background: #ffff00;
+    animation: div2 2s linear infinite;
+}
+@keyframes div {
+    0% {transform: rotate(0deg);}
+    80%{transform: rotate(0deg);}
+    100%{transform: rotate(180deg);}
+}
+@keyframes div1 {
+    0%{top:0}
+    80%{top:100%}
+    100%{top:100%}
+}
+@keyframes div2 {
+    0%{top:100%}
+    80% {top: 0}
+    100%{top:0}
+}
+</style>
+</head>
+<body>
+<div class="div">
+    <div class="div1">
+        <div></div>
+    </div>
+    <div class="div2">
+        <div></div>
+    </div>
+</div>
+</body>
+</html>

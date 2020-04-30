@@ -1,0 +1,43 @@
+<html>  
+<head>  
+<meta http-equiv="Content-Type" content="text/html; charset=utf8" />  
+<title>html5上传 file api 上传readastext</title>  
+<style>
+	div{margin-bottom: 1rem;}
+</style>
+<script type="text/javascript">  
+	function readAsText(){  
+	    var val = document.getElementById("file").value;
+	    console.log(val);
+	    if(!val){
+	    	result.innerHTML='错误：没有选择任何文件';
+	    	return;
+	    }
+
+	    var file=document.getElementById("file").files[0]; 
+	    console.log(file); 
+	    if(file.type !== 'text/plain' && file.type !== 'text/html'){
+            result.innerHTML='错误：不是有效的文本文件';
+            return;
+        }
+
+	    var reader=new FileReader();  
+	    console.log(reader);
+	    reader.readAsText(file); 
+	    console.info(reader.readyState); 
+	    reader.onload=function(e){  
+	    	console.info(e); //事件对象
+	    	console.info(reader.readyState);
+	        var result=document.getElementById("result");  
+	        result.innerHTML=this.result;  
+	    }  
+	}  
+</script>  
+</head>  
+  
+<body>  
+<div>请选择文本文件:<input type="file" id="file"/></div>
+<div><input type="button" value="预览文本文件" onclick="readAsText();"/></div>
+<div name="result" id="result">这里显示文件内容</div>  
+</body>  
+</html>

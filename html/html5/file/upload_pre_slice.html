@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf8">
+<title>html5 file api 分段读取文件内容slice</title>
+<style>
+#DropZone {width:400px;height:100px;background:#f8f8f8;border:1px dotted #333;text-align:center;line-height:100px;color:#aaa;display:inline-block;}
+.drag_hover {background:#FAD6F9;}
+.show {margin-top:20px;position:relative;width:950px;}
+.show .item {position:absolute;width:250px;height:250px;}
+.show img {max-width:224px;max-height:224px;cursor: pointer;box-shadow:0px 1px 1px 1px #AAA3A3;}
+.show img:hover {box-shadow:0px 1px 1px 2px #83ABD2;}
+.show .big {z-index:2;}
+.show .big img {max-width:none;max-height:none;cursor: pointer;box-shadow:2px 2px 10px 2px #666;}
+
+</style>
+</head>
+<body>
+<pre>
+有的时候，一次性将一个大文件读入内存，并不是一个很好的选择（如果文件太大，使用FileReader读取文件内容，可能直接导致浏览器崩溃），w3c也想到了这种情况，所以HTML5允许对文件进行分段读取
+
+本例使用了FileReader的onloadend事件来检测读取成功与否，如果用onloadend则必须检测一下FileReader readyState，因为read abort时也会触发onloadend事件，如果我们采用onload，则可以不用检测readyState
+
+readAsBinaryString这个方法，读取的二进制字符串，在页面显示，出现中文乱码，不知道怎么解决，
+如果用reader.readAsText即可正常显示中文；
+在w3c官网上：binary string, in which every byte is represented by an integer in the range [0..255]，
+而中文却不在[0...255]内，难道是因为这样才出现乱码？
+</pre>
+
+<div class="upload_box">
+    <input type="file" id="Files" name="files[]" multiple="">
+    <span id="DropZone">拖拽区域</span>
+</div>
+<button id="buttons" data-start="0" data-end="200">分段预览文件</button>
+<div class="show" id="range"></div>
+<div class="show" id="content"></div>
+<div class="show" id="lists"></div>
+<div class="show" id="Errors"></div>
+<div class="show" id="Preview"></div>
+
+<script src="../../vendors/jquery-3.1.1.js"></script>
+<script>
+//预览分段读取文件内容
+function readBlob(start, end) {  
+    var files = document.getElementById('Files').files;  
+       
+    if(!files.length) {  
+        alert('请选择文件');  
+        return;  
+    }  
+       
+    var file = files[0],  
+        start = parseInt(start, 10) || 0,  
+        end = parseInt(end, 10) || (file.size - 1);  
+    console.log(file);
+           
+    var r = document.getElementById('range'),  
+        c = document.getElementById('content');  
+           
+    var reader = new FileReader();  
+    console.log(reader);
+       
+    reader.onloadend = function(e) {
+        if(this.readyState == FileReader.DONE) { 
+            c.textContent = this.result;  
+            r.textContent = "Read bytes: " + (start + 1) + " - " + (end + 1) + " of " + file.size + " bytes";  
+        }  
+    }; 
+
+    var blob = blobSlice(file,start,end + 1);
+    console.log(blob);
+    reader.readAsBinaryString(blob);  
+};  
+
+function blobSlice(blob,startByte,length){
+    if(blob.slice){
+        return blob.slice(startByte,length);
+    } else if(blob.webkitSlice){
+        return blob.webkitSlice(startByte,length);
+    } else if(blob.webkitSlice){
+        return blob.webkitSlice(startByte,length);
+    } else {
+     return null;
+    }
+}
+   
+try {  
+    document.getElementById('buttons').addEventListener('click', function(e) {  
+        if(e.target.tagName.toLowerCase() == 'button') {  
+            var start = e.target.getAttribute('data-start'),  
+                end = e.target.getAttribute('data-end');        
+            readBlob(start, end);  
+        }    
+    });  
+} catch(ex) {  
+    alert('something error happens!')  
+}  
+</script>
+
+</body>
+</html>

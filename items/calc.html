@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf8">
+<title>计算器</title>
+<style>
+#txtList {
+font-size:14px;
+height:20px;
+border-bottom:none;
+}
+#txtResult {
+font-size:16px;
+font-weight:bold;
+color:dimgray;
+height:30px;
+border-top:none;
+}
+.calc-inner {
+margin:0 auto;
+border:1px solid darkgray;
+width:280px;
+padding:8px;
+}
+.result,.op-number {
+margin:0 auto;
+width:280px;
+}
+.result>input {
+width:280px;
+text-align:right;
+border:1px solid gray;
+display:block;
+padding-right:6px;
+box-sizing:border-box;
+}
+ul,li {
+margin:0;
+padding:0;
+}
+li {
+list-style:none;
+}
+.op-number {
+margin-top:10px;
+}
+.op-number li {
+float:left;
+padding:5px;
+}
+.op-number>ul::after {
+content:"";
+display:block;
+height:0;
+overflow:hidden;
+font-size:0;
+clear:both;
+}
+.op-number li>input {
+width:60px;
+height:42px;
+line-height:28px;
+}
+
+</style>
+</head>
+<body>
+<div class="main">
+	<div class="calc-inner">
+		<div class="result">
+			<input id="txtList" readonly="readonly">
+			<input id="txtResult" readonly="readonly">
+		</div>
+		<div class="op-number">
+			<ul>
+				<li>
+					<input type="button" value="0" onclick="CalcPage.getNum(this)">
+				</li>
+				<li>
+					<input type="button" value="1" onclick="CalcPage.getNum(this)">
+				</li>
+				<li>
+					<input type="button" value="2" onclick="CalcPage.getNum(this)">
+				</li>
+				<li>
+					<input type="button" value="+" onclick="CalcPage.getNum(this)">
+				</li>
+				<li>
+					<input type="button" value="3" onclick="CalcPage.getNum(this)">
+				</li>
+				<li>
+					<input type="button" value="4" onclick="CalcPage.getNum(this)">
+				</li>
+				<li>
+					<input type="button" value="5" onclick="CalcPage.getNum(this)">
+				</li>
+				<li>
+					<input type="button" value="-" onclick="CalcPage.getNum(this)">
+				</li>
+				<li>
+					<input type="button" value="6" onclick="CalcPage.getNum(this)">
+				</li>
+				<li>
+					<input type="button" value="7" onclick="CalcPage.getNum(this)">
+				</li>
+				<li>
+					<input type="button" value="8" onclick="CalcPage.getNum(this)">
+				</li>
+				<li>
+					<input type="button" value="*" onclick="CalcPage.getNum(this)">
+				</li>
+				<li>
+					<input type="button" value="9" onclick="CalcPage.getNum(this)">
+				</li>
+				<li>
+					<input type="button" value="=" onclick="CalcPage.getNum(this)">
+				</li>
+				<li>
+					<input type="button" value="C" onclick="CalcPage.getNum(this)">
+				</li>
+				<li>
+					<input type="button" value="/" onclick="CalcPage.getNum(this)">
+				</li>
+			</ul>
+		</div>
+	</div>
+</div>
+<script src="../vendors/jquery-3.1.1.js"></script>
+<script>
+/**
+* 计算器对象
+* @qq 9965463
+* @type {{num1: number, num2: undefined, operator: undefined, txtTop: undefined, txtBottom: undefined, list: Array, clickNumber: CalcPage.clickNumber, clickOperator: CalcPage.clickOperator, clickEqual: CalcPage.clickEqual, clear: CalcPage.clear, getNum: CalcPage.getNum, show: CalcPage.show}}
+*/
+CalcPage = {
+	num1: 0, //操作1
+	num2: undefined, //操作2
+	operator: undefined, //运算符
+	txtTop: undefined, //显示操作记录
+	txtBottom: undefined, //显示操作数|结果
+	list: [], //操作记录的保存
+
+	//点击数字
+	clickNumber: function(num) {
+		//运算符和操作数2 为null
+		if (!this.operator && !this.num2) {
+			if (this.num1 && this.num1.length == 16) {
+				return;
+			}
+			this.num1 = parseInt(this.num1 + num) + "";
+			//在页面上显示操作数1
+			this.txtBottom.value = this.num1;
+		} else if (this.operator) {
+			if (this.num2 && this.num2.length == 16) {
+				return;
+			}
+			this.num2 = this.num2 ? this.num2 : ""; // num2=undefined
+			this.num2 = parseInt(this.num2 + num) + ""; // 后面+空字符串的原因是要转字符串
+			//将操作数2显示到页面
+			this.txtBottom.value = this.num2;
+		} else {
+			throw "operator=undefined，num2!=undefined的情况是不允许的";
+		}
+	},
+	//点击操作符
+	clickOperator: function(operator) {
+		if (!this.operator && this.num2) {
+			throw "无效操作 ";
+		} else if (this.operator && this.num2) {
+			var res = eval(this.num1 + this.operator + this.num2);
+			this.num1 = res + "";
+			this.list.push(this.num2);
+			this.num2 = undefined;
+			this.txtBottom.value = this.num1;
+			this.list.push(operator);
+		} else if (!this.operator && !this.num2) {
+			this.list.push(this.num1);
+			this.list.push(operator);
+		} else if (this.operator && !this.num2) {
+			this.list.pop();
+			this.list.push(operator);
+		}
+		this.operator = operator;
+	},
+
+	//点击=
+	clickEqual: function() {
+		if (this.operator && !this.num2) {
+			this.num2 = this.num1;
+			var res = eval(this.num1 + this.operator + this.num2);
+			this.num1 = res;
+			this.operator = this.num2 = undefined;
+		} else if (this.operator && this.num2) {
+			var res = eval(this.num1 + this.operator + this.num2);
+			this.num1 = res;
+			this.operator = this.num2 = undefined;
+		} else if (!this.operator && this.num2) {
+			throw "无效操作";
+		}
+		this.list.length = 0;
+	},
+	//点击C
+	clear: function() {
+		this.num1 = 0;
+		this.num2 = undefined;
+		this.operator = undefined;
+		this.list.length = 0;
+	},
+	//事件处理
+	getNum: function(inp) {
+		var val = inp.value;
+		if (val >= 0 && val <= 9) {
+			this.clickNumber(val);
+		} else if (val == "=") {
+			this.clickEqual(val);
+			this.show();
+		} else if (val == "C") {
+			this.clear();
+			this.show();
+		} else {
+			this.clickOperator(val);
+			this.show();
+		}
+
+	},
+	//显示页面信息
+	show: function() {
+		this.txtBottom.value = this.num1;
+		this.txtTop.value = this.list.join("");
+	}
+}
+//加载事件
+window.onload = function() {
+	//初始化对象信息
+	CalcPage.txtBottom = document.getElementById("txtResult");
+	CalcPage.txtTop = document.getElementById("txtList");
+	CalcPage.show();
+}
+</script>
+
+</body>
+</html>

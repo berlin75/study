@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf8">
+<title>js水球加载进度</title>
+<style>
+#wave {
+	width:180px;
+	height:180px;
+	border:6px silver solid;
+	border-radius:50%;
+	background-color:#fff;
+	font-size:3rem;
+	line-height:180px;
+	text-align:center;
+	color:rgba(86,125,190,1);
+	position:relative;
+	margin:0 auto;
+	overflow:hidden;
+	z-index:2;
+}
+#progress {
+	width:200%;
+	height:200%;
+	border-radius:43%;
+	background: rgba(9,136,233,.5);
+	position:absolute;
+	left:-90px;
+	top:90px;
+	animation:Rota 3s linear infinite;
+}
+
+@-webkit-keyframes Rota {
+	0% {
+		transform:rotate(0deg);
+	}
+	100% {
+		transform:rotate(360deg);
+	}
+}
+</style>
+</head>
+<body>
+<div id="wave">
+	<span id="num" num="0">0</span>%
+	<div id="progress"></div>
+</div>
+<script src="../../vendors/jquery-3.1.1.js"></script>
+<script>
+var oWave = document.getElementById('wave');
+var oNum = document.getElementById('num');
+var oProgress = document.getElementById('progress');
+var num = oNum.getAttribute('num');
+var timer = setInterval(function() {
+	num++;
+	Math.min(num, 100);
+	if (num >= 100) {
+		clearInterval(timer);
+		timer = null;
+	}
+	oNum.innerHTML = num;
+	oProgress.style.top = Math.floor((100 - num) * 1.8) + 'px';
+}, 100);
+</script>
+</body>
+</html>

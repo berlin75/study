@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>无标题文档</title>
+</head>
+
+<body>
+  <form action="" method="post" name="reg" >
+    <fieldset>
+     <legend>注册信息表</legend>
+     <table align="center">
+        <tr>
+           <td>用户名：</td>
+           <td><input type="text" name="username" value="请输入姓名" size=""/></td>
+        </tr>
+        <tr>
+           <td>密码：</td>
+           <td><input type="password" name="mima"/></td>
+        </tr>
+        <tr>
+           <td>性别：</td>
+           <td><label for="man">男</label>
+               <input  type="radio" name="sex" value="男"  id="man"  checked=" checked"/>
+               <label>女
+               <input  type="radio" name="sex"  value="女"”  />
+               </label>
+           </td>
+        </tr>
+        <tr>
+           <td>爱好：</td>
+           <td><label for="music">音乐</label>
+               <input  type="checkbox" name="love" value="音乐" id="music" checked=" checked"/>
+               <label>足球
+               <input  type="checkbox"  name="love"   value="足球"”/>
+               </label>
+           </td>
+        </tr>
+
+        <tr>
+           <td>国籍：</td>
+           <td>
+              <select name="country">
+                 <option  value="中国" selected="selected">中国</option>
+                 <option  value="美国" >美国</option>
+              </select>
+           </td>
+        </tr>
+        
+        <tr>
+           <td>城市：</td>
+           <td>
+              <select name="city">
+               <optgroup label="中国">
+                 <option  value="北京" >北京</option>
+                 <option  value="湖南" >湖南</option>
+                 <option  value="湖北" >湖北</option>
+               </optgroup>
+                <optgroup label="美国"> </optgroup>
+                  <option  value="纽约" >纽约</option>
+                  <option  value="华盛顿" >华盛顿</option>
+                  <option  value="新西兰" >新西兰</option>
+                </optgroup>
+              </select>
+           </td>
+        </tr>
+        
+        
+                <tr>
+           <td>常驻地：</td>
+           <td>
+              <select name="address" size="2" multiple="multiple">
+                 <option  value="中国" selected="selected">中国</option>
+                 <option  value="美国" >美国</option>
+              </select>
+           </td>
+        </tr>
+
+        <tr>
+           <td>上传照片： </td>
+           <td><input type="file" name="picture" /></td>
+        </tr>
+
+
+        <tr>
+           <td>个人简介： </td>
+           <td><textarea name="desription" cols="30"  rows="5" > </textarea></td>
+        </tr>
+        
+        <tr>
+           <td colspan="2"><input type="submit" name="reg" value="注册"/>
+                           <input type="reset" name="chongzhi" value="重置"/>
+           </td>
+        </tr>
+
+     </table>
+    </select>
+  </form>
+ 
+ 
+ 
+</body>
+</html>

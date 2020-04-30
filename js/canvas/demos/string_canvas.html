@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf8">
+<title>01像素显示字符串canvas</title>
+<style>
+
+</style>
+</head>
+<body>
+<canvas></canvas>
+
+<script src="../../../vendors/jquery-3.1.1.js"></script>
+<script>
+window.onload = function() {
+var c = document.getElementsByTagName('canvas')[0];
+var ctx = c.getContext('2d');
+var WIDTH = c.width = window.innerWidth;
+var HEIGHT = c.height = window.innerHeight;
+var img;
+var init = function() {
+ctx.clearRect(0, 0, WIDTH, HEIGHT);
+ctx.font = 'bold 144px arial';
+ctx.fillStyle = 'rgba(255,255,255,0.5)';
+ctx.fillText('Hello World', 60, HEIGHT / 2 + 50);
+img = ctx.getImageData(0, 0, WIDTH, HEIGHT);
+}
+
+var run = function() {
+ctx.font = 'bold 5px arial';
+ctx.fillStyle = 'rgba(0,0,0,1)';
+for (var i = 1; i <= WIDTH / 8; i++) {
+for (var j = 1; j <= HEIGHT / 20; j++) {
+if (img.data[(Math.round(j * 10 + HEIGHT * 0.25 - 1) * WIDTH + i * 8) * 4]) {
+ctx.fillText('0', i * 8, j * 10 + HEIGHT * 0.25);
+} else {
+ctx.fillText('1', i * 8, j * 10 + HEIGHT * 0.25);
+}
+}
+}
+
+}
+init();
+run();
+document.onclick = function() {
+init();
+run();
+}
+
+}
+
+</script>
+
+<br/><br/><textarea rows="4" cols="150">
+参考原代码 http://www.jq22.com/webqd2041
+
+</textarea>
+</body>
+</html>

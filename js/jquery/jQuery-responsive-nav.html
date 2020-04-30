@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>jQuery响应式导航</title>
+<style>
+*{ margin:0; padding:0; box-sizing:border-box; border:none;}
+ul,li{ list-style-type:none;}
+nav{ width:80%; margin:0 auto;}
+.li0{ width:20%; float:left; position:relative; border-right:1px solid white;}
+.li0 a { padding:15px; color:white;font-size:1.5em; text-align:center; 
+         border-bottom:2px solid white;
+         display:block; text-decoration:none; background:#98bf21;}
+.li0 ul li a{ padding:15px;}
+.li0 ul{ width:100%; display:none; position:absolute; z-index:66;}
+.li0 a:hover{ background:#7A991A; color:#CCC;}
+.li0:hover ul{ display:block;}
+/***********************轮播******************************************************/
+#banner{ width:80%; height:400px; margin:10px auto; clear:both; 
+         border:2px solid #98bf21; position:relative; overflow:hidden;}
+#ultu{ position:absolute;}
+#ultu li{ float:left;}
+#banner img{ width:1071px; height:400px;}
+/***************************album******************************************************/
+#album{ width:80%; height:400px; margin:10px auto; position:relative;}
+/***************************前进后退按钮*******************************************/
+	#divback,#divforward{ width:20%; height:400px; position:absolute; top:0;}
+	#divback{  left:0;}
+	#divforward{ left:80%;}
+	#album button{ width:60px; height:60px; position:absolute; left:50%; top:50%; background:yellow;  border:1px solid green; border-radius:30px;  display:none;}
+	#divback button{ background:url(lr.png) -1px -1px;}
+	#divforward button{  background:url(lr.png) -1px -61px;}
+/***************************提示第一种张和最后一张*****************************************/
+	#album span{ position:absolute; left:0; top:50%; display:none; background:red;}
+/******************************图片选项***************************************************/	
+	#divo{position:absolute; bottom:10%; left:50%; background: rgba(204,204,204,0.5); border-radius:15px; }
+	#divo div{width:20px; border:1px solid pink; border-radius:10px; float:left; margin:5px 5px; text-align:center; background:#999;}
+	#divimg{ width:100%;height:400px;}
+	#divimg img{width:1071px; height:400px; display:none;}
+/**********************************************选项卡*****************************/
+section{ width:80%;  margin:0px auto; border:2px solid #98bf21;}
+section div{ width:90%; float:right;height:200px; background:#9F9; display:none;}
+section p{ width:10%;height:200px; float:left;}
+section button{ width:100%; height:35px; border-bottom:2px solid white; display:block; margin-bottom:35px;}
+.div1{ display:block;}
+.active{ background:yellow;}
+</style>
+<script src="../../vendors/jquery-3.1.1.js"></script>
+<script>
+	$(document).ready(function() {
+//选项卡***************************************************
+        for(var i=0;i<$("section button").length;i++){
+			$("section button").eq(i).click(function(){
+				for(var i=0;i<$("section button").length;i++){
+					$("section button").eq(i).css("background","#ccc");
+					$("section div").eq(i).css("display","none");
+				}
+				$(this).css("background","yellow");
+				$("section div").eq($(this).index()).css("display","block");
+			});
+		}
+//轮播***********************************************************************
+		var timer=null;
+		function move(){
+			var aImg=$("#banner img");
+			$("#ultu").width(aImg.eq(0).width()*aImg.length);
+			clearInterval(timer);
+			timer=setInterval(function(){
+			 if(document.getElementById("ultu").offsetLeft<((1-aImg.length)*aImg.eq(0).width()))
+				      {
+						 document.getElementById("ultu").style.left=0+"px";
+					  }
+			 $("#ultu").animate({left:"-=3px"},10);
+			},30);
+		}
+	    move();
+		$("#ultu").hover(function(){clearInterval(timer);},function(){move();});
+//Album******************************************************************************		
+		for(var i=0;i<$("#divo div").length;i++){
+			$("#divo div").eq(i).click(function(){
+				for(var i=0;i<$("#divo div").length;i++){
+					$("#divo div").eq(i).css("background","#999");
+					$("#divimg img").eq(i).css("display","none");
+				}
+				$(this).css("background","red");
+				$("#divimg img").eq($(this).index()).css("display","block");
+			});
+		}
+		$("#divback").hover(
+			function(){$("#divback button").show()},
+			function(){$("#divback button").hide()}
+		);
+		$("#divforward").hover(
+			function(){$("#divforward button").show()},
+			function(){$("#divforward button").hide()}
+		);
+		var thisimgIndex;
+		function searchindex(){
+			for(var i=0; i<$("#divimg img").length;i++){
+				if($("#divimg img").eq(i).css("display")=="block"){
+					return thisimgIndex=i;
+				}
+		   }
+		}
+		$("#divback button").click(function(){
+			searchindex();
+			if(thisimgIndex>0){
+				$("#divimg img").css("display","none");
+				$("#divimg img").eq(thisimgIndex-1).css("display","block");
+				$("#divo div").css("background","#999");
+			    $("#divo div").eq(thisimgIndex-1).css("background","red");
+			}
+			else{
+				$("#divback button").css("display","none");
+				$("#divback span").css("display","block");
+				setTimeout(function(){$("#divback span").css("display","none");},1000);
+			}
+		});
+		$("#divforward button").click(function(){
+			searchindex();
+			if(thisimgIndex<$("#divimg img").length-1){
+				$("#divimg img").css("display","none");
+				$("#divimg img").eq(thisimgIndex+1).css("display","block");
+				$("#divo div").css("background","#999");
+				$("#divo div").eq(thisimgIndex+1).css("background","red");
+			}
+			else if(thisimgIndex==$("#divimg img").length-1){
+				$("#divforward button").css("display","none");
+				$("#divforward span").css("display","block");
+				setTimeout(function(){$("#divforward span").css("display","none");},1000);
+			}
+		});
+    });
+</script>
+</head>
+
+<body>
+<nav>
+    <ul id="ul0">
+        <li class="li0"><a href="#">item1</a>
+            <ul>
+                <li><a href="#">item1</a></li>
+                <li><a href="#">item1</a></li>
+                <li><a href="#">item1</a></li>
+                <li><a href="#">item1</a></li>
+                <li><a href="#">item1</a></li>
+            </ul>
+        </li>
+        <li class="li0"><a href="#">item2</a>
+            <ul>
+                <li><a href="#">item2</a></li>
+                <li><a href="#">item2</a></li>
+                <li><a href="#">item2</a></li>
+                <li><a href="#">item2</a></li>
+            </ul>
+        </li>
+        <li class="li0"><a href="#">item3</a>
+            <ul>
+                <li><a href="#">item3</a></li>
+                <li><a href="#">item3</a></li>
+                <li><a href="#">item3</a></li>
+            </ul>
+        </li>
+        <li class="li0"><a href="#">item4</a>
+            <ul>
+                <li><a href="#">item4</a></li>
+                <li><a href="#">item4</a></li>
+            </ul>
+        </li>
+        <li class="li0"><a href="#">item5</a>
+            <ul>
+                <li><a href="#">item5</a></li>
+            </ul>
+        </li>
+    </ul>
+</nav>
+<br />
+<div id="banner">
+    <ul id="ultu">
+    	<li><img src="../image/1.jpg" /></li>
+        <li><img src="../image/2.jpg" /></li>
+        <li><img src="../image/3.jpg" /></li>
+        <li><img src="../image/4.jpg" /></li>
+    </ul>
+</div>
+<!----------------------------album-------------------------------------------------->
+<div id="album">
+	<div id="divback">
+    	<button type="button" value="back"></button>
+        <span>已经是第一张</span>
+    </div>
+    <div id="divforward">
+    	<button type="button" value="forward"></button>
+        <span>已经是最后一张</span>
+    </div>
+    <div id="divo">
+    	<div style="background:red;">1</div>
+        <div>2</div>
+        <div>3</div>
+        <div>4</div>
+    </div>
+    <div id="divimg">
+    	<img src="../image/1.jpg" style="display:block;"/>
+        <img src="../image/2.jpg" />
+        <img src="../image/3.jpg" />
+        <img src="../image/4.jpg" />
+    </div>
+</div>
+<section>
+    <p>
+    <button class="active" type="button" value="news">news</button>
+    <button type="button" value="artls">artls</button>
+    <button type="button" value="pictures">pictures</button>
+    </p>
+    <div class="div1">
+    注意一级菜单和二级菜单中的ul li a标签的继承
+    
+    </div>
+    <div>div2</div>
+    <div>div3</div>
+    <div style="clear:both;"></div>
+</section>
+<div style="width:80%; margin:0 auto;></div>
+</body>
+</html>

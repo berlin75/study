@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8" />
+<title>jump</title>
+<style>
+div{ float:left; }
+
+#div0{ border-bottom:10px solid #F0C; width:210px; height:270px; position:relative;}
+.jump{ width:30px; position:absolute; bottom:0px; }
+.jump1{ background:#d40203; height:50px; left:10px;}
+.jump2{ background:#f6ae00; height:100px; left:50px;}
+.jump3{ background:#121a2a; height:150px; left:90px;}
+.jump4{ background:#0988e9; height:200px; left:130px;}
+.jump5{ background:#34ada1; height:250px; left:170px;}
+
+#div1{margin-top:110px; margin-left:200px; width:120px; height:50px; }
+#div1 span{ display:inline-block; width:10px; height:100%; border-radius:10px; margin-left:10px; 
+	        animation:tojump 1.04s ease infinite;}
+@keyframes tojump{
+	0%,100%{ height:50px; opacity:1; }
+	50%{ height:100px; margin-top: -50px; opacity:0.5; }
+}
+#div1 span:nth-of-type(1){ background:pink; animation-delay:0s; }
+#div1 span:nth-of-type(2){ background:green; animation-delay:0.13s; }
+#div1 span:nth-of-type(3){ background:yellow; animation-delay:0.26s; }
+#div1 span:nth-of-type(4){ background:red; animation-delay:0.39s; }
+#div1 span:nth-of-type(5){ background:blue; animation-delay:0.52s; }
+
+/*原版*/
+#div2{width: 120px;height: 40px; margin-top:100px; }
+#div2 span{display:inline-block;width:8px;height:100%;margin-left:2px;border-radius:4px;
+		   background: lightgreen;animation: load 1.04s ease infinite;}
+@keyframes load{
+    0%,100%{height: 40px; background: lightgreen;}
+    50%{height: 60px;margin-top: -20px;background: lightblue;}
+}
+#div2 span:nth-child(2){animation-delay:0.13s;}
+#div2 span:nth-child(3){animation-delay:0.26s;}
+#div2 span:nth-child(4){animation-delay:0.39s;}
+#div2 span:nth-child(5){animation-delay:0.52s;}
+
+/*随机跳跃*/
+#div3{margin:110px 50px 0 50px; width:120px; height:50px; }
+#div3 span{ display:inline-block; width:10px; height:100%; border-radius:10px; margin-left:10px; }
+@keyframes tojump{
+	0%,100%{ height:50px; opacity:1; }
+	50%{ height:100px; margin-top: -50px; opacity:0.3; }
+}
+#div3 span:nth-of-type(1){background:pink; animation:tojump 0.5s ease infinite; animation-delay:0s; }
+#div3 span:nth-of-type(2){background:green; animation:tojump 0.6s ease infinite; animation-delay:0.05s; }
+#div3 span:nth-of-type(3){background:yellow;animation:tojump 0.8s ease infinite; animation-delay:0.26s; }
+#div3 span:nth-of-type(4){background:red; animation:tojump 0.9s ease infinite; animation-delay:0.39s; }
+#div3 span:nth-of-type(5){background:blue; animation:tojump 0.8s ease infinite; animation-delay:0.52s; }
+</style>
+<script>
+window.onload=function(){
+	var oDiv=document.getElementById('div0');
+	var jump=oDiv.getElementsByTagName('div');;
+	var speed=5;
+	function change(){
+	  for(var i=0;i<jump.length;i++){
+		if(jump[i].offsetHeight<250){
+			jump[i].style.height=jump[i].offsetHeight+speed+'px';
+		}
+		else if(jump[i].offsetHeight>=250){
+			jump[i].style.height=0+'px';
+		}
+	  }
+	};
+	setInterval(change,30);	
+};
+</script>
+</head>
+
+<body>
+<p style="clear:both;">div0使用js实现，div1，div2使用css3动画，Q：div1为何抖动？？？</p>
+<p>height:100px; margin-top: -50px;  -增高50px的同时，使其margin-top为-50px,保持底部静止</p>
+<div id="div0">
+<div class="jump jump1"></div>
+<div class="jump jump2"></div>
+<div class="jump jump3"></div>
+<div class="jump jump4"></div>
+<div class="jump jump5"></div>
+<div style="clear:both;"></div>
+</div>
+
+<div id="div1">
+	<span></span><span></span><span></span><span></span><span></span>
+</div>
+
+<div id="div3">
+	<span></span><span></span><span></span><span></span><span></span>
+</div>
+
+<div id="div2">
+	<span></span><span></span><span></span><span></span><span></span>
+</div>
+
+
+</body>
+</html>

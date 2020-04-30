@@ -1,0 +1,25 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>BOM2</title>
+<style>
+	body{ height:2000px;}
+	#div1{ width:100px; height:150px; background:red; position:absolute;
+	       right:0 ; bottom:0;}
+</style>
+<script>
+	window.onscroll=window.resize=function()
+	{
+		var scrollTop=document.documentElement.scrollTOP||document.body.scrollTop;
+		var oDiv=document.getElementById("div1");
+		oDiv.style.top=document.documentElement.clientHeight-oDiv.offsetHeight+scrollTop+"px";
+	};
+</script>
+</head>
+
+<body>
+ 	<div id="div1"></div>
+    <p>fixed在IE6下不兼容，div抖动在非ie6下可以用fixed，ie6下用运动</p>
+</body>
+</html>

@@ -1,0 +1,30 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>css3 img</title>
+<style>
+img{ width:400px; height:300px; }
+a{ display:inline-block; border-radius:4px; border:1px solid #ddd; padding:5px; transition:0.3s;}
+a:hover{ box-shadow:0 0 2px 1px rgba(0,140,186,0.5);}
+/******************************************************************************/
+#out{ width:60%;margin:25px;
+      box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19); }
+#out img{ width:100%;}
+#in{ text-align:center; padding:10px 20px;}
+</style>
+</head>
+
+<body>
+<a href="../1.jpg" target="_blank">
+    <img src="../1.jpg"/>
+</a>
+
+<img src="../1.jpg" style="border-radius:50%; border:1px solid #ddd; padding:5px;"/>
+
+<div id="out">
+	<img src="../2.jpg" />
+    <div id="in">The beautiful beach</div>
+</div>
+</body>
+</html>

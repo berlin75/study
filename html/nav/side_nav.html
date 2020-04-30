@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf8">
+<title>京东侧边导航-楼梯效果</title>
+<style>
+* { margin:0; padding:0; }
+#menu { position:fixed; top:25%; left:40px; width:30px; border:1px solid; }
+#menu li { position:relative; width:30px; height:30px; list-style:none; text-align:center; line-height:30px; font-size:12px; cursor:pointer; border-bottom:1px dotted #AAAAAA; }
+#menu li.last { background:#ccc; color:black; border-bottom:none; }
+#menu li span { display:none; width:30px; height:30px; position:absolute; top:0; left:0; color:red; }
+#menu li:hover span { display:block; background:darkred; color:white; }
+#menu li span.active { display:block; background:darkred; color:white; }
+#menu li:hover span.active { display:block; background:darkred; color:white; }
+#header,#main,#footer { margin:auto; width:1000px; text-align:center; font-weight:bold; }
+#main div { height:700px; color:honeydew; }
+#header { height:500px; background:#ccc; }
+#footer { height:500px; background:#ccc; }
+
+</style>
+</head>
+<body>
+<ul id="menu">
+	<li>1F <span>服饰</span> </li>
+	<li>2F <span>美妆</span> </li>
+	<li>3F <span>手机</span> </li>
+	<li>4F <span>家电</span> </li>
+	<li>5F <span>数码</span> </li>
+	<li>6F <span>运动</span> </li>
+	<li>7F <span>居家</span> </li>
+	<li>8F <span>母婴</span> </li>
+	<li>9F <span>食品</span> </li>
+	<li>10F <span>图书</span> </li>
+	<li>11F <span>服务</span> </li>
+	<li class="last">Top</li>
+</ul>
+
+<!--楼层内容开始-->
+<div id="header">头部
+	<p>方法一：filter方法过滤选择满足条件的元素</p>
+	<p>方法二：#main>div固定高度为700</p>
+</div>
+<div id="main">
+	<div class="Louti" style="background: #FF0000;">服饰</div>
+	<div class="Louti" style="background: #FF7F00;">美妆</div>
+	<div class="Louti" style="background: #FFFF00;">手机</div>
+	<div class="Louti" style="background: #00FF00;">家电</div>
+	<div class="Louti" style="background: #00FFFF;">数码</div>
+	<div class="Louti" style="background: #0000FF;">运动</div>
+	<div class="Louti" style="background: #8B00FF;">居家</div>
+	<div class="Louti" style="background: aquamarine;">母婴</div>
+	<div class="Louti" style="background: pink;">食品</div>
+	<div class="Louti" style="background: bisque;">图书</div>
+	<div class="Louti" style="background: lightgoldenrodyellow;">服务</div>
+</div>
+<div id="footer">尾部</div>
+
+
+<script src="../../vendors/jquery-3.1.1.js"></script>
+<script>
+var flag = true; //控制 当点击楼层号时，禁止滚动条的代码执行 值为true时，可以执行滚动条代码
+// 根据楼层号 控制滚走的距离 
+
+// 1、除了top的楼梯号，为每一个楼梯号添加一个click，控制楼梯滚走的距离（距离：当前楼层的offset().top ）
+$("#menu li:not(:last)").click(function() {
+	flag = false;
+	//当前点击的楼号红色的 其余黑色的
+	$(this).find("span")
+	.addClass("active")
+	.end()
+	.siblings()
+	.find("span")
+	.removeClass("active");
+	
+	var sTop = $(".Louti").eq($(this).index()).offset().top; //获取当前楼号对应楼层的 top值
+
+	//将页面滚走的距离设置为 sTop 
+	$("body,html").animate({
+		"scrollTop": sTop
+	}, 1000, function() {
+		flag = true;
+	});
+})
+
+//2、点击top 回到顶部
+$("#menu li:last").click(function() {
+	$("body,html").animate({
+		"scrollTop": 0
+	}, 1000);
+	$("#menu li span").removeClass("active");
+})
+
+//3、 滚动条滚动 -- 找到当前楼层的索引 控制楼层号
+$(window).scroll(function() {
+	if (flag) {                              //如果flag 为true 可以执行滚动条的代码
+		var sTop = $(document).scrollTop();  //正整数
+		//filter 返回满足条件的那个对象，找到窗口正在显示的楼层对象
+		var $floor = $(".Louti").filter(function(index, ele) {   
+			return Math.abs($(this).offset().top - sTop) < $(this).height() / 2;
+		});
+
+		//根据楼层的索引 设置楼梯号的 样式
+		$("#menu li").eq($floor.index())
+		.find("span")
+		.addClass("active")
+		.end()
+		.siblings()
+		.find("span")
+		.removeClass("active");
+	}
+})
+
+
+//	方法二：#main>div固定高度为700
+
+	// $(document).scroll(function() {
+	// 	if($(document).scrollTop() >= 500) {
+	// 		$("#menu").fadeIn(500);
+	// 		var i = Math.floor(($(document).scrollTop() - 500) / 700);
+	// 		$("ul li").eq(i).children("span").addClass("active");
+	// 		$("ul li").eq(i).siblings().children("span").removeClass("active");
+	// 	}else{
+	// 		$("#menu").fadeOut(333);
+	// 	}
+	// })
+	
+	
+	// $("ul li").not(".last").click(function() {
+	// 	$("body,html").animate({ "scrollTop": $(this).index() * 700 + 500 }, 666)
+	// })
+	
+	// $(".last").click(function(){
+	// 	$("body").animate({ "scrollTop":0 },500);
+	// })
+</script>
+
+</body>
+</html>

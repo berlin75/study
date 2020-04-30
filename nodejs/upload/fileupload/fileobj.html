@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>File对象</title>
+</head>
+<body>
+<input type="file" id="fileElem" multiple accept="image/*" style="display:none" onchange="handleFiles(this.files)">
+<a href="#" id="fileSelect">Select some files</a>
+
+<hr/>
+
+<input type="file" id="fileElem" multiple accept="image/*" style="display:none" onchange="handleFiles(this.files)">
+<label for="fileElem">Select some files</label>
+
+<hr/>
+<div id="dropbox" style="width: 50rem;height: 10rem;border: 1px dashed"></div>
+<div id="preview" style="width: 50rem;height: 20rem;"">
+  
+</div>
+
+<progress value="0" max="100">您的浏览器不支持progress元素</progress>
+<button onclick="sendFiles()">upload</button>
+
+<script>
+function handleFiles(files){ 
+  if (!files.length) return preview.innerHTML = "<p>No files selected!</p>";
+
+  preview.innerHTML = "";
+  var totalSzie = 0;
+  [].forEach.call(files, file => {
+    if (!file.type.startsWith('image/')){ 
+      alert('It is not image file');
+    }
+
+    totalSzie += file.size;
+    
+      /* reader.readAsDataURL(file) */
+      var img = document.createElement("img");
+      img.classList.add("obj");
+      img.file = file;
+      preview.appendChild(img); 
+      
+      var reader = new FileReader();
+      reader.onload = function(e) { 
+        img.src = e.target.result; 
+      }; 
+      reader.readAsDataURL(file);
+
+      /*window.URL.createObjectURL(file)*/
+      // 创建简单的URL字符串对象,用于指向任何DOM File对象数据,包括用户电脑中的本地文件img/pdf/video
+      // URL对象是 File 对象的一个字符串标识。 每次调用window.URL.createObjectURL()的时候，会创建一个唯一的URL对象，即使你已经为该文件创建了URL对象。这些对象都必须被释放。 当文档被卸载时，它们会自动释放，如果你的页面动态地使用它们，你应该明确地通过调用window.URL.revokeObjectURL()释放它们
+      window.URL = window.URL || window.webkitURL;
+
+      var objectURL = window.URL.createObjectURL(file);
+      console.log(typeof objectURL, objectURL);
+      var img2 = document.createElement("img");
+      img2.classList.add("obj");
+      img2.file = file;
+      img2.src = objectURL;
+      img2.onload = function() {
+          var res = window.URL.revokeObjectURL(this.src);
+          console.log(typeof res, res);
+      }
+      preview.appendChild(img2);
+  })
+
+  // 统计所有文件的大小
+  totalbytes = totalSzie + " bytes";
+  for (var aMultiples = ["KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB", "YiB"], nMultiple = 0, nApprox = totalSzie / 1024; nApprox > 1; nApprox /= 1024, nMultiple++) {
+      totalbytes = nApprox.toFixed(3) + " " + aMultiples[nMultiple] + " (" + totalSzie + " bytes)";
+  }
+  console.log(`选择${files.length}个文件，总计大小为${totalbytes}`);
+
+}
+
+var fileSelect = document.getElementById("fileSelect");
+var fileElem = document.getElementById("fileElem");
+
+fileSelect.addEventListener("click", function (e) {
+    fileElem &&fileElem.click();
+    e.preventDefault();          // prevent navigation to "#"
+}, false);
+
+/*--------------------------------------------------------*/
+var dropbox = document.getElementById("dropbox");
+dropbox.addEventListener("dragenter", dragenter, false);
+dropbox.addEventListener("dragover", dragover, false);
+dropbox.addEventListener("drop", drop, false);
+
+function dragenter(e) {
+    e.stopPropagation();
+    e.preventDefault();
+}
+
+function dragover(e) {
+    e.stopPropagation();
+    e.preventDefault();
+}
+
+function drop(e) {
+    e.stopPropagation();
+    e.preventDefault();
+    var files = e.dataTransfer.files;
+    handleFiles(files);
+}
+
+/*--------------------------------------------------------*/
+function sendFiles() { 
+  var imgs = document.querySelectorAll(".obj"); 
+  for (var i = 0; i < imgs.length; i++) {
+    new FileUpload(imgs[i], imgs[i].file);
+  }
+}
+
+function FileUpload(img, file) {
+  var reader = new FileReader();  
+  var xhr = new XMLHttpRequest();
+  
+  var self = this;
+  xhr.upload.addEventListener("progress", function(e) {
+    if (e.lengthComputable) {
+      var percentage = Math.round((e.loaded * 100) / e.total);
+      document.querySelector('progress').value = percentage;
+    }
+  }, false);
+  
+  xhr.upload.addEventListener("load", function(e){
+      console.log('100%');
+  }, false);
+  xhr.open("POST", "http://localhost:8888/upload");
+  
+  // MIME 类型上传是通过调用 XMLHttpRequest 的函数 overrideMimeType() 设置。在这种情况下，我们使用一个通用的 MIME 类型；你可以选择不设置 MIME 类型，这取决于你的使用情况
+  xhr.overrideMimeType('text/plain; charset=x-user-defined-binary');
+  reader.onload = function(evt) {
+      xhr.send(evt.target.result);
+  };
+
+  // 把 file 转换成二进制字符串
+  // 使用标准的send(Blob data)方法代替
+  reader.readAsBinaryString(file); 
+}
+</script>
+</body>
+</html>

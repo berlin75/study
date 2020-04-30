@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>立即执行函数作为回调函数,响应点击哪个链接</title>
+<style>
+a{padding: 1rem;}
+</style>
+</head>
+<body>
+<a href="#" >链接</a>
+<a href="#" >链接</a>
+<a href="#" >链接</a>
+<a href="#" >链接</a>
+<a href="#" >链接</a>
+<a href="#" >链接</a>
+
+<script>
+    var elems=document.getElementsByTagName("a");
+	for( var i=0;i<elems.length;i++){   
+	    elems[i].addEventListener("click",(function(clickedindex){
+			return function(e){
+			     e.preventDefault();
+			     alert("link #"+clickedindex);
+			     location.href = this.getAttribute('href');
+			};
+		})(i),false);	
+	}	
+</script>
+</body>
+</html>

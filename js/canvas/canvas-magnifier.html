@@ -1,0 +1,75 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>canvas 放大镜效果</title>
+<style>
+
+</style>
+</head>
+<body>
+<p>实现一个放大镜的效果，鼠标按下并移动时，显示当前图片区域的放大效果，抬起后效果消失。放大镜效果主要使用离屏canvas的技术，离屏canvas放置的是图片的放大版，而普通canvas则放置图片的正常版</p>
+<pre>
+1、context.drawImage(img,10,10);  传入一个img元素，及绘制图像canvas的起点坐标
+2、context.drawImage(img,50,10,20,30);  改变绘制的图像的大小，可以多传入两个参数，分别表示目标宽度和目标高度
+3、context.drawImage(img,0,10,50,50,0,100,40,60);  把图像中的某个区域绘制到上下文中
+   9个参数：要绘制的图像、源图像的x和y坐标、源图像的宽度和高度、目标图像的x和y坐标、目标图像的宽度和高度
+</pre>
+<p>原理：隐藏的canvas是目标canvas等比例放大绘制；点击和拖动时先清空再绘制缩小的图像，再根据击点坐标将击点周围的图像替换为隐藏canvas对应区域的图像，应用clip裁剪成圆形，鼠标松开之后恢复绘制缩小的图像</p>
+<canvas id="drawing" style="cursor: pointer;"><p>The canvas element is not supported!</p></canvas>
+<canvas id="drawingoff" style="display: none;"><p>The canvas element is not supported!</p></canvas>
+<script>
+if(drawing.getContext){
+  var context = drawing.getContext("2d");
+  var contextoff = drawingoff.getContext("2d");
+  var r = 50, scale = 1.5;
+  var img = new Image();
+  img.src = "../../image/chunfen.jpg";
+  img.onload = function(){
+    var W = img.width;
+    var H = img.height;
+    drawing.width = W/scale;
+    drawing.height = H/scale;
+    drawingoff.width = W;
+    drawingoff.height = H;
+    context.drawImage(img, 0, 0, W/scale, H/scale);
+    contextoff.drawImage(img, 0, 0);
+
+    drawing.onmousedown = function(e){ 
+      var e = e || windows.event;
+      var x0 = this.offsetLeft;    
+      var y0 = this.offsetTop;
+      drawMagnifier(e);
+      drawing.onmousemove = function(e){
+        drawMagnifier(e);
+      };
+
+      document.onmouseup = function(e){ 
+        context.clearRect(0, 0, W/scale, H/scale);
+        context.drawImage(img, 0, 0, W/scale, H/scale);
+        drawing.onmousemove = null;
+      }
+
+      function drawMagnifier(e){
+        context.clearRect(0, 0, W/scale, H/scale);
+        context.drawImage(img, 0, 0, W/scale, H/scale); 
+        var x = e.clientX - x0;   //击点到canvas边界的距离
+        var y = e.clientY - y0;
+        context.save();
+        context.beginPath();
+        context.arc(x, y, r, 0, Math.PI*2);
+        context.lineWidth = 4;
+        context.strokeStyle = "#069";
+        context.stroke();
+        context.clip();
+        //把原图像的一区域绘制到canvas的点击区域
+        context.drawImage(drawingoff, x*scale-r, y*scale-r, 2*r, 2*r, x-r, y-r, 2*r, 2*r);
+        context.restore();
+      }
+    }  
+  }
+}
+ 
+</script>
+</body>
+</html>

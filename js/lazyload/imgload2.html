@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>图片懒加载2</title>
+<style>
+	ul,li,img{margin:0; padding:0; list-style:none;}
+	li.in{ width:640px; height:480px; background:url(../../image/7.gif) center center no-repeat; background-size:442px 244px;}
+	li.in img{ width:100%; }
+</style>
+</head>
+<body>
+<h1>图片懒加载、延迟加载:延迟加载图片或触发、符合某些条件时才加载某些图片</h1>
+
+<p>方法2：给图片增加data-original = "img/test.jpg"的属性，保存图片的真实地址;当触发某些条件时，自动改变该区域的图片的src属性为真实的地址</p>
+<pre>
+obj.style.cssText = "transition: ''; opacity: 0;"  google API批量设置样式，但是会覆盖原有的所有样式
+采用叠加方法：var oldsty = obj.style; obj.sty.cssText ="transition: ''; opacity: 0;"+ oldsty;
+</pre>
+	<ul class="list">
+	  <li class="in"><img src="../../image/7.gif" alt="测试" data-original = "../../image/l1.jpg"></li>
+	  <li class="in"><img src="../../image/7.gif" alt="测试" data-original = "../../image/l2.jpg"></li>
+	  <li class="in"><img src="../../image/7.gif" alt="测试" data-original = "../../image/l3.jpg"></li>
+	  <li class="in"><img src="../../image/7.gif" alt="测试" data-original = "../../image/l4.jpg"></li>  
+	  <li class="in"><img src="../../image/7.gif" alt="测试" data-original = "../../image/l5.jpg"></li>
+	  <li class="in"><img src="../../image/7.gif" alt="测试" data-original = "../../image/l6.jpg"></li>
+	  <li class="in"><img src="../../image/7.gif" alt="测试" data-original = "../../image/l7.jpg"></li>
+	  <li class="in"><img src="../../image/7.gif" alt="测试" data-original = "../../image/l8.jpg"></li>
+	  <li class="in"><img src="../../image/7.gif" alt="测试" data-original = "../../image/l9.jpg"></li>
+	  <li class="in"><img src="../../image/7.gif" alt="测试" data-original = "../../image/l10.jpg"></li>
+	  <li class="in"><img src="../../image/7.gif" alt="测试" data-original = "../../image/l11.jpg"></li>
+	  <li class="in"><img src="../../image/7.gif" alt="测试" data-original = "../../image/l12.jpg"></li>
+	  <li class="in"><img src="../../image/7.gif" alt="测试" data-original = "../../image/l13.jpg"></li>
+	  <li class="in"><img src="../../image/7.gif" alt="测试" data-original = "../../image/l14.jpg"></li>	  
+	</ul>
+<script>
+var aImages = document.images;
+loadImg(aImages);  //首屏加载显示
+window.onscroll = function(){
+  loadImg(aImages);
+};
+function loadImg(arr){
+	for(var i=0;i<arr.length;i++){  //getBoundingClientRect用于获得页面中某个元素的左，上，右和下分别相对浏览器视窗的位置
+		if(arr[i].getBoundingClientRect().top < document.documentElement.clientHeight && !arr[i].isLoad){
+			arr[i].isLoad = true;
+			arr[i].style.cssText = "transition: ''; opacity: 0;" //批量操作css样式
+			if(arr[i].dataset){
+				aftLoadImg(arr[i],arr[i].dataset.original);  
+			}else{
+				aftLoadImg(arr[i],arr[i].getAttribute("data-original"));
+			}
+			(function(i){
+				setTimeout(function(){
+					arr[i].style.cssText = "transition: 1s; opacity: 1;"
+				},16)
+			})(i);
+		}
+	}
+}
+function aftLoadImg(obj,url){
+	var oImg = new Image();
+	oImg.src = url;
+	oImg.onload = function(){
+		obj.src = oImg.src;
+	}
+}
+ 
+</script> 
+</body>
+</html>
+

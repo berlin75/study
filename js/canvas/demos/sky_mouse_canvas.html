@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf8">
+<title>简易星空图（含鼠标事件）canvas</title>
+<style>
+*{margin: 0;padding: 0;}
+</style>
+</head>
+<body>
+
+<canvas id="c" style="background:#000"></canvas>
+
+<script src="../../../vendors/jquery-3.1.1.js"></script>
+<script>
+"use strict"
+var Num = 80;
+var points = [];
+var c = $('#c').get(0);
+var ctx = c.getContext('2d');
+var w = c.width = window.innerWidth;
+var h = c.height = window.innerHeight;
+var point = function() {
+this.x = Math.random() * w;
+this.y = Math.random() * h;
+this.color = Math.random() * 360;
+this.count = 5;
+this.mindis = 80;
+this.speedx = Math.random() * 2 - 1;
+this.speedy = Math.random() * 2 - 1;
+//this.bound=false;
+}
+point.prototype.constructor = point;
+point.prototype.lineTo = function(points) {
+ctx.beginPath();
+for (var i in points) {
+var dis = Math.sqrt(Math.pow((this.x - points[i].x), 2) + Math.pow((this.y - points[i].y), 2));
+if (this.count > 0 && points[i].count > 0 && dis < this.mindis) {
+var grd = ctx.createLinearGradient(this.x, this.y, points[i].x, points[i].y);
+var o = dis * 0.8 / this.mindis + 0.2;
+grd.addColorStop(0, "hsla(" + this.color + ",100%,50%," + o + ")");
+grd.addColorStop(1, "hsla(" + points[i].color + ",100%,50%," + o + ")");
+ctx.strokeStyle = grd;
+ctx.moveTo(this.x, this.y);
+ctx.lineTo(points[i].x, points[i].y);
+ctx.stroke();
+this.count--;
+points[i].count--;
+}
+}
+ctx.closePath();
+};
+
+point.prototype.mouse = function(mousex, mousey) {
+
+var dx = (this.x - mousex);
+var dy = (this.y - mousey);
+var dis = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
+if (dis < 100 && dis > 60) {
+dx > 0 ? this.x -= 10 : this.x += 10;
+dy > 0 ? this.y -= 10 : this.y += 10;
+} else if (dis < 80) {
+this.count = 10;
+}
+
+}
+point.prototype.init = function() {
+
+this.x += this.speedx;
+this.y += this.speedy;
+this.count = 6;
+};
+point.prototype.isBound = function() {
+
+if (this.x < 0 || this.x > w) {
+//this.bound=true;
+this.speedx = -this.speedx;
+
+} else if (this.y < 0 || this.y > h) {
+this.speedy = -this.speedy;
+}
+};
+
+(function createPoints() {
+for (var i = 0; i < Num; i++) {
+points.push(new point());
+}
+})();
+
+function drawPoints() {
+ctx.clearRect(0, 0, w, h);
+for (var i in points) {
+var p = points[i];
+//if(!parseInt(Math.random()*4,10)){
+//	p.init();
+//}	
+p.isBound();
+p.init();
+p.mouse(p.mousex, p.mousey)
+console.log(p.mousex)
+//p.count=5;
+ctx.fillStyle = "hsla(" + p.color + ",100%,50%,1)";
+ctx.fillRect(p.x - 1, p.y - 1, 2, 2);
+p.lineTo(points);
+}
+}
+$('body').get(0).onmousemove = function(e) {
+point.prototype.mousex = e.clientX;
+point.prototype.mousey = e.clientY;
+}
+setInterval(drawPoints, 100)
+</script>
+
+<br/><br/><textarea rows="4" cols="150">
+参考原代码 http://www.jq22.com/webqd2079
+
+</textarea>
+</body>
+</html>

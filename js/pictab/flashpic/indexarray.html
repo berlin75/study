@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>61Flash图片轮换效果之数组</title>
+<style>
+*{margin:0;padding:0;border:none;box-sizing:border-box;list-style:none;}
+main{margin:10px;position:relative;margin-left:440px;}
+
+#bigpic{width:400px;height:320px;position:relative;}
+#singlepic{position:absolute;left:0px;top:0px;}
+#singlepic li img{display:block;width:400px;height:320px;}
+
+#supbar{position:absolute;z-index:9;width:400px;height:320px;}
+#supbar p{float:left;width:200px;height:320px;}
+#supbar p span{display:none;width:60px;height:60px;position:absolute;top:150px;cursor:pointer;}
+.leftbtn{left:10px;background:url(image/btn.gif) no-repeat;}
+.rightbtn{right:10px;background:url(image/btn.gif) no-repeat 0 -60px;}
+#supbar p:hover span{display:block;}
+
+#picinfor{width:400px;position:absolute;bottom:0px;z-index:8;padding:5px;background:rgba(0,0,0,.6);color:#ccc;font-size:0.8rem;}
+#picinfor .picword{float:left;}
+#picinfor .picnum{float:right;}
+
+#smallpic{width:400px;height:116px;background:gray;position:relative;}
+#longpic{position:absolute;left:0px;top:0px;}
+#longpic li{float:left;padding:10px 0 10px 10px;}
+#longpic li img{width:120px;height:96px;}
+
+#subbar{position:absolute;z-index:9;width:400px;}
+#subbar p{width:120px;height:96px;margin:10px;background:rgba(0,0,0,0.6);}
+#subbar p:nth-of-type(1){float:left;}
+#subbar p:nth-of-type(2){float:right;}
+#smallpic:hover #subbar{display:none;}
+</style>
+<script src="../../../vendors/jquery-3.1.1.js"></script>
+<script>
+$(document).ready(function(){ 
+	var index=longindex=0;
+	var arraypic=[0,1,2,3,4,5];
+	var singlestr='<a href="https://www.baidu.com"><img src="image/'+arraypic[index]+'.jpg" /></a>';
+	var longstr='<li><img src="image/'+arraypic[5]+'.jpg" /></li><li><img src="image/'+arraypic[0]+'.jpg" /></li><li><img src="image/'+arraypic[1]+'.jpg" /></li>';
+	$('#singlepic').html(singlestr);
+	$('#longpic').html(longstr);
+
+	function singlemove(){
+		index++;
+		if(index>5)index=0;console.log(index);
+		$('#singlepic img').attr('src','image/'+arraypic[index]+'.jpg');
+	}
+	singlepic.timer=setInterval(singlemove,2000);
+	$('main').hover(function(){
+		clearInterval(singlepic.timer);
+	},function(){
+		singlepic.timer=setInterval(singlemove,2000);
+	});
+	$('.leftbtn').click(function(){
+		index-=2;alert(index);
+		singlemove();
+	});
+	$('.rightbtn').click(function(){
+		index++;
+		singlemove();
+	});
+	
+	/*longpic.timer=setInterval(function(){
+		longindex++;
+		if(longindex>0&&longindex<5){
+		$('#singlepic img:eq(0)').attr('src','image/'+arraypic[longindex-1]+'.jpg');
+		$('#singlepic img:eq(1)').attr('src','image/'+arraypic[longindex]+'.jpg');
+		$('#singlepic img:eq(2)').attr('src','image/'+arraypic[longindex+1]+'.jpg');
+		}
+	},2000);*/
+});
+</script>
+</head>
+
+<body>
+<main>
+	<div id="bigpic">
+		<div id="singlepic"></div>
+		<div id="supbar">
+			<p><span class="leftbtn"></span></p>
+			<p><span class="rightbtn"></span></p>
+		</div>
+		<div id="picinfor">
+			<p class="picword">加载图片信息</p>
+			<p class="picnum">加载图片数量</p>			
+		</div>
+	</div>
+
+	<div id="smallpic">
+		<ul id="longpic"></ul>
+		<div id="subbar"><p></p><p></p></div>
+	</div>
+</main>
+
+<p>1.hover和mouseover mouseout效率比较，开始时间和转换时间</p>
+</body>
+</html>

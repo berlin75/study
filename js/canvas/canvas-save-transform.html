@@ -1,0 +1,49 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>canvas 图形变换之保存状态矩阵变换</title>
+<style>
+
+</style>
+</head>
+
+<body>
+<p>setTransform()：将变换矩阵重置为默认状态，然后再调用transform()</p>
+
+<canvas id="drawing" style="border:1px solid black">
+    <p>The canvas element is not supported!</p>
+</canvas>
+
+<script src="../../vendors/jquery-3.1.1.js"></script>
+<script>
+var drawing = document.getElementById('drawing');
+//确定浏览器支持<canvas>元素
+if(drawing.getContext){
+    var context = drawing.getContext('2d');
+
+    context.beginPath();
+    context.lineWidth = 3;
+    context.strokeRect(10,10,50,50);
+
+    context.save();
+    context.transform (1,0,0,1,30,30);
+    context.strokeStyle = 'pink';
+    context.strokeRect(0,0,50,50);
+    context.restore();
+
+    context.save();
+    context.transform(2,0,0,2,0,0)
+    context.strokeStyle = 'lightblue';
+    context.strokeRect(50,10,50,50);
+    context.restore();
+
+    context.save();
+    context.transform(1,0,Math.tan(30*Math.PI/180),1,0,0);
+    context.strokeStyle = 'lightgreen';
+    context.strokeRect(200,10,50,50);
+    context.restore();
+} 
+</script>
+</body>
+</html>

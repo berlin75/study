@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>websocket_node</title>
+</head>
+<body>
+<script>
+var ws=new WebSocket("ws://127.0.0.1:8000");
+ws.onopen=function(e){
+  ws.send("次碳酸钴"); //发送数据
+};
+
+</script>
+</body>
+</html>

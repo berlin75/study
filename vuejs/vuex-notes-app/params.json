@@ -1,0 +1,6 @@
+{
+  "name": "Vuex-notes-app",
+  "tagline": "",
+  "body": "# vuex-notes-app\r\n\r\n> A Notes App with Vuex\r\n\r\n## 项目初始化\r\n``` bash\r\n# 克隆项目代码\r\ngit clone https://github.com/lichenbuliren/vuex-notes-app.git\r\n\r\n# 进入到项目根目录\r\ncd vuex-notes-app\r\n\r\n# 安装依赖包\r\nnpm install\r\n\r\n# serve with hot reload at localhost:8080\r\nnpm run dev\r\n```\r\n\r\n\r\n\r\n## 常见问题\r\n\r\n由于该例子使用的是`sass`写的样式，如果编译的时候，控制台出现`ERROR in Cannot find module 'node-sass'`，说明你的环境缺少全局的模块。\r\n\r\n安装`node-sass`模块，推荐使用`cnpm`安装\r\n\r\n``` bash\r\ncnpm install -g node-sass\t\t\t\t\t\t\t\t\t\r\n```\r\n\r\n**\\*window用户请用管理员模式安装**\r\n\r\nFor detailed explanation on how things work, checkout the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).\r\n",
+  "note": "Don't delete this file! It's used internally to help with page regeneration."
+}

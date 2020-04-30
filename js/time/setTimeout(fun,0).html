@@ -1,0 +1,57 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>setTimeout(fun,0);运行机制</title>
+<script>
+	setTimeout(function() {
+  console.log("Timeout");
+}, 0);
+
+function a(x) {
+  console.log("a() 开始运行");
+  b(x);
+  console.log("a() 结束运行");
+}
+
+function b(y) {
+  console.log("b() 开始运行");
+  console.log("传入的值为" + y);
+  console.log("b() 结束运行");
+}
+
+console.log("当前任务开始");
+a(42);
+console.log("当前任务结束");
+
+// 当前任务开始
+// a() 开始运行
+// b() 开始运行
+// 传入的值为42
+// b() 结束运行
+// a() 结束运行
+// 当前任务结束
+// Timeout
+</script>
+</head>
+
+<body>
+将输入的字符串变为大写：<input type="text" id="txt1" />
+<script>
+	document.getElementById("txt1").onkeypress=function()
+	{
+//		this.value=this.value.toUpperCase(); //只能将上一个字符转为大写，因为浏览器此时还没接收到文本，所以this.value取不到最新输入的那个字符
+		 
+		 var self=this;
+		 setTimeout(function(){self.value=self.value.toUpperCase();},0);
+	};
+	
+</script>
+
+<hr />
+
+<p>console.log控制台日志</p>
+<p><a href="http://www.cnblogs.com/youfeng365/p/5846670.html">setTimeout(fun,0);运行机制</a>,应用于调整事件的发生顺序</p>
+<p>setTimeout和setInterval的运行机制是，将指定的代码移出本次执行，等到下一轮Event Loop时，再检查是否到了指定时间。如果到了，就执行对应的代码；如果不到，就等到再下一轮Event Loop时重新判断。这意味着，setTimeout指定的代码，必须等到本次执行的所有代码都执行完，才会执行。</p>
+</body>
+</html>

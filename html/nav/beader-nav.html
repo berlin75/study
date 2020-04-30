@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>面包屑导航</title>
+<style>
+*{ margin:0; padding:0; box-sizing:border-box;}
+body{ background:#CCC;}
+
+#nav{ width:5%; position:fixed; right:5%; top:30%;}
+#nav div{ background:white; text-align:center; font-size:1.2em; 
+          padding:10px; border-bottom:1px solid #CCC;}
+#nav div:hover{ background:#C09;}
+
+#connect{ width:75%; margin:10px auto;}
+#connect img{ padding:10px;}
+#connect img:hover{ border:1px solid red; }
+#connect p{ text-align:center; font-size:2em; font-weight:bold;}
+.active{ background:#C09;}
+</style>
+<script src="../../vendors/jquery-3.1.1.js"></script>
+<script>
+$(window).ready(function() {  
+		$("#connect div").each(function(){
+			i=$("this").index();
+			$("this").hover(
+			function(){$("#nav div")[i].css("background","#C09");},
+			function(){$("#nav div")[i].css("background","white");} );
+		})
+});
+</script>
+</head>
+
+<body>
+<div id="nav">
+    <div><a href="#shishang">时尚</a></div>
+    <div>品质</div>
+    <div>特色</div>
+    <div>实惠</div>
+    <div><a href="#cai">猜你喜欢</a></div>
+    <div><a href="#div1">返回顶部</a></div>
+    <div>反馈</div>
+    <div id="fkui">
+    
+    </div>
+</div>
+<div id="connect">
+	<div id="div1">
+    	<hr />
+        <p id="shishang">时尚</p>
+        <img src="../../image/shishang.png" />
+        <img src="../../image/shishang.png" />
+        <img src="../../image/shishang.png" />
+        <img src="../../image/shishang.png" />
+        <img src="../../image/shishang.png" />
+        <img src="../../image/shishang.png" />
+        <img src="../../image/shishang.png" />
+        <img src="../../image/shishang.png" />
+    </div>
+    <div id="div2">
+   	    <hr />
+        <p>品质</p>
+        <img src="../../image/pinzhi.png" />
+        <img src="../../image/pinzhi.png" />
+        <img src="../../image/pinzhi.png" />
+        <img src="../../image/pinzhi.png" />
+        <img src="../../image/pinzhi.png" />
+        <img src="../../image/pinzhi.png" />
+        <img src="../../image/pinzhi.png" />
+        <img src="../../image/pinzhi.png" />
+    </div>
+    <div id="div3">
+    	<hr />
+        <p>特色</p>
+        <img src="../../image/tese.png" />
+        <img src="../../image/tese.png" />
+        <img src="../../image/tese.png" />
+        <img src="../../image/tese.png" />
+        <img src="../../image/tese.png" />
+        <img src="../../image/tese.png" />
+        <img src="../../image/tese.png" />
+        <img src="../../image/tese.png" />
+    </div>
+    <div id="div4">
+        <hr />
+        <p>实惠</p>
+        <img src="../../image/shihui.png" />
+        <img src="../../image/shihui.png" />
+        <img src="../../image/shihui.png" />
+        <img src="../../image/shihui.png" />
+        <img src="../../image/shihui.png" />
+        <img src="../../image/shihui.png" />
+        <img src="../../image/shihui.png" />
+        <img src="../../image/shihui.png" />
+    </div>
+    <div id="div5">
+        <hr />
+        <p id="cai">猜你喜欢</p>
+        <img src="../../image/cai.png" />
+        <img src="../../image/cai.png" />
+        <img src="../../image/cai.png" />
+        <img src="../../image/cai.png" />
+        <img src="../../image/cai.png" />
+        <img src="../../image/cai.png" />
+        <img src="../../image/cai.png" />
+        <img src="../../image/cai.png" />
+    </div>
+</div>
+</body>
+</html>

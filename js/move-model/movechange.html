@@ -1,0 +1,147 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>无缝滚动左右上下轮换</title>
+<style>
+	*{ margin:0; padding:0; }
+	body{ height:2000px;}
+	#div1 ul li img{ width:178px; height:108px; }
+	#div1{ width:712px; height:108px; background:red; margin:20px auto; 
+	       position:relative; overflow:hidden; border:1px solid #ccc;}
+	#div1 ul{ position:absolute; left:0px; top:0px;}
+	#div1 ul li{ float:left; list-style:none; width:178px; height:108px; }
+	
+	#div2{width:600px; height:400px; overflow:hidden; 
+	      margin:0px auto; position:relative; border:1px solid pink;}
+	#div2 ul{position:absolute; left:0px; top:0px;}
+	#div2 ul li img{ width:600px; height:400px; }
+	#div2 ul li{ float:left; list-style:none; width:600px; height:400px; }
+	
+	#div3{width:600px; height:400px; overflow:hidden; 
+	      margin:5px auto; position:relative; border:1px solid pink;}
+	#div3 ul{position:absolute; left:0px; top:0px;}
+	#div3 ul li img{ width:600px; height:400px; }
+	#div3 ul li{list-style:none; width:600px; height:400px; }
+</style>
+<script>
+window.onload=function(){
+	var oBtnz=document.getElementById("btn1");
+	var oBtny=document.getElementById("btn2");
+	var oDiv=document.getElementById("div1");
+	var oUl=oDiv.getElementsByTagName("ul")[0];
+	var aLi=oUl.getElementsByTagName("li");
+	oUl.innerHTML=oUl.innerHTML+oUl.innerHTML;
+	oUl.style.width=aLi[0].offsetWidth*aLi.length+"px";
+	var timer=null;
+    var speed=-1;
+    function start()   {
+	    if(oUl.offsetLeft<(-oUl.offsetWidth/2)){
+		    oUl.style.left=0+"px";
+	    }
+	    if(oUl.offsetLeft>0){
+		    oUl.style.left=(-oUl.offsetWidth/2)+"px";
+	    }
+	    oUl.style.left=oUl.offsetLeft+speed+"px";
+	    document.title=oUl.offsetLeft;
+    }
+	 
+	timer=setInterval(start,30);
+	oUl.onmouseover=function(){
+		clearInterval(timer);
+	}
+	oUl.onmouseout=function(){
+		timer=setInterval(start,30);
+	}
+
+	oBtnz.onclick=function(){
+		speed=-1;
+	}
+	oBtny.onclick=function(){
+		speed=1;
+	}
+	
+/************************************************************************************************/
+	var oDiv2=document.getElementById("div2");
+	var oUl2=oDiv2.getElementsByTagName("ul")[0];
+	var aLi2=oDiv2.getElementsByTagName("li");
+//	oU2.innerHTML=oU2.innerHTML+oU2.innerHTML;
+	oUl2.style.width=aLi2[0].offsetWidth*aLi2.length+"px";
+	var timer2=null;
+	var speed2=-1;
+	function move(){
+		if(oUl2.offsetLeft<(-aLi2[0].offsetWidth*(aLi2.length-1))){
+			oUl2.style.left=0+"px";
+		}
+		if(oUl2.offsetLeft>0){
+			oUl2.style.left=(-aLi2[0].offsetWidth*(aLi2.length-1))+"px";
+		}
+		oUl2.style.left=oUl2.offsetLeft+speed2+"px";
+	}
+	timer2=setInterval(move,30);
+	oUl2.onmouseover=function(){
+		clearInterval(timer2);
+	}
+	oUl2.onmouseout=function(){
+		timer2=setInterval(move,30);
+	}
+/***********************************************************************/
+	var oDiv3=document.getElementById("div3");
+	var oUl3=oDiv3.getElementsByTagName("ul")[0];
+	var aLi3=oDiv3.getElementsByTagName("li");
+	oUl3.style.height=aLi3[0].offsetHeight*aLi3.length+"px";
+	var timer3=null;
+	var speed3=1;
+	function run(){
+		if(oUl3.offsetTop<(-aLi3[0].offsetHeight*(aLi3.length-1)))		{
+			oUl3.style.top=0+"px";
+		}
+		if(oUl3.offsetTop>0){
+			oUl3.style.top=(-aLi3[0].offsetHeight*(aLi3.length-1))+"px";
+		}
+		oUl3.style.top=oUl3.offsetTop+speed3+"px";
+	}
+	timer3=setInterval(run,30);
+	oUl3.onmouseover=function(){
+		clearInterval(timer3);
+	}
+	oUl3.onmouseout=function(){
+		timer3=setInterval(run,30);
+	}
+
+}
+</script>
+</head>
+
+<body>
+<button id="btn1" style="position:absolute; left:275px; top:90px;">向左</button>
+<button id="btn2" style="position:absolute; left:1039px; top:90px;">向左</button>
+<div id="div1">
+  <ul>
+    <li><img src="img/11.jpg"  /></li>
+    <li><img src="img/12.jpg"  /></li>
+    <li><img src="img/13.jpg"  /></li>
+    <li><img src="img/14.jpg"  /></li>
+  </ul>
+</div>
+
+<div id="div2">
+  <ul>
+    <li><img src="img/1.jpg"  /></li>
+    <li><img src="img/2.jpg"  /></li>
+    <li><img src="img/3.jpg"  /></li>
+    <li><img src="img/4.jpg"  /></li>
+  </ul>
+</div>
+
+<div id="div3">
+  <ul>
+    <li><img src="img/1.jpg"  /></li>
+    <li><img src="img/2.jpg"  /></li>
+    <li><img src="img/3.jpg"  /></li>
+    <li><img src="img/4.jpg"  /></li>
+  </ul>
+</div>
+
+</body>
+</html>

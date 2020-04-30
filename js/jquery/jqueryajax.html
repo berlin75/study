@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<META HTTP-EQUIV="pragma" CONTENT="no-cache"> 
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-cache, must-revalidate"> 
+<META HTTP-EQUIV="expires" CONTENT="0">
+<title>jqueryajax</title>
+<script src="../../vendors/jquery-3.1.1.js"></script>
+</head>
+<body>
+<h1>JS从服务器请求数据</h1>
+<mark>$.get方法会获取缓存文件</mark>
+<br/><br/>
+
+<input type="text" value="./jqueryajax.txt" id="toload" >
+<input type="button" value="load" id="btn0">
+<input type="button" value="get" id="btn1">
+<input type="button" value="post" id="btn2">
+<br>
+<div></div>
+<script>
+var url=$('#toload').val()+'?id='+Math.random();
+
+$('#btn0').click(function(){	
+	$('div').load(url,function(responseTxt,statusTxt,xhr){
+		if(statusTxt=='success') alert('加载完成');
+		if(statusTxt=='error')   alert('加载失败，error:'+xhr.status+xhr.statusTxt);
+	}); 
+});
+
+$('#btn1').click(function(){
+	$.get(url,function(data,status){
+		status=='success' ? alert(data) : alert(status);
+	}); 
+});
+
+$("#btn2").click(function(){  //url获取并处理传递的数据，然后返回响应的数据
+	$.post(url,{ name:"Bill",city:"USA" },function(data,status){
+		alert("响应数据：" + data + "\n状态：" + status);
+	});
+});
+</script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,50 @@
+<!doctype html>
+<html>
+<body>
+    您上传的东西为：<br><br>
+    <div class="data">
+        (无)
+    </div>
+    <br>
+    <button class="choose">上传东西</button>
+    <iframe src="upl" frameborder="0" id="upl"></iframe>
+
+<script src="jquery-3.1.1.js"></script>
+<script>
+window.onload = function(){
+            var frame = $("#upl")[0];
+            var cd;
+
+            frameInit()
+            frame.onload = function(){
+                frameInit()
+                if($(cd).find("#path").length>0){
+                    var path = $(cd).find("#path")[0].innerHTML;
+                    if(/png|gif|jpg/g.test(path)){
+                        $(".data").html("<img src='"+path+"'><br>")
+                    }else {
+                        $(".data").html("<a href='"+path+"' target='_blank'>"+path+"</a><br>")
+                    }
+
+                    frame.src = "upl";
+                }
+            }
+
+            $(".choose").click(function(){
+                $(cd).find("#data").click();
+            });
+
+            function frameInit(){
+                cd = frame.contentDocument.body;
+
+                var img = $(cd).find("#data")[0]
+                if(img){
+                    img.onchange = function(){
+                        $(cd).find("#sub").click();
+                    }
+                }
+            }
+        }
+</script>
+</body>
+</html>

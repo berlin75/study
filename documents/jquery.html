@@ -1,0 +1,3409 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>jquery</title>
+<link href="vendors/public.css" rel="stylesheet" type="text/css">
+<link rel="stylesheet" type="text/css" href="vendors/SyntaxHighlighter/shCoreDefault.css"/>
+</head>
+<body>
+<h1><a name="top">jQuery js(helper)框架(库)：jQuery  prototype MooTools<small></small></a></h1>
+
+<main>
+<nav>
+  <ul>
+    <li class="home">
+      <a href="#" onclick="location = location.hostname == 'localhost' ? '../index.html' : './index.html';return false;">STUDY</a>
+    </li>
+    <li class="it"><a href="javascript:;">jquery</a></li>
+  </ul>
+</nav>
+
+<h2>jquery源码解析</h2><pre>
+提供常见js任务的函数库,包括选择器、DOM操作、事件、动画、Ajax处理
+
+jquery模块化:
+核心方法
+回调系统
+异步队列
+数据缓存
+队列操作
+选择器引
+属性操作
+节点遍历
+文档处理
+样式操作
+属性操作
+事件体系
+AJAX交互
+动画引擎
+
+任何库与框架设计的第一个要点就是解决命名空间与变量污染的问题。jQuery就是利用了JS函数作用域的特性,采用立即调用表达式包裹了自身的方法来解决这个问题
+
+在jQuery中只有全局都会用到的变量、正则表达式定义在了代码最开头,而每个模块一开始又会定义一些只在本模块会使用到的变量、正则、方法等
+
+(function($){……})(jQuery) 定义使用jQuery库的匿名函数形成闭包
+jQuery具体的实现都被包含在了一个立即执行函数构造的闭包里面,为了不污染全局作用域,只在后面暴露$和jQuery这2个变量给外界,尽量的避开变量冲突
+jQuery在这里有一个针对压缩优化细节,使用第一种方式,在代码压缩的时候window和undefined都可以压缩为1个字母并且确保它们就是window和undefined。
+(function(w, u) {
+  // w -> windwow , u -> undefined
+})(window);
+
+【 jQuery无new构造 】
+实例化一个jQuery对象的方法：
+// 无new构造
+$('#test').text('Test');
+
+// 当然也可以使用new
+var test = new $('#test');
+test.text('Test');
+
+大部分人使用jQuery的时候都是使用第一种无new的构造方式,直接$('')进行构造,这也是jQuery十分便捷的一个地方。使用第一种无new构造方式的时候本质就是相当于new jQuery(),看看在jQuery内部是如何实现的
+
+</pre><pre class="js">
+(function(window, undefined) {
+  var jQuery = function(selector, context) {
+    // The jQuery object is actually just the init constructor 'enhanced'
+    // 实例化方法jQuery()实际上是调用了其拓展的原型方法jQuery.fn.init
+    return new jQuery.fn.init(selector, context, rootjQuery);
+  },
+
+  // jQuery.prototype即是jQuery的原型,挂载在上面的方法,即可让所有生成的jQuery对象使用
+  jQuery.fn = jQuery.prototype = {
+    // 实例化化方法,这个方法可以称作jQuery对象构造器
+    init: function(selector, context, rootjQuery) {
+        // ...
+    }
+  }
+  // 这一句很关键,jQuery没有使用new运算符将jQuery实例化,而是直接调用其函数,要实现这样,那么jQuery就要看成一个类,且返回一个正确的实例,且实例还要能正确访问jQuery类原型上的属性与方法
+  // jQuery的方式是通过原型传递解决问题,把jQuery的原型传递给jQuery.prototype.init.prototype
+  // 所以通过这个方法生成的实例this所指向的仍然是jQuery.fn,所以能正确访问jQuery类原型上的属性与方法
+  jQuery.fn.init.prototype = jQuery.fn;
+})(window);
+
+</pre><pre>
+jQuery.fn.init.prototype = jQuery.fn解析：
+1)首先要明确使用 $('xxx')这种实例化方式,其内部调用的是return new jQuery.fn.init(selector, context, rootjQuery) 这一句话,也就是构造实例是交给了jQuery.fn.init()方法去完成。
+
+2)将jQuery.fn.init的prototype属性设置为jQuery.fn,那么使用new jQuery.fn.init()生成的对象的原型对象就是jQuery.fn ,所以挂载到jQuery.fn上面的函数就相当于挂载到jQuery.fn.init()生成的jQuery对象上,所有使用new jQuery.fn.init() 生成的对象也能够访问到jQuery.fn上的所有原型方法。
+
+3)也就是实例化方法存在这么一个关系链
+jQuery.fn.init.prototype = jQuery.fn = jQuery.prototype ;
+new jQuery.fn.init() 相当于 new jQuery() ;
+jQuery() 返回的是 new jQuery.fn.init(),而 var obj = new jQuery(),所以这 2 者是相当的,所以我们可以无 new 实例化 jQuery 对象。
+
+【 无new构造 - 分离构造器 】
+通过new操作符构建一个对象一般经过四步：
+A.创建一个新对象
+B.将构造函数的作用域赋给新对象,所以this就指向了这个新对象
+C.执行构造函数中的代码
+D.返回这个新对象
+
+最后一点就说明了只要返回一个新对象即可。其实new操作符主要是把原型链跟实例的this关联起来,这才是最关键的一点,所以如果需要原型链就必须要new操作符来进行处理,否则this则变成window对象了。
+
+以下是常见的类式写法:
+var $$ = ajQuery = function(selector) {
+  this.selector = selector;
+  return this
+}
+ajQuery.fn = ajQuery.prototype = {
+  selectorName:function(){
+    return this.selector;
+  },
+  constructor: ajQuery
+}
+var a = new $$('aaa');  // 实例化
+a.selectorName()        // aaa,得到选择器名字
+
+首先改造jQuery无new的格式,可以通过instanceof判断this是否为当前实例：
+var $$ = ajQuery = function(selector) {
+  if(!(this instanceof ajQuery)){
+    return new ajQuery(selector);
+  }
+  this.selector = selector;
+  return this
+}
+
+但是注意千万不要像下面这样写：
+var $$ = ajQuery = function(selector) {
+  this.selector = selector;
+  return new ajQuery(selector);
+}
+Uncaught RangeError: Maximum call stack size exceeded
+
+这样会无限递归自己,从而造成死循环并且溢出。
+jQuery为了避免出现这种死循环的问题,采取的手段是把原型上的一个init方法作为构造器
+
+var $$ = ajQuery = function(selector) {
+  return new ajQuery.fn.init( selector );  //把原型上的init作为构造器
+}
+
+ajQuery.fn = ajQuery.prototype = {
+  name: 'aaron',
+  init: function() {
+    console.log(this)
+  },
+  constructor: ajQuery
+}
+
+这样确实解决了循环递归的问题,但是又问题来了,init是ajQuery原型上作为构造器的一个方法,那么其this就不是ajQuery了,所以this就完全引用不到ajQuery的原型了,所以这里通过new把init方法与ajQuery给分离成2个独立的构造器。
+
+【 静态与实例方法共享设计 】
+保留上一节分割出2个构造器的疑问,先看看jQuery在接口的设计：
+
+遍历方法：
+$(".aaron").each()   //作为实例方法存在
+$.each()             //作为静态方法存在
+
+这是最常见的遍历方法,第一条语句是给有指定的上下文调用的,就是(".aaron")获取的DOM合集,第二条语句$.each()函数可用于迭代任何集合,无论是“名/值”对象(JavaScript对象)或数组。在迭代数组的情况下,回调函数每次都会传递一个数组索引和相应的数组值作为参数。本质上来说2个都是遍历,那么是不是要写2个方法呢？
+
+看看jQuery的源码：
+jQuery.prototype = {
+  each: function( callback, args ) {
+    return jQuery.each( this, callback, args );
+  }
+}
+
+实例方法取于静态方法,换句话来说这是静态与实例方法共享设计,静态方法挂在jQuery构造器上,原型方法挂在哪里呢？
+
+上节不是讲了内部会划分一个新的构造器init吗？jQuery通过new原型prototype上的init方法当作构造器,那么init的原型链方法就是实例的方法了,所以jQuery通过2个构造器划分2种不同的调用方式一种是静态,一种是原型。
+
+方法是共享的,并且实例方法取于静态方法,2个构造器是完全隔离的 ,这个要如何处理？
+
+看看jQuery给的方案：
+init.prototype = jQuery.fn,把jQuery.prototype原型的引用赋给jQuery.fn.init.prototype的原型,这样就把2个构造器的原型给关联起来了。
+
+ajQuery.fn = ajQuery.prototype = {
+  name: 'aaron',
+  init: function(selector) {
+    this.selector = selector;
+    return this;
+  },
+  constructor: ajQuery
+}
+ajQuery.fn.init.prototype = ajQuery.fn
+
+这段代码就是整个结构设计的最核心的东西了,有这样的一个处理整个结构就活了
+
+通过原型传递解决问题,把jQuery的原型传递给jQuery.prototype.init.prototype。换句话说jQuery的原型对象覆盖了init构造器的原型对象,因为是引用传递所以不需要担心这个循环引用的性能问题。
+
+【 jQuery方法的重载 】
+// 获取 title 属性的值
+$('#id').attr('title');
+// 设置 title 属性的值
+$('#id').attr('title','jQuery');
+
+// 获取 css 某个属性的值
+$('#id').css('title');
+// 设置 css 某个属性的值
+$('#id').css('width','200px');
+
+方法的重载即是一个方法实现多种功能,经常又是get又是set,虽然阅读起来十分不易,但是从实用性的角度考虑,这也是为什么jQuery如此受欢迎的原因,大多数人使用jQuery()构造方法使用的最多的就是直接实例化一个jQuery对象,但其实在它的内部实现中,有着9种不同的方法重载场景：
+
+</pre><pre class="js">
+// 接受一个字符串,其中包含了用于匹配元素集合的CSS选择器
+jQuery([selector,[context]])
+// 传入单个DOM
+jQuery(element)
+// 传入DOM数组
+jQuery(elementArray)
+// 传入JS对象
+jQuery(object)
+// 传入jQuery对象
+jQuery(jQuery object)
+// 传入原始HTML的字符串来创建DOM元素
+jQuery(html,[ownerDocument])
+jQuery(html,[attributes])
+// 传入空参数
+jQuery()
+// 绑定一个在DOM文档载入完成后执行的函数
+jQuery(callback)
+
+</pre><pre>
+【  jQuery的链式调用及回溯 】
+jQuery的核心理念是Write less,Do more,那么链式方法的设计与此不谋而合,从深层次考虑这种设计其实是一种Internal DSL。
+DSL是指Domain Specific Language,也就是用于描述和解决特定领域问题的语言。
+
+链式调用的原理就是要返回当前操作的上下文,只需要通过简单扩展原型方法并通过return this的形式来实现跨浏览器的链式调用。
+只需要在方法内部返回当前的这个实例对象this就可以了,因为返回当前实例的this,从而又可以访问自己的原型了,这样的就节省代码量,提高代码的效率,代码看起来更优雅。但是这种方法有一个问题是：所有对象的方法返回的都是对象本身,也就是说没有返回值,所以这种方法不一定在任何环境下都适合。
+
+虽然JS是无阻塞语言,但是他并不是没阻塞,而是不能阻塞,所以他需要通过事件来驱动,异步来完成一些本需要阻塞进程的操作,这样处理只是同步链式,除了同步链式还有异步链式,异步链式jQuery从1.5开始就引入了Promise,jQuery.Deferred
+
+</pre>除了链式调用,jQuery甚至还允许回溯,通过end()方法终止在当前链的最新过滤操作,返回上一个对象集合<pre class="js">
+$('input[type="button"]')
+  .eq(0).click(function() {
+    alert('点击我!');
+}).end().eq(1).click(function() {
+    $('input[type="button"]:eq(0)').trigger('click');
+}).end().eq(2).toggle(function() {
+    $('.aa').hide('slow');
+}, function() {
+    $('.aa').show('slow');
+});
+
+</pre><pre>
+$('div').eq(0).show().end().eq(1).hide();
+当选择了('div').eq(0)之后使用end()可以回溯到上一步选中的jQuery对象$('div'),其内部实现其实是依靠添加了prevObject这个属性：
+
+jQuery完整的链式调用、增栈、回溯通过return this、return this.pushStack()、return this.prevObject实现,看看源码实现：
+
+</pre><pre class="js">
+jQuery.fn = jQuery.prototype = {
+  // 将一个DOM元素集合加入到jQuery栈,此方法在jQuery的DOM操作中被频繁的使用,在parent(),find(),filter()中,pushStack()方法通过改变一个jQuery对象的prevObject属性来跟踪链式调用中前一个方法返回的DOM结果集合,在链式调用end()方法后内部就返回当前jQuery对象的prevObject属性
+  pushStack: function(elems) {
+    // 构建一个新的jQuery对象,无参的this.constructor(),只是返回引用this,jQuery.merge把elems节点合并到新的jQuery对象,this.constructor就是jQuery的构造函数jQuery.fn.init,所以this.constructor()返回一个jQuery对象
+    // 由于jQuery.merge函数返回的对象是第二个函数附加到第一个上面,所以ret也是一个jQuery对象,这里可以解释为什么pushStack出入的DOM对象也可以用CSS方法进行操作
+    var ret = jQuery.merge(this.constructor(), elems);
+
+    // 给返回的新jQuery对象添加属性prevObject,所以也就是为什么通过prevObject能取到上一个合集的引用了
+    ret.prevObject = this;
+    ret.context = this.context;
+
+    // Return the newly-formed element set
+    return ret;
+  },
+
+  // 回溯链式调用的上一个对象,回溯的关键是返回prevObject属性,而prevObject属性保存了上一步操作的jQuery对象集合
+  end: function() {
+    return this.prevObject || this.constructor(null);
+  },
+
+  // 取当前jQuery对象的第i个
+  eq: function(i) {
+    // jQuery对象集合的长度
+    var len = this.length,
+        j = +i + (i < 0 ? len : 0);
+
+    // 利用pushStack返回
+    return this.pushStack(j >= 0 && j < len ? [this[j]] : []);
+  },
+}
+
+</pre><pre>
+总的来说,
+1)end()方法返回prevObject属性,这个属性记录了上一步操作的jQuery对象合集;
+2)而prevObject属性由pushStack()方法生成,该方法将一个DOM元素集合加入到jQuery内部管理的一个栈中,通过改变jQuery对象的prevObject属性来跟踪链式调用中前一个方法返回的DOM结果集合
+3)在链式调用end()方法后,内部就返回当前jQuery对象的prevObject属性,完成回溯。
+
+【 回溯处理的设计 】
+如果想知道prevObject对象,首先了解一下jQuery对象栈,jQuery内部维护着一个jQuery对象栈。每个遍历方法都会找到一组新元素即一个jQuery对象,然后jQuery会把这组元素推入到栈中。
+而每个jQuery对象都有三个属性：context、selector和prevObject,其中的prevObject属性就指向这个对象栈中的前一个对象,而通过这个属性可以回溯到最初的DOM元素集中。
+jQuery为操作这个内部对象栈提供个非常有用的2个方法：end()和addBack()
+可能有些API上是andSelf,因为就Query的api是这样写的,andSelf现在是.addBack()的一个别名。在jQuery1.8和更高版本中应使用.addBack()
+
+源码其实也是这样的
+jQuery.fn.andSelf = jQuery.fn.addBack;
+
+调用第一个方法只是简单地弹出一个对象,结果就是回到前一个jQuery对象。
+调用第二个方法会在栈中回溯一个位置,然后把两个位置上的元素集组合起来,并把这个新的、组合之后的元素集推入栈的上方。
+
+利用这个DOM元素栈可以减少重复的查询和遍历的操作,而减少重复操作也正是优化jQuery代码性能的关键所在。
+
+end: function() {
+  return this.prevObject || this.constructor(null);
+}
+
+【 插件接口的设计 】
+如果jQuery没有插件接口的设计,那么他就像个光杆司令,只有自己一个封闭的城堡。因此jQuery城堡需要设计一个大门 - 插件接口,从而打开大门开始招兵买马。当然jQuery除了获得“开发者社区”的大力支持外,也有很多大公司纷纷对它投出了橄榄枝,这也是它成功的关键。
+
+基于插件接口设计中一个最重要的好处是把扩展的功能从主体框架中剥离出去,降低了框架的复杂度,所以在软件设计中插件接口的提供把独立的功能与框架以一种很宽松的方式松耦合。
+
+一般来说jQuery插件的开发分为两种：
+一种是挂在jQuery命名空间下的全局函数,也可称为静态方法;
+另一种是jQuery对象级别的方法,即挂在jQuery原型下的方法,这样通过选择器获取的jQuery对象实例也能共享该方法。
+
+提供的接口：
+$.extend(target, [object1], [objectN])
+
+接口的使用：
+jQuery.extend({
+  data:function(){},
+  removeData:function(){}
+})
+
+jQuery.fn.extend({
+  data:function(){},
+  removeData:function(){}
+})
+
+jQuery的主体框架就是通过工厂模式返回一个内部的init构造器生成的对象,但是根据一般设计者的习惯,如果要为jQuery添加静态方法或实例方法从封装的角度讲是应该提供一个统一的接口才符合设计的。
+
+jQuery支持自己扩展属性,这个对外提供了一个接口,jQuery.fn.extend()来为对象增加方法,从jQuery的源码中可以看到,jQuery.extend和jQuery.fn.extend其实是同指向同一方法的不同引用。
+
+这里有一个设计的重点,通过调用的上下文,来确定这个方法是作为静态还是实例处理,jsx一共有四种上下文调用方式：方法调用模式、函数调用模式、构造器调用模式、apply调用模式：
+jQuery.extend调用的时候上下文指向的是jQuery构造器
+jQuery.fn.extend调用的时候上下文指向的是jQuery构造器的实例对象了
+
+通过extend()函数可以方便快速的扩展功能,不会破坏jQuery的原型结构,jQuery.extend = jQuery.fn.extend = function(){...}; 这个是连等,也就是2个指向同一个函数,怎么会实现不同的功能呢？这就是this力量了！
+
+fn与jQuery其实是2个不同的对象,jQuery.extend调用的时候this是指向jQuery对象的(jQuery是函数,也是对象！),所以这里扩展在jQuery上。而jQuery.fn.extend调用的时候this指向fn对象,jQuery.fn和jQuery.prototype指向同一对象,扩展fn就是扩展jQuery.prototype原型对象。这里增加的是原型方法,也就是对象方法了。所以jQuery的API中提供了以上2个扩展函数。
+
+</pre>jQuery的extend代码实现比较长,简单说一下重点<pre class="js">
+aAron.extend = aAron.fn.extend = function() {
+    var options, src, copy,
+        target = arguments[0] || {},
+        i = 1,
+        length = arguments.length;
+
+    //只有一个参数,就是对jQuery自身的扩展处理
+    //extend,fn.extend
+    if (i === length) {
+        target = this; //调用的上下文对象jQuery/或者实例
+        i--;
+    }
+    for (; i < length; i++) {
+        //从i开始取参数,不为空开始遍历
+        if ((options = arguments[i]) != null) {
+            for (name in options) {
+                copy = options[name];
+                //覆盖拷贝
+                target[name] = copy;
+            }
+        }
+    }
+    return target;
+}
+
+</pre><pre>
+因为extend的核心功能就是通过扩展收集功能(类似于mix混入),所以就会存在收集对象(target)与被收集的数据,因为jQuery.extend并没有明确实参,而且是通过arguments来判断的,所以这样处理起来很灵活。arguments通过判断传递参数的数量可以实现函数重载。其中最重要的一段target = this,通过调用的方式就能确实当前的this的指向,所以这时候就能确定target了。最后就很简单了,通过for循环遍历把数据附加到这个target上了。当然在这个附加的过程中还可以做数据过滤、深拷贝等一系列的操作了。
+
+【 回调函数 】
+在很多时候需要控制一系列的函数顺序执行,那么一般就需要一个队列函数来处理这个问题
+</pre><pre class="js">
+function Aaron(List, callback) {
+  setTimeout(function() {
+    var task;
+    if (task = List.shift()) {
+      task(); //执行函数
+    }
+    if (List.length > 0) { //递归分解
+      arguments.callee(List)
+    } else {
+      callback()
+    }
+  }, 25)
+}
+
+//调用,分别输出 'a', 'b', 'c', 'callback'
+​Aaron([
+  function() {console.log('a');},
+  function() {console.log('b');},
+  function() {console.log('c');}
+], function() {
+  console.log('callback')
+})
+
+</pre><pre>
+传入一组函数参数,靠递归解析,分个执行,其实就是靠setTimeout可以把函数加入到队列末尾才执行的原理,这样的写法就有点就事论事了,聚合对象完全是一个整体,无法再次细分出来,所以需要一种方案,用来管理分离每一个独立的对象。
+
+换成jQuery提供的方式,便捷很多,代码又很清晰,所以Callbacks是一个多用途的回调函数列表对象,提供了一种强大的方法来管理回调函数队列
+
+</pre><pre class="js">
+var callbacks = $.Callbacks();
+callbacks.add(function() {
+  console.log('a');
+})
+callbacks.add(function() {
+  console.log('b');
+})
+callbacks.fire(); //输出结果: 'a' 'b'
+
+</pre><pre>
+那么使用回调函数总的来说弱化耦合,让调用者与被调用者分开,调用者不关心谁是被调用者,所有它需知道的只是存在一个具有某种特定原型、某些限制条件的被调用函数
+
+观察者模式(pub/sub)的背后总的想法是在应用程序中增强松耦合性。并非是在其它对象的方法上的单个对象调用。一个对象作为特定任务或是另一对象的活动的观察者,并且在这个任务或活动发生时,通知观察者。观察者也被叫作订阅者(Subscriber),它指向被观察的对象,既被观察者(Publisher 或 subject)。当事件发生时,被观察者(Publisher)就会通知观察者(subscriber)。
+
+观察者的使用场合
+当一个对象的改变需要同时改变其它对象,并且它不知道具体有多少对象需要改变的时候,就应该考虑使用观察者模式。
+
+官网的demo涉及到了add与fire方法,熟悉设计模式的一眼就能看出,其实又是基于发布订阅(Publish/Subscribe)的观察者模式的设计。
+
+作为$.Callbacks()的创建组件的一个演示,只使用回调函数列表就可以实现Pub/Sub系统,将$.Callbacks作为一个队列。
+
+模拟常规下最简单的实现：
+
+JS里对观察者模式的实现是通过回调来实现的,先定义一个Observable对象,其内部包含了2个方法：订阅add方法与发布fire方法
+
+</pre><pre class="js">
+var Observable = {
+  callbacks: [],
+  add: function(fn) {
+    this.callbacks.push(fn);
+  },
+  fire: function() {
+    this.callbacks.forEach(function(fn) {
+      fn();
+    })
+  }
+}
+
+// 使用add开始订阅：
+Observable.add(function() {
+  console.log(1);
+})
+
+Observable.add(function() {
+  console.log(2);
+})
+
+// 使用fire开始发布：
+Observable.fire(); // 1, 2
+
+</pre><pre>
+设计的原理：
+开始构建一个存放回调的数组,如this.callbacks= [] 添加回调时将回调push进this.callbacks,执行则遍历this.callbacks执行回调,也弹出1跟2了。当然这只是简洁的设计,便于理解,整体来说设计的思路代码都是挺简单的,那么从简单的设计深度挖掘下这种模式的优势。
+
+如果没有做过复杂交互设计或大型应用的开发者,可能一开始无法理解这模式的好处,就简单的设计而言用模式来处理问题,有点把简单的问题复杂化,不是为了使用模式而使用的。
+
+组件开发为了保证组件可以在不同的项目中都适用,其必须是对其常用功能抽象出来加以实现,绝不会包含具体的业务逻辑而某一特定的项目使用者在其业务场景中使用组件时不可避免的要加入不同场景的业务逻辑。
+
+模式的实际运用
+在进行组件开发中,为了保证组件可以在不同的类似项目场景中都能适用,那么就必须是对其常用功能抽象出来加以实现。
+
+假设一段ajax的请求,成功后通过done返回结果数据：
+
+$.ajax({
+  url: "test.html",
+  context: document.body
+}).done(function(data) {
+  //data数据的处理
+  $('aaron1').html(data.a)
+  $('aaron2').html(data.b)
+  $('aaron3').html(data.c)
+  //其余处理
+});
+
+所有的逻辑是不是都写在done方法里面,这样确实是无可厚非的,但是问题就是逻辑太复杂了。Done里面有数据处理、html渲染、还可能有其它不同场景的业务逻辑。这样如果是换做不同的人去维护代码,增加功能就会显得很混乱而且没有扩展性。那么观察者模式能很好的解决了这个的问题。
+
+$.ajax({
+  url: "test.html",
+  context: document.body
+}).done(function(data) {
+  pocessData()
+  pocessHtml()
+  pocessOther()
+}
+
+function pocessData() {
+  //处理数据
+}
+
+function pocessHtml() {
+  $('aaron1').html(data.a)
+  $('aaron2').html(data.b)
+  $('aaron3').html(data.c)
+}
+
+function pocessOther() {
+  //处理其他逻辑
+}
+
+
+这种方式的好处是,分离出各种的业务函数,从而降低了代码之间的耦合度,但是这样代码写法几乎就是“就事论事”的处理,达不到抽象复用。
+
+那么用观察者模式加工一下上面的代码
+
+Observable.add(function() {
+  //pocessData
+})
+
+Observable.add(function() {
+  $('aaron1').html(data.a)
+  $('aaron2').html(data.b)
+  $('aaron3').html(data.c)
+})
+
+Observable.add(function() {
+  //pocessOther
+})
+
+$.ajax({
+  url: "test.html",
+  context: document.body
+}).done(function(data) {
+  Observable.fire(data)
+})
+
+设计该模式背后的主要动力是促进形成松散耦合。在这种模式中,并不是一个对象调用另一个对象的方法,而是一个对象订阅另一个对象的特定活动并在状态改变后获得通知。订阅者也称为观察者,而被观察的对象称为发布者或主题。当发生了一个重要的事件时,发布者将会通知(调用)所有订阅者并且可能经常以事件对象的形式传递消息。
+
+总的来说,观察者模式所做的工作就是在解耦,让耦合的双方都依赖于抽象,而不是依赖于具体。从而使得各自的变化都不会影响到另一边的变化。
+
+jQuery回调对象
+jQuery.Callbacks一般开发者接触的很少,虽然jQuery向开发者提供了外部接口调用,但是$.Callbacks()模块的开发目的是为了给内部$.ajax() 和 $.Deferred()模块提供统一的基本功能组件。它可以用来作为类似基础定义的新组件的功能。
+
+jQuery.Callbacks是jquery在1.7版本之后加入的,是从1.6版中的_Deferred对象中抽离的,主要用来进行函数队列的add、remove、fire、lock等操作,并提供once、memory、unique、stopOnFalse四个option进行一些特殊的控制。
+
+这个函数常见的应用场景是事件触发机制,也就是设计模式中的观察者模式的发布、订阅机制,目前Callbacks对象用于queue、ajax、Deferred对象中
+
+function fn1(value) {
+  console.log(value);
+}
+
+function fn2(value) {
+  fn1("fn2 says: " + value);
+  return false;
+}
+
+可以将上述两个方法作为回调函数,并添加到 $.Callbacks 列表中,并按下面的顺序调用它们:
+
+var callbacks = $.Callbacks();
+callbacks.add( fn1 );
+// outputs: foo!
+callbacks.fire( "foo!" );
+callbacks.add( fn2 );
+// outputs: bar!, fn2 says: bar!
+callbacks.fire( "bar!" );
+callbacks.remove( fn2 );
+// only outputs foobar, as fn2 has been removed.
+callbacks.fire( "foobar" );
+
+这样做的结果是,当构造复杂的回调函数列表时,将会变更很简单。可以根据需要,很方面的就可以向这些回调函数中传入所需的参数。
+
+jQuery的回调函数到底为哪些模块服务？
+
+异步队列模块：
+Deferred: function(func) {
+  var tuples = [
+    // action, add listener, listener list, final state
+    ["resolve", "done", jQuery.Callbacks("once memory"), "resolved"],
+    ["reject", "fail", jQuery.Callbacks("once memory"), "rejected"],
+    ["notify", "progress", jQuery.Callbacks("memory")]
+  ],………….
+
+队列模块
+_queueHooks: function(elem, type) {
+  var key = type + "queueHooks";
+  return data_priv.get(elem, key) || data_priv.access(elem, key, {
+    empty: jQuery.Callbacks("once memory").add(function() {
+      data_priv.remove(elem, [type + "queue", key]);
+    })
+  });
+}
+
+Ajax模块
+ajax: function(url, options) {
+  //省略代码
+  deferred = jQuery.Deferred(),
+  completeDeferred = jQuery.Callbacks("once memory")
+    ..............
+}
+
+不难发现jQuery.Callbacks还提供“once memory”等参数用来处理：
+once: 确保这个回调列表只执行( .fire() )一次(像一个递延Deferred)。
+memory: 保持以前的值,将添加到这个列表的后面的最新的值立即执行调用任何回调 (像一个递延Deferred)。
+unique: 确保一次只能添加一个回调(所以在列表中没有重复的回调)。
+stopOnFalse: 当一个回调返回false时中断调用。
+
+var callbacks = $.Callbacks('once');
+callbacks.add(function() {
+  alert('a');
+})
+callbacks.add(function() {
+  alert('b');
+})
+callbacks.fire(); //输出结果: 'a' 'b'
+callbacks.fire(); //未执行
+
+jQuery回调模块结构
+整个$.Callbacks的源码很少,它是一个工厂函数,使用函数调用(非new,它不是一个类)创建对象,它有一个可选参数flags用来设置回调函数的行为,对外的接口也就是self的返回。
+
+jQuery.Callbacks()的API列表如下：
+callbacks.add()        ：回调列表中添加一个回调或回调的集合。
+callbacks.disable()    ：禁用回调列表中的回调。
+callbacks.disabled()   ：确定回调列表是否已被禁用。
+callbacks.empty()      ：从列表中删除所有的回调。
+callbacks.fire()       ：用给定的参数调用所有的回调。
+callbacks.fired()      ：访问给定的上下文和参数列表中的所有回调。
+callbacks.fireWith()   ：访问给定的上下文和参数列表中的所有回调。
+callbacks.has()        ：确定列表中是否提供一个回调。
+callbacks.lock()       ：锁定当前状态的回调列表。
+callbacks.locked()     ：确定回调列表是否已被锁定。
+callbacks.remove()     ：从回调列表中的删除一个回调或回调集合。
+
+源码结构：
+jQuery.Callbacks = function(options) {
+  options = typeof options === "string" ? (optionsCache[options] || createOptions(options)) : jQuery.extend({}, options);
+
+  //实现代码
+  fire = function() {}
+  self = {
+    add: function() {},
+    remove: function() {},
+    has: function(fn) {},
+    empty: function() {},
+    disable: function() {},
+    disabled: function() {},
+    lock: function() {},
+    locked: function() {},
+    fireWith: function(context, args) {},
+    fire: function() {},
+    fired: function() {}
+  };
+  return self;
+};
+
+整个结构要分三部分：
+Options参数缓存
+内部fire触发器的设计
+外部
+
+参数的缓存设计
+Callbacks是可以是接受的字符串的组合传参数,可以使用空格分割,代码如下：
+
+var opts = 'unique memory';
+var object = {}
+jQuery.each(opts.match(/\S+/g) || [], function(_, flag) {
+  object[flag] = true;
+});
+
+这样的操作其实是不需要重复的,所以可以设计一个缓存池,用来储存重复的操作：
+
+var optionsCache = {};
+function createOptions(options) {
+  var object = optionsCache[options] = {};
+  jQuery.each(options.match(rnotwhite) || [], function(_, flag) {
+    object[flag] = true;
+  });
+  return object;
+}
+
+所以传递参数的时候,如果参数是字符串,可以直接从optionsCache缓存中去查找：
+
+options = typeof options === "string" ?
+        ( optionsCache[ options ] || createOptions( options ) ) :
+        jQuery.extend( {}, options );
+
+接口的设计：
+通过学习了观察者模式的思路,知道callback需要在内部维护着一个list的队列数组,用于保存订阅的对象数据。同时也需要提供了add、remove、fire等订阅、发布、删除类似的接口。那么是不是很简单是就是把订阅对象给push给内部list列表？
+
+实现思路就是: 构建一个存放回调的数组,如var list = [],通过闭包使这条回调数组保持存在。添加回调时将回调push进list,执行则遍历list执行回调。
+
+默认回调对象设计
+不传入任何参数,调用add的时候将函数add到内部的list中,调用fire的时候顺序触发list中的回调函数：
+
+function fn1(val) {
+  console.log('fn1 says:' + val);
+}
+
+function fn2(val) {
+  console.log('fn2 says ' + val);
+}
+var cbs = $.Callbacks();
+cbs.add(fn1);
+cbs.fire('foo');
+console.log('........')
+cbs.add(fn2);
+cbs.fire('bar')
+
+结果就是按照顺序叠加触发,如下列表：
+fn1 says:foo
+………………………
+fn1 says:bar
+fn2 says bar
+
+这种就是最简单的处理了,可以直接模拟,代码如下：
+function Callbacks() {
+  var list = [];
+  var self;
+  self = {
+    add: function(fn) {
+      list.push(fn)
+    },
+    fire: function(args) {
+      list.forEach(function(fn) {
+        fn(args);
+      })
+    }
+  }
+  return self;
+}
+
+once的设计
+once的作用确保回调列表只执行(.fire())一次(像一个递延 Deferred),如下代码：
+function fn1(val){
+    console.log('fn1 says ' + val);
+}
+var cbs = $.Callbacks('once');
+cbs.add(fn1);
+cbs.fire('foo');
+cbs.fire('foo');   // cbs.fire('foo')只执行了一次,fn1 says foo只显示一次
+
+once定义是很明确的,确保这个回调列表只执行( .fire() )一次(像一个递延 Deferred),所以针对这种once的处理可以有多种不同的途径实现。
+1、add的时候抛弃
+2、在fire的时候抛弃多个。
+
+但是jQuery是在执行第一个fire的时候直接给清空list列表了,然后在add的地方给判断下list是否存在,从而达到这样的处理。
+
+function Callbacks(options) {
+  var list = [];
+  var self;
+  self = {
+    add: function(fn) {
+      list.push(fn)
+    },
+    fire: function(args) {
+      if (list) {
+        list.forEach(function(fn) {
+          fn(args);
+        })
+        if (options === 'once') {
+          list = undefined;
+        }
+      }
+    }
+  }
+  return self;
+}
+
+在fire之后判断参数是否为once,直接把list给清理掉,所以之后的所有fire都被抛弃掉了,而从达到了once的效果。
+
+jQuery.Callbacks的处理
+在fire中调用了self.disable();方法
+
+// 禁用回调列表中的回调。
+disable: function() {
+  list = stack = memory = undefined;
+  return this;
+},
+
+memory的设计
+memory：保持以前的值,将添加到这个列表的后面的最新的值立即执行调用任何回调,像一个递延Deferred
+
+回调函数是从异步队列Deferred分离出来的,所以很多的接口设计都是为了契合Deferred接口,memory用的很多,这个缓存的设计这里提及一下
+
+主要是用来实现deferred的异步收集与pipe管道风格的数据传递的,具体在Deferred有详解,这里大概了解下作用范围。
+
+</pre><pre class="js">
+var cbs = Callbacks('once');
+cbs.add(fn1);
+cbs.fire('foo');
+cbs.fire('foo');
+
+function fn1(val) {
+  console.log('fn1 says ' + val);
+}
+function fn2(val) {
+  console.log('fn2 says ' + val);
+}
+function fn3(val) {
+  console.log('fn3 says ' + val);
+}
+
+var cbs = $.Callbacks('memory');
+cbs.add(fn1);
+cbs.fire('foo');
+console.log('..........')
+cbs.add(fn2);
+cbs.fire('bar');
+console.log('..........')
+cbs.add(fn3);
+cbs.fire('aaron');
+
+// 输出
+fn1 says foo
+..........
+fn2 says foo
+fn1 says bar
+fn2 says bar
+..........
+fn3 says bar
+fn1 says aaron
+fn2 says aaron
+fn3 says aaron
+
+</pre><pre>
+结果可以看出在执行cbs.add(fn2);的时候此时除了把fn2添加到了回调队列之外而且还立刻执行了这个方法,唯一的区别就是参数是用的之前的。所以解释就叫“保持以前的值”。
+
+所以这个memory设计需要解决的问题就是：
+1：如何取到上一个参数
+2：add后如何执行
+
+</pre>看看实现的代码：<pre class="js">
+function Callbacks(options) {
+  var list = [];
+  var self;
+  var firingStart;
+  var memory;
+
+  function _fire(data) {
+    memory = options === 'memory' && data;
+    firingIndex = firingStart || 0;
+    firingStart = 0;
+    firingLength = list.length;
+    for (; list && firingIndex < firingLength; firingIndex++) {
+      list[firingIndex](data)
+    }
+  }
+
+  self = {
+    add: function(fn) {
+      var start = list.length;
+      list.push(fn)
+      if (memory) {
+        firingStart = start; //获取最后一值
+        _fire(memory);
+      }
+    },
+    fire: function(args) {
+      if (list) {
+        _fire(args)
+      }
+    }
+  }
+  return self;
+}
+
+首先add之后要能触发fire的动作,所以我们把fire作为内部的一个私有方法实现_fire,比较合逻辑,这样外部的fire只是一个门面方法的调用。
+
+私有变量memory缓存这上一个参数的属性,我们靠firingStart用来定位最后通过add增加的回调数据的索引。在遍历的时候直接通过firingStart的起始索引定位,然后传递memory的参数,而且实现这种“保持以前的值”的设计。
+
+unique的设计
+Unique：确保一次只能添加一个回调(所以在列表中没有重复的回调)
+
+function fn1(val) {
+  console.log('fn1 says ' + val);
+}
+var callbacks = $.Callbacks( "unique" );
+callbacks.add( fn1 );
+callbacks.add( fn1 ); // repeat addition
+callbacks.add( fn1 );
+callbacks.fire( "foo" );  // fn1 says foo,结果：过滤了相同的add操作
+
+过滤重复的比较简单,因为是数组的保存方式,可以在入口处通过indexOf判断即可
+
+function Callbacks(options) {
+  var list = [];
+  var self;
+  var firingStart;
+  var memory;
+
+  function _fire(data) {
+    memory = options === 'memory' && data;
+    firingIndex = firingStart || 0;
+    firingStart = 0;
+    firingLength = list.length;
+    for (; list && firingIndex < firingLength; firingIndex++) {
+      list[firingIndex](data)
+    }
+  }
+
+  self = {
+    add: function(fn) {
+      var start = list.length;
+      if (options == 'unique') {
+        if (-1 === list.indexOf(fn)) {
+          list.push(fn)
+        }
+      } else {
+        list.push(fn)
+      }
+      if (memory) {
+        firingStart = start; //获取最后一值
+        _fire(memory);
+      }
+    },
+    fire: function(args) {
+      if (list) {
+        _fire(args)
+      }
+    }
+  }
+  return self;
+}
+
+</pre><pre>
+stopOnFalse
+stopOnFalse: 当一个回调返回false 时中断调用
+
+function fn1(value) {
+  console.log(value);
+  return false;
+}
+
+function fn2(value) {
+  fn1("fn2 says: " + value);
+  return false;
+}
+
+var callbacks = $.Callbacks("stopOnFalse");
+callbacks.add(fn1);
+callbacks.fire("foo");
+
+callbacks.add(fn2);
+callbacks.fire("bar");
+结果虽然fn1被添加到了回调列表,但是因为fn1返回了false,那么意思之后的回调都不会被调用了。如果还有fn3,在f2上返回false,fn3也将不会被调用。
+
+foo
+bar
+
+
+这个设计我们只要控制好函数返回的处理的布尔值,通过这个值用来判断是否需要下一个遍历
+
+if (list[firingIndex](data) === false && options === 'stopOnFalse') {
+  break;
+}
+源码可以如下：
+
+function Callbacks(options) {
+  var list = [];
+  var self;
+  var firingStart;
+  var memory;
+
+  function _fire(data) {
+    memory = options === 'memory' && data;
+    firingIndex =
+      firingStart || 0;
+    firingStart = 0;
+    firingLength = list.length;
+    for (; list && firingIndex < firingLength; firingIndex++) {
+      if (list[firingIndex](data) === false && options === 'stopOnFalse') {
+        break;
+      }
+    }
+  }
+
+  self = {
+    add: function(fn) {
+      var start = list.length;
+      if (options == 'unique') {
+        if (-1 === list.indexOf(fn)) {
+          list.push(fn)
+        }
+      } else {
+        list.push(fn)
+      }
+      if (memory) {
+        firingStart = start; //获取最后一值
+        _fire(memory);
+      }
+    },
+    fire: function(args) {
+      if (list) {
+        _fire(args)
+      }
+    }
+  }
+  return self;
+}
+以上是几种单独的处理情况的用法,我们可以看到jQuery都是组合使用的,最常见的就是
+
+jQuery.Callbacks("once memory")的组合了,其实以上的思路都讲解过了,无非就是组合起来的时候要考虑一些判断了
+
+</pre>
+
+<h4>数据缓存</h4><pre>
+【 内存泄露 】
+内存泄露是指一块被分配的内存既不能使用,又不能回收,直到浏览器进程结束。在C++中因为是手动管理内存,内存泄露是经常出现的事情。而现在流行的C#和Java等语言采用了自动垃圾回收方法管理内存,正常使用的情况下几乎不会发生内存泄露。浏览器中也是采用自动垃圾回收方法管理内存,但由于浏览器垃圾回收方法有bug,会产生内存泄露。
+
+常见内存泄露的几种情况
+1.循环引用
+2.JS闭包
+3.DOM插入
+
+一个DOM对象被一个JS对象引用,与此同时又引用同一个或其它的JS对象,这个DOM对象可能会引发内存泄漏,这个DOM对象的引用将不会在脚本停止的时候被垃圾回收器回收。要想破坏循环引用,引用DOM元素的对象或DOM对象的引用需要被赋值为null。
+
+其实绝大部分内存泄漏都不是由JS引起的,浏览器的回收机制已经做的相当好了,多数的泄漏都是由于与DOM交互而产生的。
+
+含有DOM对象的循环引用将导致大部分当前主流浏览器内存泄露
+
+第一种：多个对象循环引用
+var a=new Object;
+var b=new Object;
+a.r=b;
+b.r=a;
+
+第二种：循环引用自己
+var a=new Object;
+a.r=a;
+
+循环引用很常见且大部分情况下是无害的,但当参与循环引用的对象中有DOM对象或者ActiveX对象时,循环引用将导致内存泄露。
+把例子中的任何一个new Object替换成document.getElementById或者document.createElement就会发生内存泄露了。
+
+所以这里的总结：
+JS的内存泄露,无怪乎就是从DOM中remove了元素,但是依然有变量或对象引用了该DOM对象,然后内存中无法删除,使得浏览器的内存占用居高不下。这种内存占用,随着浏览器的刷新,会自动释放。
+
+而另外一种情况就是循环引用,一个DOM对象和JS对象之间互相引用,这样造成的情况更严重一些,即使刷新内存也不会减少。这就是严格意义上说的内存泄露了。
+
+所以在平时实际应用中经常需要给元素缓存一些数据,并且这些数据往往和DOM元素紧密相关。由于DOM元素(节点)也是对象, 所以可以直接扩展DOM元素的属性,但是如果给DOM元素添加自定义的属性和过多的数据可能会引起内存泄漏,所以应该要尽量避免这样做,更好的解决方法是使用一种低耦合的方式让DOM和缓存数据能够联系起来。
+
+所以必须有一种机制,避免引用数据直接依附在DOM对象上,这样尽量避免内存泄漏的产生。jQuery的缓存系统就很好的解决了这一问题。
+
+jQuery的缓存系统
+jQuery从1.2.3版本引入数据缓存系统,主要的原因就是早期的事件系统Dean Edwards的ddEvent.js代码带来的问题：
+1.没有一个系统的缓存机制,它把事件的回调都放到EventTarget之上,这会引发循环引用
+2.如果EventTarget是window对象,又会引发全局污染不同模块之间用不同缓存变量
+
+一般jQuery开发都喜欢便捷式的把很多属性,比如状态标志都写到dom节点中,也就是HTMLElement。
+好处 : 直观,便捷。
+坏处 ：
+1.循环引用
+2.直接暴露数据,安全性？
+3.增加一堆的自定义属性标签,对浏览器来说是没意的
+4.取数据的时候要对HTML节点做操作
+
+jQuery缓存系统的真正魅力在于其内部应用中,动画、事件等都有用到这个缓存系统。试想如果动画的队列都存储到各DOM元素的自定义属性中,这样虽然可以方便的访问队列数据,但也同时带来了隐患。如果给DOM元素添加自定义的属性和过多的数据可能会引起内存泄漏,所以要尽量避免这么干。
+
+A.允许在DOM元素上附加任意类型的数据,避免了循环引用的内存泄漏风险
+B.用于存储跟dom节点相关的数据,包括事件,动画等
+C.一种低耦合的方式让DOM和缓存数据能够联系起来
+
+对于jQuery来说,数据缓存系统本来就是为事件系统服务而分化出来的,到后来它的事件克隆乃至后来的动画列队实现数据的存储都是离不开缓存系统,所以数据缓存也算是jQuery的一个核心基础了。
+
+jQuery的数据缓存接口：
+jQuery.data( element, key, value )
+.data( )
+
+对于jQuery.data方法,原文如下：
+The jQuery.data() method allows us to attach data of any type to DOM elements in a way that is safe from circular references and therefore from memory leaks. We can set several distinct values for a single element and retrieve them later:
+在jQuery的官方文档中,提示用户这jQuery.data()是一个低级的方法,应该用.data()方法来代替。$.data(element, key, value)可以对DOM元素附加任何类型的数据,但应避免循环引用而导致的内存泄漏问题。
+
+二者都是用来在元素上存放数据也就平时所说的数据缓存,都返回jQuery对象,但是内部的处理确有本质的区别。
+
+【 静态与实例方法的区别 】
+jQuery.data(ele) 与 $(ele).data()
+这两个函数都是用来在元素上存放数据,也就平时所说的数据缓存,都返回jQuery对象,初学时很容易让人混淆,尤其是给dom元素添加缓存数据时。
+
+简单的来说：
+1.jQuery.data()可以实现为dom元素或js对象添加缓存
+2.$("ele").data()实是对前者的扩展,其目的是可以方便的通过选择器为多个dom元素添加缓存数据
+
+虽然大体的意思一样,但是2个接口在处理上却有差别,也是容易忽视的
+
+【 jQuery缓存的设计思路 】
+jQuery缓存设计接口对数据的处理有如下几种：
+用name和value为对象附加数据
+一个对象为对象附加数据
+为DOM Element附加数据
+
+设计的思路：
+常规的数据缓存,我们都大多为了方便直接就绑定到了dom对应的元素上了,最为常见的就是事件对象的回调函数了,还有一些DOM的属性。当然这也不是不可以,jQuery早期就是这么干的,但是容易引发循环引用,也会带来一定的全局污染的问题。那么jQuery在之后的改进就独立出了一个”数据缓存“的模块。
+
+其核心的关键就是：数据存放在内存中,通过一个映射关系与直接的DOM元素发生关联
+
+数据缓存,jQuery现在支持两种：
+1.dom元素,数据存储在jQuery.cache中。
+2.普通js对象,数据存储在该对象中。
+
+首先先要在内存中开辟一个区域用来保存数据,jQuery用cache对象{},那么所有的数据就是针对cache的CURD操作了。
+
+1:如果是DOM元素,通过分配一个唯一的关联id把DOM元素和该DOM元素的数据缓存对象关联起来,关联id被附加到以jQuery.expando的值命名的属性上,数据存储在全局缓存对象jQuery.cache中。在读取、设置、移除数据时将通过关联id从全局缓存对象jQuery.cache中找到关联的数据缓存对象,然后在数据缓存对象上执行读取、设置、移除操作。
+
+2:如果是JS对象,数据则直接存储在该JS对象的属性jQuery.expando上。在读取、设置、移除数据时实际上是对JS对象的数据缓存对象执行读取、设置、移除操作。
+
+3:为了避免jQuery内部使用的数据和用户自定义的数据发生冲突,数据缓存模块把内部数据存储在数据缓存对象上,把自定义数据存储在数据缓存对象的属性data上。
+
+所以jQuery在数据缓存的处理抽出一个Data类出来,通过2组不同的实例,分别处理不同的处理类型：
+var data_priv = new Data();
+var data_user = new Data();
+
+一个是给jQuery内部只用,比如数据对象,queue,Deferred,事件,动画缓存
+另一个对象data_user是提供给开发者使用的,比如$.attr(),$.data等等
+
+【 Data类的设计 】
+看看Data类是如何构建这个缓存池的：
+(1)先在jQuery内部创建一个cache对象{}来保存缓存数据,然后往需要进行缓存的DOM节点上扩展一个值为expando的属性
+expando的值用于把当前数据缓存的UUID值做一个节点的属性给写入到指定的元素上形成关联桥梁,所以元素本身具有这种属性的可能性很少,所以可以忽略冲突。
+
+function Data() {
+  Object.defineProperty(this.cache = {}, 0, {
+    get: function() {
+      return {};
+    }
+  });
+  this.expando = jQuery.expando + Math.random();
+}
+
+(2)接着把每个节点的dom[expando]的值都设为一个自增的变量id,保持全局唯一性。 这个id的值就作为cache的key用来关联DOM节点和数据。也就是说cache[id]就取到了这个节点上的所有缓存,即id就好比是打开一个房间(DOM节点)的钥匙。 而每个元素的所有缓存都被放到了一个map映射里面,这样可以同时缓存多个数据。
+
+Data.uid = 1;
+关联起dom对象与数据缓存对象的一个索引标记,换句话说先在dom元素上找到expando对应值也就uid,然后通过这个uid找到数据cache对象中的内。
+
+(3)所以cache对象结构应该像下面这样：
+var cache = {
+  "uid1": { // DOM节点1缓存数据,
+    "name1": value1,
+    "name2": value2
+  },
+  "uid2": { // DOM节点2缓存数据,
+    "name1": value1,
+    "name2": value2
+  }
+  // ......
+};
+
+每个uid对应一个elem缓存数据,每个缓存对象是可以由多个name value(名值对)对组成的,而value是可以是任何数据类型的。
+
+流程分解：(复杂的过滤,找重的过程去掉)
+第一步：jQuery本身就是包装后的数组结构,这个不需要解析了
+
+第二步：通过data存储数据
+为了不把数据与dom直接关联,所以会把数据存储到一个cache对象上
+产生一个unlock = Data.uid++; unlock标记号
+把unlock标记号作为一个属性值 赋予$body节点
+cache缓存对象中开辟一个新的空间用于存储foo数据,this.cache[ unlock ] = {};
+最后把foo数据挂到cache上,cache[ data ] = value;
+
+第三步：通过data获取数据
+从$body节点中获取到unlock标记
+通过unlock在cache中取到对应的数据
+
+【 实例方法的设计 】
+疑问：jQuery.data() 与 .data()为什么会有区别？
+
+jQuery的方法设计大都是多用的,可以根据传递参数的个数判断是set还是get处理,不仅如此jQuery还对参数的传递类型还抽出了一个处理的方法jQuery.access,可以传递字符串、数组、对象等等,根据这种类型自动分解成接口所有能接受的参数。
+
+省略了部分,比如数据的过滤,HMLT5 data的处理之类,保留直接的处理,如下代码：
+jQuery.fn.extend({
+  data: function(key, value) {
+    return access(this, function(value) {
+      // 通过access解析出参数 value的值
+    }, null, value, arguments.length > 1, null, true)
+  })
+}
+
+通过access解析后的参数就能让data_user接口所接收,此时可以调用数据对象接口开始对数据进行存储设置了。
+this.each(function() {
+   var data = data_user.get( this, camelKey );
+   data_user.set( this, camelKey, value );
+});
+
+因为jQuery可以是一个元素合集,所以内部需要通过each对每一个合集都遍历处理,
+
+对数据的存储内部就是调用的data_user.get缓存类的接口。
+
+get: function(owner, key) {
+  var cache = this.cache[this.key(owner)];
+  return key === undefined ?
+    cache : cache[key];
+}
+
+通过get方法通过key去cache中取得之前的值,如果没有则新开辟一个空间用来存储之后的新值,
+
+通过data_user.set去设置这个新的值：
+
+set: function(owner, data, value) {
+  var prop,
+    unlock = this.key(owner),
+    cache = this.cache[unlock];
+  cache[data] = value;
+  return cache;
+}
+
+取出cache中对应的存储空间,然后可见
+cache[ data ] = value;
+数据直接就是通过对象的键值对的方式存储在内存中的。
+
+当我们重复同一个key的时候,其实是反复操作同一个cache缓存区下的同一个key,所以当下面：
+cache[‘bar’] = {
+     myType: "慕课网一",
+});
+
+cache[‘bar’] = {
+     myType: "慕课网二",
+});
+这种情况下,肯定是被覆盖掉了。所以也就为什么通过实例的接口会覆盖数据了。
+
+【 静态接口设计 】
+通过源码可见,静态方法是直接操作数据类的 data_user.access 方法
+jQuery.extend({
+  data: function(elem, name, data) {
+    return data_user.access(elem, name, data)
+  }
+
+静态方法data的实现不像attr操作直接把数据作为属性捆绑到元素节点上,如果为DOM Element 附加数据;DOM Element 也是一种 Object ,但 IE6、IE7 对直接附加在 DOM Element 上的对象的垃圾回收存在问题;因此我们将这些数据存放在全局缓存(我们称之为“globalCache”)中,即 “globalCache” 包含了多个 DOM Element 的 “cache”,并在 DOM Element 上添加一个属性,存放 “cache” 对应的 uid。
+
+最后可见：
+1：jQuery.data(element,[key],[value]),每一个element都会有自己的一个{key:value}对象保存着数据,所以新建的对象就算有key相同它也不会覆盖原来存在的对象key所对应的value,因为新对象保存是是在另一个{key:value}对象中
+
+2：$("div").data("a","aaaa") 它是把数据绑定每一个匹配div节点的元素上
+
+源码可以看出来,说到底,数据缓存就是在目标对象与缓存体间建立一对一的关系,整个Data类其实都是围绕着 thia.cache 内部的数据做增删改查的操作。
+
+</pre>
+
+<h4>jquery的Sizzle选择器</h4><pre>
+jQuery的定位就是一个DOM的操作库,那么可想而知选择器是一个至关重要的模块。Sizzle作为一个独立全新的选择器引擎,出现在jQuery1.3版本之后,并被John Resig作为一个开源的项目,可以用于其他框架：Mool、Dojo、YUI等。
+
+jQuery是总入口,选择器支持9种方式的处理：
+1.$(document)
+2.$('< div>’)
+3.$('div')
+4.$('#test')
+5.$(function(){})
+6.$("input:radio", document.forms[0]);
+7.$('input', $('div'))
+8.$()
+9.$("< div>", {
+   "class": "test",
+   text: "Click me!",
+   click: function(){ $(this).toggleClass("test"); }
+}).appendTo("body");
+10.$($('.test'))
+
+一般选择器的匹配模式(包括老版本的jQuery),都是一个顺序的思维方式:
+在需要递进式匹配时,比如$("div a") 这样的匹配时,执行的操纵都是先匹配页面中div然后再匹配它的节点下的a标签,之后返回结果。我们知道CSS的匹配规则是从右边向左筛选,jQuery在Sizzle中延续了这样的算法,先搜寻页面中所有的a标签,在之后的操纵中再往后判定它的父节点(包括父节点以上)是否为div,一层一层往上过滤,最后返回该操纵序列。
+sizzle只能说是大体如此,此外在1.8中引入了编译的概念,大大提高了重复的选择的效率。
+
+浏览器渲染原理：
+浏览器从下载文档到显示页面的过程是个复杂的过程,这里包含了重绘和重排。各家浏览器引擎的工作原理略有差别,但也有一定规则。
+
+通常在文档初次加载时,浏览器引擎会解析HTML文档来构建DOM树,之后根据DOM元素的几何属性构建一棵用于渲染的树。渲染树的每个节点都有大小和边距等属性,类似于盒子模型(由于隐藏元素不需要显示,渲染树中并不包含DOM树中隐藏的元素)。
+
+当渲染树构建完成后,浏览器就可以将元素放置到正确的位置了,再根据渲染树节点的样式属性绘制出页面。由于浏览器的流布局,对渲染树的计算通常只需要遍历一次就可以完成,所以我们知道浏览器最终会将HTML文档或者说页面解析成一棵DOM树,如下代码将会翻译成以下的DOM：
+
+</pre><pre class="html">
+<div id="text">
+  <p>
+     <input type="text" />
+  </p>
+  <div class="aaron">
+     <input type="checkbox" name="readme" />
+     <input type="checkbox" name="ttt" />
+     <input type="checkbox" name="aaa" />
+     <p>Sizzle</p>
+  </div>
+</div>
+
+</pre><pre>
+如果想要操作到当中那个checkbox,我们需要有一种表述方式,使得通过这个表达式让浏览器知道我们是想要操作哪个DOM节点。
+这个表述方式就是CSS选择器,它是这样表示的：
+div > p + .aaron input[type="checkbox"]
+表达的意思是：div底下的p的兄弟节点,该节点的class为aaron ,并且其属性type为checkbox。
+
+常见的选择器其实最终都是通过浏览器提供的接口实现的,由于低级浏览器并未提供这些高级点的接口,所以才有了Sizzle这个CSS选择器引擎。Sizzle引擎提供的接口跟document.querySelectorAll是一样的,其输入是一串选择器字符串,输出则是一个符合这个选择器规则的DOM节点列表,因此第一步骤是要分析这个输入的选择器。
+
+通过sizzle与高级API获取的结果是一致的：
+$('div > div.aaron input[name=ttt]')
+document.querySelectorAll(' div > div.aaron input[name=ttt]')
+这个是相对复杂的CSS的组合了,涉及到了几种不同类型的选择器,除去querySelectorAll这种高级API,我们是无法直接获取到对应的节点引用的,因为Sizzle要实现这种查找也是非常复杂的,这里面就要涉及一系列的概念。
+
+1．拆分选择器,把每一个选择器组成能够处理的最小化单元。
+div.aaron这行代码原生的API不认识,但是div与.aaron都是有API能直接获取到的,所以拆分出后提供后面进行关联匹配筛选等等。这里sizzle就引入了词法分析器与种子合集。
+
+2．Sizzle也是遵循从右到左开始查找,但是不仅仅是这样。
+浏览器提供的查找接口,基本靠谱的就只有三个：
+Expr.find = {
+  'ID'    : context.getElementById,
+  'CLASS' : context.getElementsByClassName,
+  'TAG'   : context.getElementsByTagName
+}
+所以开始第一查找,从右到左边依次取出最小的单元选择器,通过ID、CLASS.TAG去查找,如果能找到就放到结果集中,这样第一时间定位到了最终的元素必须会存在的合集。
+
+3．这样只能找出可能存在的合集,但是没有精确到具体的选择器上,所以还需要一个筛选的过程,这个过程也是最复杂的。
+
+Sizzle从1.8后引入的“编译”的概念,用于提高性能。
+
+【 Sizzle解析原理 】
+如何解析复杂的选择器？
+
+div > div.Aaron input[name=ttt]
+组合后的意思大概就是：
+1. 选择所有div节点
+2. 选择div的子元素之后的所有div并且class="Aaron" 的所有元素
+3. 之后选择div.Aaron元素内部的所有input并且属性[name=ttt]的元素
+
+就针对这个简单的结构,描述出整个解析的流程
+
+用组合语句,在高级浏览器上jquery都是通过querySelectorAll处理的,所以讨论的都是在低版本上的实现,伪类选择器,XML要放到最后,本文暂不涉及这方便的处理。
+
+需要用到的几个知识点:
+1: CSS选择器的位置关系
+2: CSS的浏览器实现的基本接口
+3: CSS选择器从右到左扫描匹配
+
+CSS选择器的位置关系
+一个节点跟另一个节点有以下几种关系：
+祖宗和后代
+父亲和儿子
+临近兄弟
+普通兄弟
+在CSS选择器里边分别是用：空格、>、+、~。
+其实还有一种关系：div.Aaron,中间没有空格表示了选取一个class为Aaron的div节点
+
+<div id="grandfather">
+  <div id="father">
+    <div id="child1"></div>
+    <div id="child2"></div>
+    <div id="child3"></div>
+  </div>
+</div>
+爷爷grandfather与孙子child1属于祖宗与后代关系(空格表达)
+
+父亲father与儿子child1属于父子关系,也算是祖先与后代关系(>表达)
+
+哥哥child1与弟弟child2属于临近兄弟关系(+表达)
+
+哥哥child1与弟弟child2,弟弟child3都属于普通兄弟关系(~表达)
+
+在Sizzle里有一个对象是记录跟选择器相关的属性以及操作：Expr。它有以下属性：
+relative = {
+  ">": { dir: "parentNode", first: true },
+  " ": { dir: "parentNode" },
+  "+": { dir: "previousSibling", first: true },
+  "~": { dir: "previousSibling" }
+}
+
+所以在Expr.relative里边定义了一个first属性,用来标识两个节点的“紧密”程度,例如父子关系和临近兄弟关系就是紧密的。在创建位置匹配器时会根据first属性来匹配合适的节点
+
+CSS的浏览器实现的基本接口
+除去querySelector,querySelectorAll,HTML文档一共有这么四个API：
+1、getElementById,上下文只能是HTML文档。
+2、getElementsByName,上下文只能是HTML文档。
+3、getElementsByTagName,上下文可以是HTML文档,XML文档及元素节点。
+4、getElementsByClassName,上下文可以是HTML文档及元素节点。IE8还没有支持。
+
+所以要兼容的话sizzle最终只会有三种完全靠谱的可用
+Expr.find = {
+  'ID'    : context.getElementById,
+  'CLASS' : context.getElementsByClassName,
+  'TAG'   : context.getElementsByTagName
+}
+
+所以最终总的原理：
+1、支持高级API 直接调用querySelectorAll
+2、降级通过sizzle处理,那么内部会有一个规则把选择器分组groups,然后通过从右边往左边查找,加入编译函数的方式节约重复查找的性能问题
+
+Sizzle词法解析、词法分析器(tokenize)
+词法分析器又称扫描器,词法分析是指将编写的文本代码流解析为一个一个的记号,分析得到的记号以供后续语法分析使用
+
+'div > div.aaron input[name=ttt]'是一个相对复杂的选择器,这样的结构在不支持高级API的浏览器中是无法直接通过获取的,那么所有选择器的库就必须要干的一件事,把复杂选择器按照一样的设计规则,分解成浏览器原始API能够识别的结构,然后通过其他的方法找个这个结构。所以这里就要引入一个切割的算法了,也有点类似编译原理的词法分析。
+
+所以引擎在遇到无法直接处理的复杂选择器时,就需要按照内部的规则进行分组了。
+
+Sizzle的tokenize格式如下：
+{
+ value:'匹配到的字符串',
+ type:'对应的Token类型',
+ matches:'正则匹配到的一个结构'
+}
+
+tokenize需要解析的几种情况：
+1、多重选择器,逗号分组
+selector = 'div,input'
+在出现逗号分隔符的时候就说明选择所有指定的选择器的组合结果,所以需要分割成各自的处理模块,这种事情当然交给正则来做是最合适的
+
+A: 常规的思路先是通过split(,)先把选择器劈成二部分,然后依次处理各自的模块
+B：sizzle的思路则是循环一个一个分组出来的
+
+假设一个复杂的选择器
+div.aaron > input[name=ttt] , div p > span
+这里涉及了3大块
+1、分组逗号
+2、层级关系
+3、每种元素处理
+
+其中分3大块的处理,其实很明了,因为这个案例的问题,我们没有层级关系的具体代码,下章会详细讲解,我们先理解这个思路。
+
+sizzle对于分组过滤处理都用正则,其中都有一个特点,就是都是元字符^开头,限制匹配的初始,所以tokenize也是从左边开始一层一层的剥离。
+
+其中会用到的正则：
+//分组
+var rcomma = /^[\x20\t\r\n\f]*,[\x20\t\r\n\f]*/;
+//关系符
+var rcombinators = /^[\x20\t\r\n\f]*([>+~]|[\x20\t\r\n\f])[\x20\t\r\n\f]*/;
+//空白
+var whitespace = "[\\x20\\t\\r\\n\\f]";
+
+所以最终的结构:
+groups: [
+  tokens： {
+    matches: ? type : ? value : ?
+  },
+  tokens： {
+    matches: ? type : ? value : ?
+  }
+]
+当然为什么是这样的结构,这是sizzle内部的一个解析规则罢了。后面就用这个规则去做匹配与筛选。
+
+2、关系处理器处理
+在层级关系中有几种特殊的划分 Token ： >, +, 空格, ~ 用来表明：父与子,兄弟,祖辈子孙之间的层级关系。
+
+selector = 'div.aaron,div > p'
+从 > 划分
+
+rcombinators = new RegExp( "^" + whitespace + "*([>+~]|" + whitespace + ")" + whitespace + "*" )
+可以是>+~或者空白
+
+这个分组是为了之后的关系选择确定。
+
+if ( (match = rcombinators.exec( soFar )) ) {
+  matched = match.shift();
+  tokens.push({
+    value: matched,
+    // Cast descendant combinators to space
+    type: match[0].replace( rtrim, " " )
+  });
+  soFar = soFar.slice( matched.length );
+}
+
+3、元素的匹配器：
+Expr.filter ：TAG, ID, CLASS, ATTR, CHILD, PSEUDO
+通过一系列的正则抽出表达式中的内容。
+
+ID:
+///^#((?:\\.|[\w-] | [^\x00-\xa0] ) +)/
+var characterEncoding = "(?:\\\\.|[\\w-]|[^\\x00-\\xa0])+";
+var ID = new RegExp("^#(" + characterEncoding + ")")
+
+TAG：
+var TAG =  new RegExp( "^(" + characterEncoding.replace( "w", "w*" ) + ")" );
+
+CLASS:
+var Class = new RegExp( "^\\.(" + characterEncoding + ")" );
+
+ATTR：
+属性选择器有点复杂,通过第一次正则只能匹配器出整体,所以需要第二次分解,引入了Expr.preFilter,Expr.preFilter保留了3个兼容处理分别是ATTR,CHILD,PSEUDO复杂的选择器。
+
+var identifier = characterEncoding.replace( "w", "w#" );
+var attributes = "\\[" + whitespace + "*(" + characterEncoding + ")(?:" + whitespace +
+    // Operator (capture 2)
+    "*([*^$|!~]?=)" + whitespace +
+    // "Attribute values must be CSS identifiers [capture 5] or strings [capture 3 or capture 4]"
+    "*(?:'((?:\\\\.|[^\\\\'])*)'|\"((?:\\\\.|[^\\\\\"])*)\"|(" + identifier + "))|)" + whitespace +
+    "*\\]";
+
+var ATTR = new RegExp( "^" + attributes );
+
+preFilter: {
+    "ATTR": function( match ) {
+        match[1] = match[1].replace( runescape, funescape );
+        // Move the given value to match[3] whether quoted or unquoted
+        match[3] = ( match[3] || match[4] || match[5] || "" ).replace( runescape, funescape );
+        if ( match[2] === "~=" ) {
+            match[3] = " " + match[3] + " ";
+        }
+        return match.slice( 0, 4 );
+    }
+
+如果选择器是 div.aaron input[name=ttt],div p,之前通过词法解析出来的的七类型：
+
+TAG、>、TAG、CLASS、"空格"、"TAG"、ATTR
+如下面的结构所示：
+
+type: "TAG"
+value: "div"
+matches ....
+
+type: ">"
+value: " > "
+
+type: "TAG"
+value: "p"
+matches ....
+除去关系选择器,其余的有语意的标签都对应这分析出matches。
+tokenize最后一个属性选择器分支单元结构。
+"[input[name=ttt]]"
+matches = [
+   0: "type"
+   1: "="
+   2: "ttt"
+]
+type: "ATTR"
+value: [name=ttt]"
+那么我们从右到左边开始匹配最终合集单元。
+
+从左边开始很明显是属性选择器：
+
+input[name=ttt]
+但是这个东东原生的API是不认识的,所以我们只能再往前找input的合集：
+
+type: "TAG"
+value: "input"
+这种标签Expr.find能匹配到了,所以直接调用：
+
+Expr.find["TAG"] = support.getElementsByTagName ?
+  function(tag, context) {
+      if (typeof context.getElementsByTagName !== strundefined) {
+          return context.getElementsByTagName(tag);
+      }
+} :
+但是getElementsByTagName方法返回的是一个合集。
+
+这里引入了seed - 种子合集(搜索器搜到符合条件的标签),放入到这个初始集合seed中。这种我们找到了最终的一个合集,那么我们需要的就是根据剩余的条件筛选出真正的选择器就OK了,这里暂停了,不再往下匹配了,如果再用这样的方式往下匹配效率就慢了。
+
+开始整理
+
+重组一下选择器,剔掉已经在用于处理的tag标签,input,所以选择器变成了：
+
+selector:"div > div.aaron [name=ttt]"
+这里可以优化下,如果直接剔除后,为空了,就证明满足了匹配要求,直接返回结果了。
+
+到这一步为止能够使用的东东：
+1、seed合集
+2、通过tokenize分析解析规则组成match合集,本来是7个规则快,因为匹配input,所以要对应的也要踢掉一个所以就是6个了。
+3、选择器语句,对应的踢掉了input。
+
+selector:"div > div.aaron [name=ttt]"
+此时send目标合集有2个最终元素了,那么如何用最简单,最有效率的方式从2个条件中找到目标呢？
+
+</pre>
+
+<div id="start">
+<h2>jquery的使用</h2><pre>
+【 通过CDN内容分发网络引用jQuery 】
+百度：script src="http://libs.baidu.com/jquery/1.9.0/jquery.js" >
+谷歌：script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/juery.min.js"
+微软：script src="http://ajax.htmlnetcdn.com/ajax/jquery/jquery-1.10.2.min.js"
+
+【 jQuery语法 】
+jQuery语法：$(selector).action()   使用$作为jQuery的简写
+
+文档就绪事件
+$(document).ready(function() {});
+$(function () {});                  // 简写
+jQuery(function($){……});
+
+$(document).load(function() { })
+
+DOM文档加载的步骤：
+(1) 解析HTML结构。
+(2) 加载外部脚本和样式表文件。
+(3) 解析并执行脚本代码。
+(4) 构造HTML DOM模型。   //ready
+(5) 加载图片等外部文件。
+(6) 页面加载完毕。       //load
+
+</pre>创建一个class="page"的div元素<pre class="html">
+$('<div>', {"class": 'page'}).append($('<div>', {"class": 'page-layout'})
+<div class="page"><div class="page-layout"></div></div>
+$('<div>').addClass('page')
+
+</pre>
+
+<div id="extend">
+<h2>jquery扩展</h2><pre>
+jQuery.extend(): 把两个或者更多的对象合并到第一个当中
+jQuery.fn.extend()：把对象挂载到jQuery的prototype属性来扩展一个新的jQuery实例方法。
+使用jQuery.extend()拓展的静态方法可以直接使用$.xxx进行调用,而使用jQuery.fn.extend()拓展的实例方法需要使用$().xxx调用。
+
+需要注意源码中这一句jQuery.extend = jQuery.fn.extend = function() {} ,也就是jQuery.extend的实现和jQuery.fn.extend的实现共用了同一个方法,但是为什么能够实现不同的功能了,这就要归功于 Javascript强大的this了。
+1)在jQuery.extend()中this的指向是jQuery对象或者说是jQuery类,所以这里扩展在jQuery上
+2)在jQuery.fn.extend()中this的指向是fn对象,jQuery.fn = jQuery.prototype,也就是这里增加的是原型方法,也就是对象方法。
+
+1、扩展jQuery本身的方法,$.extend
+$.funcName = function(){},一般用于定义单个扩展(插件)
+$.extend({funcName1:function(){}, funcName2:function(){}}),一般用于定义多个扩展(插件)
+
+2、扩展jQuery对象的方法,$.fn.extend
+$.fn.funcName = function(){},一般用于定义单个扩展(插件)
+$.fn.extend({funcName1:function(){}, funcName2:function(){}}),一般用于定义多个扩展(插件)
+
+3、扩展DataType对象的方法,[DataType].prototype,[DataType]代指String、Number...等数据类型
+
+</pre>1.类方法 $.extend()<pre class="js">
+$.extend({
+  print1:function(name){            //print1是自己定义的函数名字,括号中的name是参数
+      console.log(name)
+  }
+});
+$.print1("坤") ;                    //调用时直接$.函数名(参数);
+
+</pre>2.对象方法 $.fn.extend()<pre class="js">
+$.fn.extend({
+  getMax:function(a, b){
+    var result= a > b ? a : b;
+    console.log(result);
+  }
+});
+$("input").getMax(1, 2);           //调用时要$(标签名).函数名();
+
+</pre>3.一般情况下jQuery的扩展方法写在自执行匿名函数中,原因是在js中是以函数为作用域的,在函数中写可以避免自己定义的函数或者变量与外部冲突
+<pre class="js">
+(function(){
+  $.extent({
+    print1:function(){
+      console.log(123);
+    }
+  })
+})();
+
+</pre>
+</div>
+
+<div id="selector">
+<h2>选择器</h2><pre>
+【 基本 】
+#id
+element
+.class
+*
+select1,select2,selectN
+
+【 层级 】
+ancestor descendant
+parent > child
+pre + next
+pre ~ siblings
+
+【 基本 】
+:first
+:last
+:not(selector)
+:even   匹配所有索引值为偶数的元素,从0开始计数,$("tr:even")查找表格的1、3、5...行(即索引值0、2、4...)
+:odd    匹配所有索引值为奇数的元素,从0开始计数,$("tr:odd")查找表格的2、4...行(即索引值1、3、5...)
+:eq(index)
+:gt(index)
+:lt(index)
+:header   匹配如 h1, h2, h3之类的标题元素
+:animated 匹配所有正在执行动画效果的元素
+:focus    匹配当前获取焦点的元素
+
+【 内容 】
+:contains(text) 匹配包含给定文本的元素
+:empty
+:has(selector)
+:parent         匹配含有子元素或者文本的元素
+
+【 可见性 】
+:hidden
+:visible
+
+【 属性 】
+[attribute]
+[attribute=value]
+[attribute!=value]
+[attribute^=value]   开头
+[attribute$=value]   结尾
+[attribute*=value]   匹配给定的属性是以包含某些值的元素
+[attrSel1][attrSel2][attrSelN]  复合属性选择器,需要同时满足多个条件时使用
+
+【 子元素 】
+:nth-child
+:first-child
+:last-child
+:only-child
+
+【 表单 】
+:input
+:text      匹配所有的单行文本框type=text
+:password
+:radio
+:checkbox
+:submit
+:image     type=image
+:reset
+:button
+:file      type=file
+:hidden    type=hidden
+
+【 表单对象属性 】
+:enabled
+:disabled
+:checked
+:selected   匹配所有选中的option元素
+
+***************************************************************************
+
+$("*")        选取所有元素
+$(this)        选取当前html元素
+$("p.red" )      选取class为red的p元素
+$("p  .red" )     选取p元素下class为red的子元素
+$("p:first")       选取第一个p元素
+$("ul li:first")       选取第一个ul元素的第一个li元素
+$("ul li:first-child")    选取每一个ul元素的第一个li元素
+$("[href]")           选取带有href属性的元素
+$("[href$='.jpg']")      选取所有href值以.jpg结尾的元素
+$("a[target='_blank']")  选取所有target属性值为_blank的a元素
+$(":button")          选取所有type="button"的input和button元素
+$("tr:even")       选取偶数位的tr元素
+$("tr:odd")    选取奇数位的tr元素
+$(":empty")   选取所有空元素
+$(":header")  选取所有标题元素 h1
+$(":focus")    选取当前具有焦点的元素
+$(":input")    选取所有input元素
+$(":text")      选取所有带有type=text的input元素
+$(":password")   选取所有带有type=paassword的input元素
+$(".class1.class2")  选取class为class1同时为class2的元素
+$("ul li:eq(3)")    选取ul中第4个li
+$("ul li:gt(3)")    选取index大于3的项
+$("ul li:lt(3)")          选取index小于3的项
+$("：contains('w3c'))")     选取包含指定字符串的所有元素
+:gt(0) 选择器选取 index 值大于指定数字0的元素
+:visible 选取每个当前是可见的元素,display:none,type=hidden,width-height:0,隐藏的父元素
+</pre>
+</div>
+
+<div id="event">
+<h2>事件处理程序</h2><pre>
+鼠标事件click  dblclick  mouseenter   mouseleave  hover mousedown mousemove mouseover mouseout mousseup
+键盘事件keypress  keydown   keyupp
+表单事件submit  change  focus   blur  select
+文档窗口事件load  resize  scroll  unload  ready
+
+触发mouseover事件：鼠标指针穿过被选元素或其子元素
+触发mouseenter事件：鼠标指针穿过被选元素才发生
+触发hover事件：鼠标指针移动到被选元素上触发第一个函数,移出触发第二个函数
+$("p").hover( function(){  } , function(){  } );
+
+【 onpaste 】
+用户向元素中粘贴文本时触发,通常用于type=text的input元素,ctrl+v,浏览器编辑菜单,右键菜单
+
+【 oncontextmenu 】
+事件在元素中用户右击鼠标时触发并打开上下文菜单。
+
+【 preventDefault()】
+阻止元素发生默认的行为(例如,当点击提交按钮时阻止对表单的提交)
+return false;
+在jQuery事件处理函数中调用return false;相当于同时调用了preventDefault和stopPropagation方法,
+这会导致当前元素的事件无法向上冒泡,在事件代理模式下,会导致问题
+isDefaultPrevented() 方法返回指定的 event 对象上是否调用了 preventDefault() 方法
+
+</pre><pre class="js">
+$("a").click(function(event){
+ 		event.preventDefault();
+		alert("Default prevented: " + event.isDefaultPrevented());
+});
+
+</pre><pre>
+【 pageX()属性 】
+是鼠标指针的位置,相对于文档的左边缘
+
+【 pageY()属性 】
+是鼠标指针的位置,相对于文档的上边缘
+
+</pre><pre class="js">
+$(document).mousemove(function(e){
+	$("span").text("X: " + e.pageX + ", Y: " + e.pageY);
+});
+
+</pre><pre>
+【 target属性 】
+规定哪个DOM元素触发了该事件
+
+</pre><pre class="js">
+$("p, button, h1, h2").click(function(event){
+	$("div").html("Triggered by a " + event.target.nodeName + " element.");
+});
+
+</pre><pre>
+【 result属性 】
+包含由被指定事件触发的事件处理器返回的最后一个值,除非这个值未定义
+
+</pre><pre class="js">
+$("button").click(function(e) {
+	return ("最后一次点击的鼠标位置是： X" +e.pageX + ", Y" + e.pageY);
+});
+$("button").click(function(e) {
+	$("p").html(e.result);
+});
+
+</pre><pre>
+【 type属性 】
+描述触发哪种事件类型
+
+</pre><pre class="js">
+$("p").bind('click dblclick mouseover mouseout',function(event){
+		$("div").html("Event: " + event.type);
+});
+
+</pre><pre>
+【 timeStamp属性 】
+包含从1970年1月1日到事件被触发时的毫秒数
+
+</pre><pre class="js">
+// 显示出当对按钮元素的点击事件发生时的时间戳：
+$("button").click(function(event){
+  	$("span")html(event.timeStamp);
+});
+
+</pre><pre>
+【 which属性 】
+指示按了哪个键或按钮
+
+</pre><pre class="js">
+$("input").keydown(function(event){
+		$("div").html("Key: " + event.which);
+});
+
+</pre><pre>
+【 bind()方法 】
+为被选元素添加或绑定一个或多个事件处理程序
+$(selector).bind(event,data,function(){})  event以空格分开,data可选规定传递到函数的额外数据
+简写：$(selector).bind({ event1:function(){} , event2:function(){}  })
+
+</pre><pre class="js">
+$("button").bind("click",function(){
+  	$("p").slideToggle();
+});
+
+</pre><pre>
+【 unbind()方法 】
+移出绑定的事件,适用于任何通过jQuery附加的事件处理程序
+
+</pre><pre class="js">
+$("button").click(function(){  //移除所有 p 元素的事件处理器
+  	$("p").unbind();
+});
+
+</pre><pre>
+$(selector).on(event,childSelector,data,function,map)  //绑定事件,使用off()方法移除on()所绑定的方法
+$(selector).on(event,childSelector,function)
+$(selector).on(event,function,map)
+
+【 ready()方法 】
+当 DOM(文档对象模型) 已经加载,并且页面(包括图像)已经完全呈现时,会发生 ready 事件。
+由于该事件在文档就绪后发生,因此把所有其他的 jQuery 事件和函数置于该事件中是非常好的做法。正如上面的例子中那样。
+ready() 函数规定当 ready 事件发生时执行的代码。
+ready() 函数仅能用于当前文档,因此无需选择器
+1.$(document).ready(function)
+2.$().ready(function)
+3.$(function)
+
+【 resize()方法 】
+当调整浏览器窗口的大小时,发生resize事件。
+resize()方法触发resize事件,或规定当发生resize事件时运行的函数
+
+【 scroll() 】
+当用户滚动指定的元素时,会发生scroll事件。
+scroll事件适用于所有可滚动的元素和window对象(浏览器窗口)。
+scroll()方法触发scroll事件,或规定当发生scroll事件时运行的函数
+
+【 select() 】
+当textarea或文本类型的input元素中的文本被选择时,会发生select事件。
+select()方法触发select事件,或规定当发生select事件时运行的函数
+
+</pre><pre class="js">
+$("input").select(function(){
+	$("input").after(" Text marked!");
+});
+
+</pre><pre>
+【 submit() 】
+当提交表单时,会发生submit事件。
+该事件只适用于表单元素。
+submit()方法触发submit事件,或规定当发生submit事件时运行的函数
+
+</pre><pre class="js">
+$("form").submit(function(e){
+		alert("Submitted");
+});
+
+</pre><pre>
+【 load()方法 】
+当指定的元素(及子元素)已加载时,会发生load()事件。
+该事件适用于任何带有URL的元素(比如图像、脚本、框架、内联框架)。
+根据不同的浏览器(Firefox和IE),如果图像已被缓存,则也许不会触发load事件
+
+</pre><pre class="js">
+$("img").load(function(){
+		$("div").text("Image loaded");
+});
+
+</pre><pre>
+【 unload()方法 】
+当用户离开页面时,会发生unload事件。
+具体来说,当发生以下情况时,会发出unload事件：
+1.点击某个离开页面的链接
+2.在地址栏中键入了新的URL
+3.使用前进或后退按钮
+4.关闭浏览器
+5.重新加载页面
+unload()方法将事件处理程序绑定到 unload 事件。
+unload()方法只应用于 window 对象
+
+</pre><pre class="js">
+$(window).unload(function(){
+	alert("Goodbye!");
+});
+
+</pre><pre>
+【 方法click() 】
+$(selector).click() 触发被选元素的click事件
+$(selector).click(function) 将函数绑定到 click 事件,规定当被选元素的 click 事件发生时运行的函数
+
+【 dbclick()方法 】
+
+【 blur()方法 】
+适用于任何HTML元素
+$(selector).blur() 触发被选元素的blur事件
+$(selector).blur(function) 将函数绑定到 blur 事件,规定当被选元素的 blur 事件发生时运行的函数
+
+【 change()方法 】
+仅适用于文本域(text field),以及textarea和select元素
+$(selector).change() 触发被选元素的change事件
+$(selector).change(function) 将函数绑定到 change 事件,规定当被选元素的 change 事件发生时运行的函数
+
+【 delegate()方法 】
+适用于当前或未来的元素(比如由脚本创建的新元素)
+为指定的元素(属于被选元素的子元素)添加一个或多个事件处理程序,并规定当这些事件发生时运行的函数
+
+</pre><pre class="js">
+$("div").delegate("button","click",function(){  //div内的button发生click事件时规定运行的函数
+  	$("p").slideToggle();
+});
+
+</pre><pre>
+【 undelegate() 】
+从匹配元素移除一个被添加的事件处理器,现在或将来
+
+【 live()方法 】
+适用于匹配选择器的当前及未来的元素(比如由脚本创建的新元素)
+为被选元素附加一个或多个事件处理程序,并规定当这些事件发生时运行的函数。
+
+【 die()方法 】
+移除所有通过live()方法向指定元素添加的一个或多个事件处理程序
+$(selector).die(event,function)
+
+</pre><pre class="js">
+$("p").live("click",function(){
+	$(this).slideToggle();
+});
+$("button").click(function(){
+	$("p").die();
+});
+
+</pre><pre>
+【 error()方法 】
+当元素遇到错误(没有正确载入)时,发生 error 事件。error() 方法触发 error 事件,或规定当发生 error 事件时运行的函数。
+该方法是 bind('error', handler) 的简写方式
+$(selector).error()
+$(selector).error(function)
+
+</pre><pre class="js">
+$("img").error(function(){
+		$("img").replaceWith("Missing image!");
+});
+
+</pre><pre>
+【 focus()方法 】
+触发 focus 事件,或规定当发生 focus 事件时运行的函数
+当通过鼠标点击选中元素或通过 tab 键定位到元素时,该元素就会获得焦点,发生focus事件
+$(selector).focus()
+$(selector).focus(function)
+
+【 keypress()方法 】
+keypress事件与keydown事件类似。当按钮被按下时,会发生该事件。它发生在当前获得焦点的元素上。
+与keydown事件不同,每插入一个字符,就会发生 keypress 事件。
+keypress() 方法触发 keypress 事件,或规定当发生 keypress 事件时运行的函数
+如果在文档元素上进行设置,则无论元素是否获得焦点,该事件都会发生
+$(selector).keypress()
+$(selector).keypress(function)
+
+</pre><pre class="js">
+// 计算在输入域中的按键次数
+i=0;
+$(document).ready(function(){
+  $("input").keypress(function(){
+    $("span").text(i+=1);
+  });
+});
+
+</pre><pre>
+【 keydown(),keyup()方法 】
+完整的key press过程分为两个部分：
+1. 按键被按下发生keydown事件;2. 按键被松开并复位发生发生keyup事件。它发生在当前获得焦点的元素上。
+$(selector).keydown()
+$(selector).keydown(function)
+$(selector).keyup()
+$(selector).keyup(function)
+
+【 mousedown() 】
+触发、或将函数绑定到指定元素的 mouse down 事件
+与 click 事件不同,mousedown 事件仅需要按键被按下,而不需要松开即可发生
+$(selector).mousedown()
+$(selector).mousedown(function)
+
+【 mouseup() 】
+触发、或将函数绑定到指定元素的 mouse up 事件
+与 click 事件不同,mouseup 事件仅需要放松按钮。当鼠标指针位于元素上方时,放松鼠标按钮就会触发该事件
+
+【 mouseenter() 】
+触发、或将函数绑定到指定元素的 mouse enter 事件
+当鼠标指针进入或穿过元素时,会发生 mouseenter 事件。常与 mouseleave 事件一起使用
+与mouseover不同,只有在鼠标指针穿过被选元素时才会触发mouseenter.鼠标穿过被选元素还是任何子元素,同样会触发mouseover事件
+$(selector).mouseenter()
+$(selector).mouseenter(function)
+
+【 mouseleave() 】
+触发、或将函数绑定到指定元素的 mouse leave 事件
+与mouseout不同,只有在鼠标指针离开被选元素时,才会触发mouseleave.鼠标指针离开被选元素还是任何子元素,同样会触发mouseout事件
+$(selector).mouseleave()
+$(selector).mouseleave(function)
+
+【 mouseout() 】
+触发、或将函数绑定到指定元素的 mouse out 事件
+【 mouseover() 】
+触发、或将函数绑定到指定元素的 mouse over 事件
+
+</pre>只有在鼠标指针穿过被选元素时才会触发mouseenter事件,不论鼠标指针穿过被选元素或其子元素都会触发mouseover事件<pre class="js">
+x=0;
+y=0;
+$(document).ready(function(){
+	$("div.over").mouseover(function(){
+  	$(".over span").text(x+=1);
+	});
+	$("div.enter").mouseenter(function(){
+  	$(".enter span").text(y+=1);
+	});
+});
+
+</pre><pre>
+【 mousemove() 】
+触发、或将函数绑定到指定元素的 mouse move 事件
+用户把鼠标移动一个像素,就会发生一次 mousemove 事件。处理所有 mousemove 事件会耗费系统资源。请谨慎使用该事件
+$(selector).mousemove()
+$(selector).mousemove(function)
+
+</pre><pre class="js">
+// 获得鼠标指针在页面中的位置,相对于整个页面的位置
+$(document).mousemove(function(e){
+  $("span").text(e.pageX + ", " + e.pageY);
+});
+
+</pre><pre>
+【 hover() 】
+规定当鼠标悬停在被选元素上时要运行的两个函数,触发mouseenter和mouseleave事件.
+只规定一个函数时将会在两个时间上运行
+
+【 toggle()方法 】
+绑定2或多个事件处理函数,以相依被选元素的轮流click事件
+也可绑定被选元素的hide() show()方法
+$(selector). toggle( function1(),function2,……)
+$(selector). toggle(speed,callback)
+$(selector). toggle(true)  显示所选元素,false隐藏
+
+</pre><pre class="js">
+// 点击p切换body的背景色
+$("p").toggle(
+  function(){$("body").css("background-color","green");},
+  function(){$("body").css("background-color","red");},
+  function(){$("body").css("background-color","yellow");}
+);
+
+</pre><pre>
+【 trigger() 】
+trigger()方法触发被选元素的指定事件类型
+
+</pre><pre class="js">
+// 点击button触发input的select事件
+$("input").select(function(){
+  $("input").after("文本被选中！");
+});
+$("button").click(function(){
+  $("input").trigger("select");
+});
+
+</pre><pre>
+【 triggerHandler() 】
+方法触发被选元素的指定事件类型。但不会执行浏览器默认动作,也不会产生事件冒泡。
+triggerHandler()方法与trigger()方法类似。不同的是它不会触发事件(比如表单提交)的默认行为,而且只影响第一个匹配元素。
+与trigger()方法相比的不同之处
+它不会引起事件(比如表单提交)的默认行为
+.trigger()会操作jQuery对象匹配的所有元素,而.triggerHandler()只影响第一个匹配元素。
+由.triggerHandler()创建的事件不会在DOM树中冒泡;如果目标元素不直接处理它们,则不会发生任何事情。
+该方法的返回的是事件处理函数的返回值,而不是具有可链性的 jQuery 对象。此外,如果没有处理程序被触发,则这个方法返回 undefined。
+
+</pre>triggerHandler()方法不会引起所发生事件的默认行为(文本不会被选中)<pre class="js">
+$("input").select(function(){
+	$("input").after("发生 Input select 事件！");
+});
+$("button").click(function(){
+	$("input").triggerHandler("select");
+});
+</pre>
+</div>
+
+<div id="show">
+<h2>jQuery效果：<font color="red">显示或淡入或滑动的元素会挤据空间,隐藏或淡出或滑动的元素退出空间</font></h2><pre>
+*******callback回调函数,效果完成之后再执行的*******
+
+【 隐藏和显示 】
+hide()方法 / show()方法 / toggle()方法切换hide()/show()
+
+show()适用于通过jQuery隐藏的元素,或在CSS中声明 display:none 的元素,但不适用于 visibility:hidden 的元素
+$(select).hide(speed,callback);  可选speed:"slow"/ "fast"/"nomal"/毫秒数,默认0
+$(select).show(speed,callback);  可选callback参数是显示隐藏完成后执行的函数
+$(select).toggle(speed,callback);
+
+</pre><pre class="js">
+$(".btn1").click(function(){
+	$("p").hide(1000);
+});
+$(".btn2").click(function(){
+	$("p").show(1000,showColor);    //回调函数
+	$("p").css("background-color","red");
+});
+function showColor(){
+	$("p").css("background-color","green");
+}
+
+</pre><pre>
+【 Fading淡入淡出 】
+fadeIn()方法  fadeOut()方法  fadeToggle()方法   fadeTo()方法
+
+fadeIn()方法使用淡入效果来显示被选元素,假如该元素是隐藏的
+适用于通过jQuery隐藏的元素,或在CSS中声明 display:none 的元素,但不适用于 visibility:hidden 的元素
+
+fadeTo(speed,opacity,callback) 方法将被选元素的不透明度逐渐地改变为指定的值
+opacity规定要淡入或淡出的透明度。必须是介于 0.00 与 1.00 之间的数字
+
+$(select).fadeIn(speed,callback);  可选speed:"slow"/ "fast"/毫秒数
+$(select).fadeTo(speed,opacity,callback);  渐变为指定的透明度
+speed和opacity参数是必须的
+
+【 滑动(收起和展开) 】
+slideDown()方法  slideUp()方法   slideToggle()方法
+
+$(select).slideDown(speed,callback);通过使用滑动效果,显示隐藏的被选元素
+$(selector).slideUp(speed,callback);通过使用滑动效果,隐藏被选元素
+$(selector).slideToggle(speed,callback);通过使用滑动效果(高度变化)来切换元素的可见状态
+
+</pre>
+
+<h3>动画</h3><pre>
+animate()方法创建自定义动画,执行 CSS 属性集的自定义动画,通过CSS样式将元素从一个状态逐渐变为另一个状态
+只有数字值可创建动画(比如 "margin:30px")。字符串值无法创建动画(比如 "background-color:red")。
+注释：使用 "+=" 或 "-=" 来创建相对动画(relative animations)
+
+语法1：$(selector).animate(styles,speed,easing,callback)
+1.使用动画时styles必须使用Camel标记法书写,如paddingLeft,而不是padding-left
+  backgroundPosition / borderWidth / borderBottomWidth / borderLeftWidth / borderRightWidth
+borderTopWidth / borderSpacing / margin / marginBottom / marginLeft / marginRight / marginTop
+outlineWidth / padding / paddingBottom / paddingLeft / paddingRight / paddingTop
+height / width / maxHeight / maxWidth / minHeight / minWidth / font / fontSize
+bottom / left / right / top / letterSpacing / wordSpacing / lineHeight / textIndent
+2.easing 可选。规定在不同的动画点中设置动画速度的 easing 函数。内置的 easing 函数：swing linear
+3.callback 可选。animate 函数执行完之后,要执行的函数。
+
+语法2：$(selector).animate(styles,options)
+options可选。规定动画的额外选项。
+可能的值
+speed - 设置动画的速度
+easing - 规定要使用的 easing 函数
+callback - 规定动画完成之后要执行的函数
+step - 规定动画的每一步完成之后要执行的函数
+queue - 布尔值。指示是否在效果队列中放置动画。如果为 false,则动画将立即开始
+specialEasing - 来自 styles 参数的一个或多个 CSS 属性的映射,以及它们的对应 easing 函数
+
+语法3：$(selector).animate({params},speed,callback);
+1.params定义形成动画的css属性,如left:"100px",opacity:"0.5"
+  使用相对值height:"+=150px"
+  使用预定义的值show/hide/toggle,如 height:"toggle"
+2.speed使用列队功能：$("div").animate({left:"100px"},"slow");
+
+</pre><pre class="js">
+$("div").animate({fontSize:"2em"},"slow");
+$("#box").animate({height:"300px"});
+
+$("button").click(function(){
+  $("div").animate({left:'250px'});
+});
+
+$("button").click(function(){
+  $("div").animate({
+    left:'250px',
+    opacity:'0.5',
+    height:'150px',
+    width:'150px'
+  });
+});
+
+$("button").click(function(){
+  $("div").animate({
+    left:'250px',
+    height:'+=150px',
+    width:'+=150px'
+  });
+});
+
+$("button").click(function(){
+  $("div").animate({
+    height:'toggle'    //show , hide , toggle
+  });
+});
+
+$("button").click(function(){    //队列
+  var div=$("div");
+  div.animate({height:'300px',opacity:'0.4'},"slow");
+  div.animate({width:'300px',opacity:'0.8'},"slow");
+  div.animate({height:'100px',opacity:'0.4'},"slow");
+  div.animate({width:'100px',opacity:'0.8'},"slow");
+});
+
+</pre><pre>
+生成颜色动画需要以下代码
+&ltscript src="http://code.jquery.com/jquery-3.1.1.js" integrity="sha256-16cdPddA6VdVInumRGo6IbivbERE8p7CQR3HzTBuELA=" crossorigin="anonymous"&gt&lt/script&gt
+
+【 stop()方法 】
+停止当前正在运行的动画
+$(selector).stop(stopAll,goToEnd);  参数可选
+stopAll规定是否应该清除动画队列,默认false,true表示停止被选元素的所有加入队列的动画
+goToEnd规定是否立即完成当前动画,默认false
+
+</pre><pre class="js">
+$("#start").click(function(){
+	$("#box").animate({height:300},"slow");
+	$("#box").animate({width:300},"slow");
+	$("#box").animate({height:100},"slow");
+	$("#box").animate({width:100},"slow");
+});
+$("#stop").click(function(){
+	$("#box").stop(true);        //停止被选元素的所有加入队列的动画
+});
+$("#stop").click(function(){
+	$("#box").stop(true,true);   //停止被选元素的所有加入队列的动画,但允许完成当前动画
+});
+
+</pre><pre>
+【jQuery方法链接技术-Chaining   jQuery 的链条属性(命令链) jQuery 对象实例 】
+$("p").slideUp().slideDown().css("color","red");
+
+【 end()方法 】
+结束当前链条中的最近的筛选操作,并将匹配元素集还原为之前的状态
+例：$("p").find("span").end().css("border", "2px red solid"); //最终选择p元素,和有无span无关
+例：$('ul.first').find('.foo').css('background-color', 'red').end().find('.bar').css('background-color', 'green');
+
+</pre>
+</div>
+
+<div id="DOM">
+<h2>jquery DOM文档操作</h2><pre>
+【 $(selector).length 】
+相当于$(selector).size(),方法size()高版本jquery已弃用
+
+【 $(selector).toArray() 】
+将被选元素以数组的形式返回
+var arr=$(selector).toArray()
+
+1、jquery选择器$('selector')返回的不是数组,而是封装好的jquery对象。但这个对象有一个特别的地方,就是查询到的节点被以下标为属性,添加到了jquery对象上,所以它看起来像数组,因为它存在一些属性是数字;
+
+2、jquery对象有哪些属性和方法？
+可以理解,$('selector')返回了一个对象obj,obj[0]....obj[i]总是返回查询到的第i个节点。此外query对象还被通过prototype添加了一些方法,即：
+jQuery.prototype.each = function(){}
+jQuery.prototype.hasClass = function(){}
+jQuery.prototype.hide = function(){}
+jQuery.prototype.css = function(){}
+jQuery.prototype.attr = function(){}
+$('selector')返回的对象就可以调用这些方法,比如obj.attr('name')、obj.css('color', 'red')
+
+3、jquery方法如何处理多个节点？
+实际上,以上诸如hide、css、attr等方法,在jquery内部都是通过循环来处理各个节点的。但是,如果是要获取节点属性,比如obj.attr('name'),显然这个只能返回一个字符串,所以类似的方法都是获取节点集合中的第一个节点的属性。也就是说,虽然返回的节点很多,但只有第一个会被处理。
+
+4、为什么jquery可以链式调用？
+在jquery中,很多同名的方法通过参数个数的不同实现不同的功能,比如css方法,如果传一个参数则表示获取css属性;如果传两个参数,则表示给节点添加某个属性,并赋值为第二个参数。attr、width等也是这样的处理。对于方法的返回值,除了获取属性值、获取css值等需要返回实际值的方法外,当css方法、attr方法表示为为节点添加属性、css样式时,是不需要返回值的,但jquery让这些方法返回了this,也就是返回了调用者自身,所以可以链式调用。
+
+</pre><pre class="js">
+$("button").click(function(){
+  x=$("li").toArray()
+  for (i=x.length;i>0;i--){
+    alert(x[i].innerHTML);
+  }
+});
+
+</pre><pre class="js">
+/* $() 即调用了jQuery.fn.init方法 */
+
+console.log($(".slide"));
+// [div.slide.on, div.slide, div.slide, div.slide, prevObject: jQuery.fn.init[1]]
+
+console.log($(".slide").toArray());
+// [div.slide.on, div.slide, div.slide, div.slide]
+
+</pre><pre>
+【 获取设置内容 】
+text()            返回所选元素的文本内容
+text("文本内容")  设置
+html()            返回所选元素中的内容,包括标签
+html("html语句")  设置
+val()             返回表单字段的值
+val("值")         设置
+
+其回调函数:第一个参数表示被选元素列表中当前元素的下标,第二个原始旧值
+text(function(i,origText){  return……});   以回调函数新值返回想要设置的内容
+
+</pre><pre class="js">
+$("#btn1").click(function(){
+	$("#test1").text(function(i,origText){
+		return "新文本";
+  	//return "原文本: " + origText + "新文本: Hello world!" + "index: " + i;
+	});
+});
+
+</pre><pre>
+【 获取设置属性 】
+attr()方法获取设置属性值
+$("a").attr("href");                               获取属性
+$("a").attr("href","http://www.baidu.com");       设置属性
+$("a").attr({"href":" http://www.baidu.com","title":"baidu"}) 同时设置多个属性
+$("a").attr("href",function(i,origValue){  trturn origValue+"/js"});  回调函数
+	回调函数由两个参数：被选元素列表中当前元素的下标,以及原始(旧的)值。然后以函数新值返回您希望使用的字符串。
+
+方法removeAttr("attribute")   移除属性
+
+【 添加元素 】
+$(selector).append(content1,content2)   被选元素内部的结尾插入指定的文本/HTML
+$(content).appendTo(selector)           被选元素的结尾(仍然在内部)插入指定内容
+$(selector).prepend(content1,content2)  被选元素内部的开头插入指定的文本/HTML
+$(selector).after(content1,content2)    被选元素之后插入内容
+$(selector).after(function(index))      被选元素之后使用函数来插入内容
+$(selector).before(content1,content2)   被选元素之前插入内容
+$(selector).insertAfter(selector)       把匹配元素插入到另一个指定元素集合的后面
+$(content).insertBefore(selector)       插入到前面,content为选择器表达式或HTML 标记
+
+【 clone() 】
+创建匹配元素集合的副本
+$("body").append($("p").clone());      默认不包含p元素的事件处理函数
+$("body").append($("p").clone(ture));  TRUE包含p元素的事件处理函数
+
+</pre><pre class="js">
+//通过 append() 和 prepend() 方法添加若干新元素
+function appendText(){
+	var txt1="<p>Text.</p>";               // 使用 HTML 标签创建文本
+	var txt2=$("<p></p>").text("Text.");   // 使用 jQuery 创建文本
+	var txt3=document.createElement("p");
+	txt3.innerHTML="文本。";               // 使用 DOM 创建文本 text with DOM
+	$("p").append(txt1,txt2,txt3);         // 追加新元素
+}
+
+</pre><pre>
+【 删除元素 】
+$(selector).remove()  删除被选元素及其子元素
+$(selector).remove("selector") 过滤被删除的元素
+
+$(selector).empty()  从被选元素中删除子元素
+
+方法detach()  移除被选元素,但保留该元素及其方法,可供恢复
+
+</pre><pre class="js">
+var x;
+$("#btn1").click(function(){ x=$("p").detach(); });
+$("#btn2").click(function(){  $("body").prepend(x); });
+$("p").click(function(){ $(this).animate({fontSize:"+=1px"}) });
+
+</pre><pre>
+$(selector).get(index)  获得由选择器指定的DOM元素,参数可选。规定通过index编号获取哪个匹配元素
+x=$("p").get(0);
+alert(x.nodeName+":"+x.innerHTML)
+
+$(selector).index()
+获得第一个匹配元素相对于其同胞元素的index 位置,返回指定元素的索引号,未找到元素返回-1
+
+$(selector).index(element)
+获得元素相对于选择器的index 位置,参数可选,规定要获得index位置的元素.可以是 DOM 元素或 jQuery 选择器
+
+</pre><pre class="js">
+$("li").click(function(){
+  alert($(this).index());
+});
+
+</pre><pre class="js">
+<button>获得 index</button>
+<ul>
+	<li class="hot">Tea</li>
+	<li class="hot" id="favorite">Coffee</li>
+</ul>
+
+$("button").click(function(){
+	alert($(".hot").index($("#favorite")));  //返回1
+});
+
+</pre><pre>
+【 replaceAll() 】
+用匹配的元素替换所有匹配到的元素
+$(document.createElement("div")).replaceAll("p");
+
+【 replaceWith() 】
+用新内容替换匹配的元素,同All,但with可使用函数替换
+$(selector).replace("content")
+
+</pre>
+</div>
+
+<div id="css">
+<h2>jQUery 操作CSS</h2><pre>
+$(selector).addClass("class1 class2") 向被选元素添加类
+$(selector).removeClass("class1")     从被选元素删除类
+$(selector).toggleClass("class1")     对被选元素进行添加或删除类的切换操作
+
+$(selector).css("propertyname")    返回样式属性
+$(selector).css("propertyname","vale")    设置
+$(selector).css({"propertyname":"vale", "propertyname":"vale"})    设置多个属性
+
+$(selector).offset()   返回匹配元素相对于文档的偏移位置
+返回第一个匹配元素的偏移坐标,返回的对象包含两个整型属性：top 和 left,以像素计。此方法只对可见元素有效
+$(selector).offset().left   //8 left
+$(selector).offset().top   //8 top
+$(selector).offset({top:100,left:100})               设置偏移
+$(selector).offset( function(index, oldoffset){……} ) 使用函数设置,参数可选
+
+</pre><pre class="js">
+$("button").click(function(){           //使用已有对象的位置来定位元素
+	$("p").offset($("span").offset());
+});
+
+newPos=new Object();                    //使用新对象中的坐标来定位元素
+newPos.left="0";
+newPos.top="100";
+$("button").click(function(){
+    $("p").offset(newPos);
+});
+
+</pre>$(selector).offstParent()  返回最近的祖先定位元素<pre class="js">
+$("button").click(function(){
+		$("p").offsetParent().css("background-color","red");
+});
+
+</pre><pre>
+$(selector).position() 方法返回匹配元素相对于父元素的位置(偏移)
+返回的对象包含两个整型属性：top 和 left,以像素计。此方法只对可见元素有效
+
+</pre><pre class="js">
+$("div").position().left
+$("div").position().top
+
+$(".btn1").click(function(){
+		x=$("p").position();
+		$("#span1").text(x.left);
+		$("#span2").text(x.top);
+});
+
+</pre><pre>
+$(selector).scrollLeft()
+返回或设置匹配元素的滚动条的水平位置,从左侧滚动过的像素数.滚动条位于最左侧时是 0
+
+$(selector).scrollTop()
+返回或设置匹配元素的滚动条的垂直位置,从顶部滚动过的像素数.滚动条位于顶部时是 0
+该方法对于可见元素和不可见元素均有效
+当用于获取值时,该方法只返回第一个匹配元素的 scroll top offset
+当用于设置值时,该方法设置所有匹配元素的 scroll top offset
+
+</pre><pre class="js">
+$("body").scrollTop(0)       //可用于返回顶部
+
+$(".btn1").click(function(){
+	$("div").scrollLeft(100);
+});
+
+$(".btn1").click(function(){
+	alert($("div").scrollTop()+" px");
+});
+
+</pre><pre>
+【 jQuery尺寸 】
+$(selector).width()     设置或返回元素的宽度,不包括内边距、边框或外边距
+$(selector).height()
+$(selector).innerWidth()  返回包括内边距的宽度
+$(selector).innerHeight()
+$(selector).outerWidth()  返回包括内边距和边框的宽度
+$(selector).outerHeight()
+$(selector).outerWidth(true) 方法返回元素的宽度(包括内边距、边框和外边距)
+$(selector).outerHeight(true) 方法返回元素的高度(包括内边距、边框和外边距)
+$(document).width()
+$(document).height()
+$(window).width()
+$(window).height()
+
+例：$("#div1").width(500).height(500);
+
+</pre>
+</div>
+
+<div id="list">
+<h2>jQUery 遍历DOM: 遍历DOM 树遍历(tree-traversal)</h2><pre>
+【 向上遍历DOM树 】
+$(selector).parent()              返回直接父元素
+$(selector).parents()             从父元素开始,返回所有祖先元素,直到根元素 html
+$(selector).parents("selector")   过滤
+$(selector).parentsUntil("selector")  返回介于两个给定元素之间的所有祖先元素
+
+$(selector).closest(selector) 获得匹配选择器的第一个祖先元素,从当前元素开始沿 DOM 树向上
+直到已运用选择器的一个匹配为止,类似于parents(),但是parents从父元素开始
+
+</pre><pre class="js">
+// 通过 closest() 完成事件委托。当被最接近的列表元素或其子后代元素被点击时,会切换黄色背景
+$( document ).bind("click", function( e ) {
+	$( e.target ).closest("li").toggleClass("hilight");
+});
+
+$('li.item-a').closest('ul').css('background-color', 'red');
+
+</pre><pre>
+【 向下遍历DOM树 】
+$(selector).children()             返回被选元素的所有直接子元素,向下一级
+$(selector).children("selector")   过滤
+
+$(selector).find("*")          返回所有后代子元素
+$(selector).find("selector")   根据selector返回所有后代元素
+
+【 水平遍历DOM树 】
+$(selector).siblings()            返回被选元素的所有同胞元素,排除自己
+$(selector).siblings("selector")  过滤,返回被选元素的所有同胞元素,排除自己
+
+$(selector).next()               返回被选元素的下一个紧邻的同胞元素
+$(selector).next("selector")     提供选择器,则取回匹配该选择器的下一个同胞元素
+$(selector).nextAll()            选取每个匹配元素之后的所有同辈元素,和prevAll()相反
+$(selector).nextAll("selector")  返回介于两个给定参数之间的所有跟随的同胞元素
+
+$(selector).prev()
+$(selector).prev(selector)   获得匹配元素集合中的每个元素的前一个同胞元素
+$(selector).prevAll()        选取每个匹配元素之前的所有同辈元素
+$(selector).prevUntil()      返回介于两个给定参数之间的所有跟随的同胞元素
+
+$(selector).map(callback(index,domElement))              把每个元素通过函数传递到当前匹配集合中,生成包含返回值的新的jQuery对象
+由于返回值是 jQuery 封装的数组,使用 get() 来处理返回的对象以得到基础的数组
+$(selector).get(index) 			   获得由选择器指定的 DOM 元素
+
+</pre><pre class="js">
+$("p").append( $("input").map(function(){
+  return $(this).val();
+}).get().join(", ") );
+
+</pre><pre class="js">
+<form method="post" action="">
+  <div><label for="two">2</label><input type="checkbox" value="2" id="two" name="number[]"></div>
+  <div><label for="four">4</label><input type="checkbox" value="4" id="four" name="number[]"></div>
+  <div><label for="six">6</label><input type="checkbox" value="6" id="six" name="number[]"></div>
+  <div><label for="eight">8</label><input type="checkbox" value="8" id="eight" name="number[]"></div>
+</form>
+
+$(':checkbox').map(function() {
+	return this.id;
+}).get().join(',');    //返回two,four,six,eight
+
+</pre><pre>
+【 过滤 】
+$("div p").first()      选取首个div元素内部的第一个p元素
+$("div p").last()       选取最后一个div元素内部的最后一个p元素
+$("p").eq(0)            选取第一个p元素,返回被选元素中带有指定索引号的元素
+$("p").not(".intro")      返回不带有类名intro的所有p元素,与filter相反
+
+$("p").filter(".intro")   返回带有类名intro的所有p元素
+使用该方法的第二个形式是,通过使用过滤函数而不是选择器来筛选元素。对于每个元素,若该函数返回 true,则元素会被包含在已筛选集合中;否则,会排除这个元素
+$('li').filter(function(index) {
+  return $('strong', this).length == 1;
+}).css('background-color', 'red');
+
+$(selector).hasClass("className")  检查被选元素是否包含指定的class,返回布尔值
+
+$(selector).has(selector) 将匹配元素集合缩减为拥有匹配指定选择器或 DOM 元素的后代的子集
+例：$('li').has('ul').css('background-color', 'red'); //二级菜单,包含当前的li元素
+
+$(selector).is(selector)   匹配元素的选择器是否为selector,返回布尔
+与其他筛选方法不同,is()不创建新的jQuery对象,它允许我们在不修改jQuery对象内容的情况下对其进行检测。这在 callback 内部通常比较有用,比如事件处理程序
+
+</pre><pre class="js">
+$("input[type='checkbox']").parent().is("form")
+$('$checkbox-id').is(':checked')
+
+</pre><pre class="js">
+//限制为只有当列表项本身,而非子元素,被点击时才进行触发
+//li1单击list才有效,li2无效,li3点击都有效
+
+//对于带有位置性选择器的选择器表达式字符串,如:first、:gt()或者:even,位置性筛选是针对传递到.is()的jQuery 对象进行的,而非针对包含文档。
+//所以对于上面的 HTML 来说,诸如 $("li:first").is("li:last") 的表达式返回 true,
+//但是 $("li:first-child").is("li:last-child") 返回 false
+<ul>
+  <li>list <strong>item 1</strong></li>
+  <li><span>list item 2</span></li>
+  <li>list item 3</li>
+</ul>
+
+$("ul").click(function(event) {
+  var $target = $(event.target);  //事件目标
+  if ( $target.is("li") ) {
+    $target.css("background-color", "red");
+  }
+});
+
+</pre><pre class="js">
+<ul>
+  <li><strong>list</strong> item 1 - one strong tag</li>
+  <li><strong>list</strong> item <strong>2</strong> -
+    two <span>strong tags</span></li>
+  <li>list item 3</li>
+  <li>list item 4</li>
+  <li>list item 5</li>
+</ul>
+
+$("li").click(function() {
+  var $li = $(this),
+    isWithTwo = $li.is(function() {
+      return $('strong', this).length === 2;
+    });
+  if ( isWithTwo ) {
+    $li.css("background-color", "green");
+  } else {
+    $li.css("background-color", "red");
+  }
+});
+
+</pre><pre>
+$(selector).slice(start,end)  把匹配元素集合缩减为指定的指数范围的子集
+参数为负则表示从集合末端开始的偏移量,end缺省表示选取范围会在集合末端结束
+例：$("p").slice(0, 2).wrapInner("<b></b>"); //从0-2不包括2的p元素添加b标签
+	$('li').slice(2, 4).css('background-color', 'red');  //从2-4不包括4
+	$('li').slice(-2, -1).css('background-color', 'red'); //从结尾二与从结尾计数的一 的之间的范围中的唯一项目
+
+$(selector).add(selector)  将元素添加到匹配元素集合中
+$(selector).add(elements)
+$(selector).add(html)
+$(selector).add(jQueryObject)
+$(selector).add(selector, context)  context	选择器开始进行匹配的位置
+例：$("div").css("border", "2px solid red").add("p").css("background", "yellow");
+
+$(selector).addBack()
+
+</pre><pre class="js">
+$("div").find("p").addBack().addClass("border");
+$("div").find("p").addClass("background");       //由于未使用 .andSelf(),div 没有黄色背景色
+
+$("li.third-item").nextAll().andSelf().css("background-color", "red");
+//初始化的堆栈存仅包含项目3的集合,调用.nextAll()会将项目4,5的集合推入堆栈,调用.andSelf()合并这两个集合
+
+</pre>
+</div>
+
+<div id="each">
+<h2>each方法</h2><pre>
+$(selector).each(function(index,element))   循环遍历,返回false可以停止循环
+参数必须,为每个被选元素规定要执行的函数,选择器的index位置,element当前的元素(也可使用 "this" 选择器)
+
+$.each()与$(selector).each()不同, 后者专用于jquery对象的遍历, 前者可用于遍历任何的集合(无论是数组或对象)
+
+</pre>【 遍历DOM节点 】<pre class="js">
+<ul><li>a</li><li>b</li><li>c</li></ul>
+$("li").each(function(){
+  alert($(this).text())
+});
+
+</pre>【 遍历数组 】<pre class="js">
+var arr = [1,2,3];
+$.each(arr,function(i){
+  console.log((arr[i]));
+});
+
+</pre>【 循环对象 】<pre class="js">
+var myObject = {"one":1,"two":2,"three":3};
+$.each(myObject,function(i){
+  console.log(myObject[i]);
+});
+
+</pre>【 循环二维数组 】<pre class="js">
+var myArray = [[1,2,3],[4,5,6],[7,8,9]];
+$.each(myArray,function(i,item){
+  console.log(item[0]);
+});
+console:1,4,7
+
+</pre><pre>
+【 循环控制语句 】
+return false;跳出这个循环
+return true;继续下一个循环
+
+【 遍历一个JavaScript数组对象,弹出apple/arange…… 】
+var json = [
+  {"id":"1","tagName":"apple"},
+  {"id":"2","tagName":"orange"},
+  {"id":"3","tagName":"banana"},
+  {"id":"4","tagName":"watermelon"},
+  {"id":"5","tagName":"pineapple"}
+];
+
+$.each(json, function(idx, obj) {
+  alert(obj.tagName);
+});
+
+【 遍历一个JSON字符串(随附单或双引号) 】
+var json = '[
+  {"id":"1","tagName":"apple"},
+  {"id":"2","tagName":"orange"},
+  {"id":"3","tagName":"banana"},
+  {"id":"4","tagName":"watermelon"},
+  {"id":"5","tagName":"pineapple"}
+]';
+
+$.each(JSON.parse(json), function(idx, obj) {
+  alert(obj.tagName);
+});
+
+//or
+$.each($.parseJSON(json), function(idx, obj) {
+  alert(obj.tagName);
+});
+
+【 contents() 】
+获得匹配元素集合中每个元素的子节点,包括文本和注释节点。
+
+【 $("li").first().css("background","red") 】
+第一个li元素设置red背景
+
+【 $("li").last().css("background","red") 】
+最后一个li元素设置red背景
+
+</pre>
+</div>
+
+<div id="data">
+<h2>jQUery 数据 队列</h2><pre>
+.queue(queueName)  显示或操作在匹配元素上执行的函数队列
+参数queueName可选。字符串值,包含序列的名称。默认是 fx, 标准的效果序列
+
+$(selector).data(name)        从被选元素中返回附加的数据
+$(selector).data(name,value)  向被选元素附加数据
+$(selector).data(object)      使用带有名称/值对的对象向被选元素添加数据
+$(selector).removeData(name)  删除之前通过 data() 方法设置的数据
+
+</pre><pre class="js">
+$("#btn1").click(function(){
+	$("div").data("greeting", "Hello World");
+});
+$("#btn2").click(function(){
+	alert($("div").data("greeting"));
+});
+
+</pre><pre class="js">
+testObj=new Object();
+testObj.greetingMorn="Good Morning!";
+testObj.greetingEve="Good Evening!";
+$("#btn1").click(function(){
+  $("div").data(testObj);
+});
+$("#btn2").click(function(){
+  alert($("div").data("greetingEve"));
+});
+
+</pre><pre class="js">
+$("#btn2").click(function(){
+  $("div").removeData("greeting");
+  alert("Greeting is: " + $("div").data("greeting"));
+});
+</pre>
+</div>
+
+<div id="ajax">
+<h2>jQUery AJAX</h2><pre>
+AJAX是与服务器交换数据的技术,在不加载全部网页的情况下,更新部分网页
+
+AJAX=异步js和xml
+
+【 $("selector").load(URL,data,callback) 】
+加载数据并把加载的数据放入被选元素中
+URl为必选,要加载的URL,html或txt,json文件等全部内容;例：$('p1').load('data.txt #tip');加载txt文件中id='tip'的内容
+callback可选,回调函数：responseTxt调用成功时的结果内容,statusTXT调用的状态,xhr包含XMLHttpRequest对象
+data可选,规定与请求一同发送的查询字符串键值对集合
+
+</pre><pre class="js">
+$('#btn').click(
+	$('p1').load('./data.txt?id=Math.random() #tip', function(responseTxt,statusTxt,xhr){
+		if(statusTxt=='success') alert('加载完成');
+		if(statusTxt=='error')   alert('加载失败,error:'+xhr.status+xhr.statusTxt);
+	});
+);
+
+</pre>只加载test.txt中class="p1"标签中的文本<pre class="js">
+// test.txt内容
+测试的第0个段落
+<p>测试的第一个段落</p>
+<p class="p1">测试的第二个段落</p>
+<p class="p1">测试的第三个段落</p>
+
+// js代码
+$(document).ready(function() {
+  $("button").eq(0).click(function(){
+     $(".div1").load("test.txt .p1" ,function(responseTxt,statusTxt,xhr){
+      if(statusTxt=="success"){alert("外部内容加载成功");};
+      if(statusTxt=="error"){alert("Error"+xhr.status+":"+xhr.statusText);}
+     });
+  });
+
+  $("button").eq(1).click(function(){
+     $.get("test.php" ,function(data,status){
+      alert("数据："+data+"\n状态："+status);
+     });
+  });
+
+  $("button").eq(2).click(function(){
+     $.post("test_post.php", { name:"jolie",city:"American"}, function(data,status){
+        alert("数据："+data+"\n状态："+status);
+     });
+  });
+});
+
+</pre><pre>
+【 $.ajax([settings]) 】
+通过HTTP请求加载远程数据,返回其创建的XMLHttpRequest对象,是jQuery底层AJAX实现
+
+参数列表：
+1.options-- 类型object
+
+2.async
+boolean,默认true异步,false同步请求将锁住浏览器,请求完成才能执行其他操作
+
+3.beforeSend(XHR)
+function 发送请求前可修改XMLHttpRequest对象的函数,如添加自定义HTTP头、ajax事件,返回false则取消本次ajax请求
+XMLHttpRequest对象是惟一的参数。
+
+4.cache
+boolean,默认true,dataType为script和jsonp时默认为false,设置为false将不会从浏览器缓存中加载请求信息
+
+5.complete(XHR, textStatus)
+function 请求完成后的回调函数,成功失败均可调用
+参数：XMLHttpRequest对象和一个描述成功请求类型的字符串
+
+6.contentType
+string  发送信息至服务器时内容编码类型,默认"application/x-www-form-urlencoded"。
+
+7.context
+object 设置Ajax相关回调函数的上下文.即让回调函数内this指向这个对象;
+如果不设定这个参数,那么this就指向调用本次AJAX请求时传递的options参数
+如指定一个DOM元素作为context参数,这样就设置了success回调函数的上下文为这个DOM元素
+
+$.ajax({ url: "test.html", context: document.body, success: function(){
+  $(this).addClass("done");
+}});
+
+8.data
+Object或String 发送到服务器的数据。如果已经不是字符串将自动转换为字符串格式。get请求中将附加在url后。
+防止这种自动转换,可以查看processData选项。
+对象必须为key/value格式,例如{foo1:"bar1",foo2:"bar2"}转换为&foo1=bar1&foo2=bar2。
+如果是数组JQuery将自动为不同值对应同一个名称,如{foo:["bar1","bar2"]}转换为&foo=bar1&foo=bar2。
+
+9.dataFilter(data, type)
+function  给Ajax返回的原始数据的进行预处理的函数。
+参数data是Ajax返回的原始数据,参数type是调用jQuery.ajax时提供的dataType参数,函数返回的值将由jQuery进一步处理
+
+10.dataType
+string  预期服务器返回的数据类型,不指定jQuery将自动根据HTTP包MIME信息来智能判断,返回responseXML或responseText,并作为回调函数参数传递。可用的类型如下：
+xml：返回XML文档,可用JQuery处理。
+html：返回纯文本HTML信息;包含的script标签会在插入DOM时执行。
+script：返回纯文本Js代码,不会自动缓存结果,除非设置了cache参数。注意在远程请求时(不在同一个域下)所有post请求都将转为get请求。
+json：返回JSON数据。
+jsonp：JSONP格式。使用SONP形式调用函数时如myurl?callback=?,JQuery将自动替换后一个“?”为正确的函数名以执行回调函数。
+text：返回纯文本字符串。
+
+11.error(XMLHttpRequest, textStatus, errorThrown)
+function 请求失败时调用此函数,ajax事件
+参数：XMLHttpRequest对象、错误信息、(可选)捕获的异常对象,通常情况下textStatus和errorThrown只有其中一个包含信息
+
+12.global
+Boolean 是否触发全局Ajax事件,默认true,ajaxStart或ajaxStop可用于控制各种ajax事件
+
+13.ifModified
+boolean  仅在服务器数据改变时获取新数据。默认false,即忽略头信息
+使用HTTP包Last-Modified头信息判断,检查服务器指定的'etag'来确定数据没有被修改过
+
+14.jsonp
+string  在一个jsonp请求中重写回调函数的名字。
+这个值用来替代在"callback=?"这种GET或POST请求中URL参数里的"callback"部分
+如{jsonp:'onJsonPLoad'}会导致将"onJsonPLoad=?"传给服务器
+
+15.password
+string  用于响应HTTP访问认证请求的密码
+
+16.processData
+boolean 默认true
+默认情况下发送的数据将被转换为对象(从技术角度来讲并非字符串)以配合默认内容类型"application/x-www-form-urlencoded"。如果要发送DOM树信息或其他不希望转换的信息,请设置为false。
+
+17.scriptCharset
+string
+只有当请求时dataType为"jsonp"或"script",并且type是"GET"才会用于强制修改charset。通常只在本地和远程的内容编码不同时使用
+
+18.success(data, textStatus)
+function ajax事件,请求成功的回调函数
+参数：由服务器返回,并根据dataType参数进行处理后的数据;描述状态的字符串
+
+19.traditional
+boolean  如果你想要用传统的方式来序列化数据,那么就设置为 true
+
+20.timeout
+number  设置请求超时时间(毫秒)。此设置将覆盖$.ajaxSetup()方法的全局设置
+
+21.type
+string  请求方式(post或get)默认get,其他http请求方法如put和delete也可使用,但仅部分浏览器支持
+
+22.url
+string  默认值: 当前页地址。发送请求的地址。
+
+23.username
+string  用于响应HTTP访问认证请求的用户名
+
+23.xhr
+function  需要返回一个XMLHttpRequest对象。
+默认在IE下是ActiveXObject而其他情况下是XMLHttpRequest。用于重写或提供一个增强的XMLHttpRequest对象
+
+</pre><pre class="js">
+$.ajax({
+  type:       //数据的提交方式：get和post
+  url:        //请求地址
+  async:      //是否支持异步刷新,默认是true
+  data:       //需要提交的数据
+  dataType:   //服务器返回数据的类型,例如xml,String,Json等
+  success:function(data){
+    //请求成功后的回调函数,参数data就是服务器返回的数据
+  }
+  error:function(data){
+    //请求失败后的回调函数,根据需要可以不写,一般只写上面的success回调函数
+  }
+  complete:function(){
+    //请求完成后回调函数 (请求成功或失败时均调用),调用了success一定会调用complete
+  }
+})
+
+</pre><pre class="js">
+$(function(){
+  $('#send').click(function(){
+    $.ajax({
+      type: "GET",
+      url: "test.json",
+      data: {username:$("#username").val(), content:$("#content").val()},
+      dataType: "json",
+      success: function(data){
+        $('#resText').empty();    //清空resText里面的所有内容
+        var html = '';
+        $.each(data, function(commentIndex, comment){
+          html += '<div class="comment"><h6>' + comment['username'] + ':</h6><p class="para">' + comment['content'] + '</p></div>';
+        });
+        $('#resText').html(html);
+      }
+    })
+  })
+})
+
+</pre><pre class="js">
+$.ajax({
+  type: 'POST',
+  url: url,
+  data: data,
+  dataType: dataType,
+  success: function(data){
+    if(data.success){
+      console.log(data);
+    }else{
+      alert(''出现错误:+data.msg);
+    }
+  },
+  error: function(jqXHR){
+    alert('发生错误'+jqXHR.status);
+  }
+});
+
+</pre>ajax上传<pre class="js">
+var formData = new FormData($("#form1")[0]);
+$.ajax({
+  url: "ajax_upload.php",
+  type: "POST",
+  data: formData,
+  dataType:"json",
+  contentType: false,
+  processData: false,
+  success:function(data){
+    console.log(data);
+    if(data.status == 200){      // 状态200返回数据
+        console.log(data.result);
+    }else{                       // 状态不是200返回数据
+        alert("上传错误！");
+    }
+  }
+});
+
+</pre>ajax同步<pre class="js">
+$("#b01").click(function(){
+  var htmlobj = $.ajax({url:"/jquery/test1.txt", async:false});
+  $("#myDiv").html(htmlobj.responseText);
+});
+
+</pre><pre class="js">
+$.ajax({
+  type: 'post',
+  url: 'submit.aspx',
+  datatype: "json",
+  success: function (e) {      //成功后回调
+    alert("回调函数成功了");
+   },
+  error: function(e){          //失败后回调
+    alert("服务器请求失败");
+  },
+  beforeSend: function(){      //发送请求前调用,可以放一些"正在加载"之类额话
+    alert("正在加载");
+}})
+
+</pre><pre>
+【 $.get(url,data,callback,dataype) 】
+通过http请求从服务器请求数据,但是可能返回缓存数据
+url参数必须,通过HTTP GET请求从服务器上请求数据
+data可选,连同请求发送到服务器的数据
+回调函数function(data,status,xhr){} ,data响应的数据,status请求的状态,xhr包含XHR对象
+datatype可选,jQuery会智能判断,规定预计的服务器响应的数据类型
+
+</pre><pre class="js">
+$('#btn').click(
+	$.get('./data.txt?id=Math.random() #tip', function(data,status){
+		if(status=='success') alert(data);
+	});
+);
+
+</pre><pre>
+【 $.post(url,data,callback,datatype) 】
+通过http向指定的资源提交要处理的数据,请求从服务器请求数据,但不会缓存数据
+POST请求从服务器上请求数据,url获取并处理传递的数据,然后返回响应的数据
+url必须,规定要请求的url
+data可选,规定连同请求发送的数据
+callback回调函数可选,function(data,textstatus,jqXHR){---}
+datatype可选,jQuery会智能判断,规定预计的服务器响应的数据类型
+
+</pre><pre class="js">
+$("btn").click(function(){
+	$.post("./demo_test_post.php", { name:"Bill",city:"USA" }, function(data,status){
+	  alert("响应数据：" + data + "\n状态：" + status);
+	},"json");
+});
+
+</pre>load,post,get方法对比<pre class="js">
+＜meta charset="utf-8"＞
+＜meta http-equiv="pragma" content="no-cache"＞
+＜meta http-equiv="cache-control" content="no-cache, must-revalidate"＞
+＜meta http-equiv="expires" content="0"＞
+＜script src="../../vendors/jquery-3.1.1.js"＞＜/script＞
+
+<h1>JS从服务器请求数据</h1>
+<mark>$.get方法会获取缓存文件</mark>
+<input type="text" value="./jqueryajax.txt" id="toload" >
+<input type="button" value="load" id="btn0">
+<input type="button" value="get" id="btn1">
+<input type="button" value="post" id="btn2">
+<br>
+<div></div>
+
+// js代码
+var url=$('#toload').val()+'?id='+Math.random();
+
+$('#btn0').click(function(){
+  $('div').load(url,function(responseTxt,statusTxt,xhr){
+    if(statusTxt=='success') alert('加载完成');
+    if(statusTxt=='error')   alert('加载失败,error:'+xhr.status+xhr.statusTxt);
+  });
+});
+
+$('#btn1').click(function(){
+  $.get(url,function(data,status){
+    status=='success' ? alert(data) : alert(status);
+  });
+});
+
+$("#btn2").click(function(){  //url获取并处理传递的数据,然后返回响应的数据
+  $.post(url,{ name:"Bill",city:"USA" },function(data,status){
+    alert("响应数据：" + data + "\n状态：" + status);
+  });
+});
+
+</pre><pre>
+如果由jQuery.post()发起的请求返回错误代码,那么不会有任何提示,除非脚本已调用了全局的.ajaxError()方法
+
+【 jQuery.getJSON(url,data,success(data,status,xhr)) 】
+通过HTTP GET请求载入JSON数据
+数据最终还是通过url后面通过get方式发送数据出去的,所以发送的data数据量不能太多,否则造成url太长接收失败
+url必须,规定要请求的url
+data可选,规定连同请求发送的数据,待发送 Key/value 参数 ,同get,post类型的data
+success可选,规定请求成功时运行的函数
+等价于：
+  $.ajax({
+    url: url,
+    data: data,
+    success: callback,
+    dataType: json
+  });
+
+</pre><pre class="js">
+$.getJSON("test.js", { name: "John", time: "2pm" }, function(json){
+  alert("JSON Data: " + json.users[3].name);
+});
+
+</pre><pre class="js">
+var areadata ={
+  province : [],
+  city: [],
+  district: []
+}
+function getdata(){
+  $.getJSON("/areas.json", function(data){
+  areadata.province=data.province;
+  areadata.city=data.city;
+  areadata.district=data.district;
+});
+
+}
+//areas.json是json格式的数据文件,示例如下:
+{"province":[{"name":"安徽省", "code":"340000"},{"name":"北京市", "code":"110000"}],
+"city":[{"name":"安庆市", "code":"340800"},{"name":"蚌埠市", "code":"340300"}],
+"district":[{"name":"埇桥区", "code":"341302"},{"name":"浉河区", "code":"411502"}]}
+
+</pre>ajax跨域多了个参数jsoncallback=?<pre class="js">
+$.getJSON("http://api.flickr.com/photos_vendors/public.gne?tags=cat&tagmode=any&format=json&jsoncallback=?", function(data){
+  $.each(data.items, function(i,item){
+    $("&ltimg/&gt").attr("src", item.media.m).appendTo("#images");
+    if ( i == 3 ) return false;
+  });
+});
+
+</pre><pre>
+【 $(selector).serialize() 】
+通过序列化表单值,创建URL编码文本字符串
+
+</pre><pre class="js">
+$("button").click(function(){
+  $("div").text($("form").serialize());  //FirstName=Bill&LastName=Gates
+});
+
+</pre><pre>
+JQuery和其他框架同时使用$作为简写
+noConflict()方法会释放对$标识符的控制,这样其他脚本就可以使用它了
+
+$.noConflict();
+jQuery(document).ready();
+
+</pre>
+</div>
+
+<div id="DOM-jquery">
+<h2>DOM对象和jQuery对象</h2><pre>
+document.getElementById()返回的是DOM对象,可以使用DOM对象的方法;
+$()返回的是jQuery对象,可以使用加jQuery的方法
+
+$('id').html()
+document.getElementById('id').innerHTML
+$('id')[0].innnerHTML
+
+$(''id).get(0) .innerHTML
+
+$(''id).eq(0)[0] .innerHTML
+
+jQuery对象与DOM对象的转换
+1.$()[index]    $().get(index)  $().eq(0)[0]  得到DOM对象
+
+2.$(DOM对象)   得到jQUery对象
+
+获取对象的方法：
+form name='formName' id='formId'
+
+1.通过id：document.getElementById('formId')
+$('formId')
+
+2.通过name：document.getElemenstByName('formName')
+$('form[name="formName"]')
+
+</pre>
+</div>
+
+<div id="example">
+<h2>jQuery应用实例</h2><pre>
+jQuery链式调用
+jquery对象的方法在执行完之后返回这个jquery对象,所有的jQuery对象的方法可以连起来写：
+$("#div1").chlidren("ul").slideDown("fast").parent.siblings.chlidren("ul").slideUp("fase")
+
+</pre><pre class="js">
+//1.手风琴下拉菜单
+
+*{margin: 0;padding: 0;list-style: none;}
+.menu{width:150px;margin:10px 0 0 10px;}
+.menu>li{background: #8731dd;color:#fff;text-indent: 16px;margin-top:-1px;cursor: pointer;}
+.menu>li>span{padding:10px 0;display:block;border-bottom: 1px solid #f3f3f3;}
+.menuactive,.menu>li>span:hover{background:#c7254e;}
+.menu>li ul{display: none;}
+.menu>li ul li{text-indent:20px;background: #9a9add;border:1px solid #f3f3f3;margin-top:-1px;padding:6px 0;}
+.menu>li .active{display: block;}
+.menu>li ul li:hover{background:#67C962;}
+.menu>li ul{margin-bottom:1px;}
+
+<ul class="menu" id="menu">
+	<li><span>水果系列</span>
+	 <ul class="active"><li>苹果</li><li>梨子</li><li>葡萄</li><li>火龙果</li></ul>
+	</li>
+	<li><span>海鲜系列</span>
+	 <ul><li>鱼</li><li>大虾</li><li>螃蟹</li><li>海带</li></ul>
+  </li>
+	<li><span>果蔬系列</span>
+	 <ul> <li>茄子</li><li>黄瓜</li><li>豆角</li><li>西红柿</li></ul>
+	</li>
+	<li><span>速冻食品</span>
+	 <ul><li>水饺</li><li>冰淇淋</li></ul>
+	</li>
+	<li><span>肉质系列</span>
+	 <ul><li>猪肉</li><li>羊肉</li><li>牛肉</li></ul>
+  </li>
+</ul>
+
+$(function(){
+ 	$(".menu>li>span").click(function(){
+ 		console.log($(this).html());
+ 		$(this).addClass("menuactive").parent().siblings().children("span").removeClass("menuactive");
+ 		$(this).next("ul").slideToggle();
+ 		$(this).parent().siblings().children("ul").slideUp();
+ 	});
+});
+
+</pre><pre class="js">
+//2.选项卡
+<div id="box">
+	<ul id="tag">
+		<li>1</li><li>2</li><li>3</li>
+	</ul>
+	<div>
+		<div class="con">content1</div>
+		<div class="con">content2</div>
+		<div class="con">content3</div>
+	</div>
+</div>
+
+$(function(){
+	$('#box #tag li').click(function(){
+		$('#box .con').eq($(this).index()).show().siblings('.con').hide(); //siblings遍历获得匹配集合中每个元素的同胞
+	})
+})
+
+</pre><pre class="js">
+【jquery checkbox选中、改变状态、change和click事件】
+
+【jquery判断checked的三种方法:】
+.attr('checked); //看版本1.6+返回:"checked"或"undefined" ;1.5-返回:true或false
+.prop('checked'); //16+:true/false
+.is(':checked'); //所有版本:true/false//别忘记冒号哦
+
+jquery赋值checked的几种写法:
+所有的jquery版本都可以这样赋值:
+	$("#cb1").attr("checked","checked");
+	$("#cb1").attr("checked",true);
+jquery1.6+:prop的4种赋值:
+	$("#cb1″).prop("checked",true);//很简单就不说了哦
+	$("#cb1″).prop({checked:true}); //map键值对
+	$("#cb1″).prop("checked",function(){
+		return true;//函数返回true或false
+	});
+	$("#cb1″).prop("checked","checked");
+
+【checkbox click和change事件】
+方法1：
+$("#ischange").change(function() {
+	alert("checked");
+});
+
+方法2：
+$(function(){
+	if ($.browser.msie) {
+		$('input:checkbox').click(function () {
+			this.blur();
+			this.focus();
+		}
+	});
+};
+
+方法3：
+$("#ischange").change(function() {
+	alert("checked");
+});
+
+方法4：
+$(function () {if ($.browser.msie) {$('input:checkbox').click(function () { this.blur(); this.focus(); }); }});
+
+方法5：
+$(document).ready(function(){
+	$("testCheckbox").change(function() {
+		alert("Option changed!");
+	});
+});
+
+【获取单个checkbox选中项】
+$("input:checkbox:checked").val()
+$("input:[type='checkbox']:checked").val();
+$("input:[name='ck']:checked").val();
+
+【获取多个checkbox选中项】
+$('input:checkbox').each(function() {
+	if ($(this).attr('checked') ==true) {
+		alert($(this).val());
+	}
+});
+
+【设置第一个和最后一个checkbox 为选中值】
+$('input:checkbox:first').attr("checked",'checked');
+$('input:radio:last').attr('checked', 'checked');
+$('input:radio:last').attr('checked', 'true');
+$('input:checkbox).eq(索引值).attr('checked', 'true');
+$('input:radio').slice(1,2).attr('checked', 'true');
+$("input:checkbox[value='1']").attr('checked','true');
+$("input:checkbox[value='1']").remove();    //删除Value=1的checkbox
+
+$('input:checkbox').each(function (index, domEle) { //遍历
+	//写入代码
+});
+
+$('input:checkbox').each(function() { //全选,全不选为false
+	$(this).attr('checked', true);
+});
+
+</pre><pre class="js">
+//反全选
+function reverse(className){
+  $.each($("input[type=checkbox]."+className+""), function() {
+    $(this).prop("checked",false);
+  });
+}
+
+//全选
+function select(className){
+  $.each($("input[type=checkbox]."+className+""), function() {
+    $(this).prop("checked",true);
+  });
+}
+
+</pre><pre class="js">
+//向数组添加、删除指定的对象
+var a = [];
+var b = [{a:1},{b:2},{c:3}];
+var str = b[1];
+var index = b.indexOf(str);     // 如果str为{b:2}的话则不生效,因为obj除非引用一致以外不相等。
+a.push(b.splice(index, 1)[0]);
+
+</pre>
+</div>
+
+<div id="question">
+<h2>question</h2><pre class="js">
+TIPS:
+$("li").click( function() { alert($(this).index() ); } );
+获取的是所有li元素的集合,相当于每个li元素添加了click事件,不再需要用for循环
+
+将jQuery对象缓存进变量是一种好习惯
+
+jQuery3.2全选没反应,jquery-1.7.2.min.js反应正常？？？？？？
+$('input[level=1]').click(function(){
+	var inputs=$(this).parents('.adm_applist').find('input');
+	$(this).attr('checked')?inputs.attr('checked','checked'):
+	  inputs.removeAttr('checked');
+});
+
+</pre>
+</div>
+
+<div id="bottom"></div>
+</main>
+<ol>
+	<li><a href="#top">源码解析</a></li>
+  <li><a href="#start">开始使用</a></li>
+	<li><a href="#selector">选择器</a></li>
+	<li><a href="#event">事件处理</a></li>
+	<li><a href="#show">jQuery效果</a></li>
+	<li><a href="#DOM">DOM操作</a></li>
+  <li><a href="#each">each方法</a></li>
+	<li><a href="#css">css操作</a></li>
+	<li><a href="#list">遍历DOM</a></li>
+	<li><a href="#data">数据 队列</a></li>
+	<li><a href="#ajax">ajax</a></li>
+	<li><a href="#DOM-jquery">DOM-jquery</a></li>
+	<li><a href="#example">实例</a></li>
+	<li><a href="#question">question</a></li>
+	<li><a href="#bottom">底部</a></li>
+</ol>
+
+<script src="vendors/jquery-3.3.1.min.js"></script>
+<script src="vendors/public.js"></script>
+<script src="vendors/SyntaxHighlighter/shCore.js"></script>
+<script>
+  // 代码高亮
+    $('pre[class=html]').addClass('brush:html;toolbar:false');
+    $('pre[class=js]').addClass('brush:js;toolbar:false');
+    $('pre[class=php]').addClass('brush:php;toolbar:false');
+    SyntaxHighlighter.all();
+</script>
+</body>
+</html>

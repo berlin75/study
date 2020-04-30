@@ -1,0 +1,90 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>数码时钟完整版</title>
+<style>
+	*{ margin:0; padding:0;}
+    p{ text-align:center; font-size:80px;}
+	#div1{ width:1200px;margin:50px auto;}
+	#div1 span{ font-size:80px; color:black;}
+	#div2{ width:1200px;margin:50px auto;}
+	#div2 span{ font-size:80px; color:black;}
+</style>
+<script>
+    function todou(n)
+	{
+		if(n<10)
+		{
+			return  "0"+n;	    //将个位数变为0开头的两位数，并改为字符串
+		}
+		else
+		{
+			return  ""+n;
+		}
+	}
+	function tosig(n)
+	{
+		return  ""+n;
+	}
+	window.onload=function()
+	{
+	  function tick()
+		  {
+			var odiv=document.getElementById("div1");
+			var aimg=odiv.getElementsByTagName("img");
+			var odiv2=document.getElementById("div2");
+			var aimg2=odiv2.getElementsByTagName("img");
+			var odate=new Date();
+			var str=todou(odate.getHours())+todou(odate.getMinutes())+todou(odate.getSeconds())+tosig(odate.getDay());
+			var str2=todou(odate.getFullYear())+todou((odate.getMonth()+1))+todou(odate.getDate());
+//			alert(aimg2.length);			
+			    for(var n=0;n<aimg2.length;n++)
+				{
+					aimg2[n].src="../shuzi/"+str2.charAt(n)+".jpg"	;
+					  
+				}
+				
+				for(var i=0;i<(aimg.length-1);i++)
+				{
+					aimg[i].src="../shuzi/"+str.charAt(i)+".jpg"	;
+					  
+				}
+				aimg[aimg.length-1].src="../shuzi/z"+str.charAt(aimg.length-1)+".jpg"	;
+			}                         //str[i]存在兼容性问题，低版本浏览器不显示图片
+			setInterval(tick,1000);
+			tick();                       // 再页面打开等待刷新的那段时间先执行一次
+	}
+</script>
+</head>
+
+<body>
+		<p>数码时钟</p>
+    <div id="div2">
+    	<img src="../shuzi/0.jpg" />
+    	<img src="../shuzi/0.jpg" />
+        <img src="../shuzi/0.jpg" />
+        <img src="../shuzi/0.jpg" />
+        <span >年</span>
+        <img src="../shuzi/0.jpg" />
+        <img src="../shuzi/0.jpg" />
+        <span>月</span>
+        <img src="../shuzi/0.jpg" />
+        <img src="../shuzi/0.jpg" />
+        <span>日</span>
+    </div>
+    <div id="div1">
+        <img src="../shuzi/0.jpg" />
+        <img src="../shuzi/0.jpg" />
+        <span>:</span>
+        <img src="../shuzi/0.jpg" />
+        <img src="../shuzi/0.jpg" />
+        <span>:</span>
+        <img src="../shuzi/0.jpg" />
+        <img src="../shuzi/0.jpg" />
+        <span>&nbsp;&nbsp;星期</span>
+        <img src="../shuzi/z0.jpg" style="width:70px; height:70px;"/>
+        
+    </div>
+</body>
+</html>

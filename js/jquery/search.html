@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>search</title>
+<script src="../../vendors/jquery-3.1.1.js"></script>
+<script>
+$(document).ready(function() {
+	var oTxt=$("#divsearch :text");
+	$("#divsearch :button").click(function(){
+		if(oTxt.val()=="") return;
+		var aTxt=oTxt.val().toLowerCase().split(" ");
+		for(var i=0;i<aTxt.length;i++){
+			if($("p").text().search(aTxt[i])!=-1){
+				content.replace(aTxt[i], "<mark>"+aTxt[i]+"</mark>")
+				alert('关键字 "' + oTxt.val() + '" 存在');
+			}
+			else{
+				alert('关键字 "' + oTxt.val() + '" 不存在！');
+			}
+		}
+	});
+});
+</script>
+</head>
+
+<body>
+<div id="divsearch" >
+<input type="text"  />
+<input type="button" value="搜索" />
+</div>
+<p id="content">可搜索关键字：是的，你好，在哪，测试，代码，检索，标记，替换</p>
+</body>
+</html>

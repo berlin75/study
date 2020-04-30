@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>无标题文档</title>
+<script src="../../vendors/jquery-3.1.1.js"></script>
+</head>
+
+<body>
+<form id="formId" name="formName">
+    <label for="textName">请输入英文：</label>
+	<input type="text" name="textName" id="textId"  value="123456"/>
+    <button type="button"  value="yes" name="btnName"  id="btnId">YES</button>
+    <br /><br />
+    <label for="textName1">您输入的内容是：</label>
+	<input type="text" name="textName1" id="textId1" />
+    <input type="text" name="textName2" id="textId2" />
+    <input type="text" name="textName3" id="textId3" />
+</form>
+
+<script>
+$('#btnId').click(function(){
+	$('#textId1')[0].innerHTML=$('#textId').html();
+	$('#textId2').get(0).innerHTML=document.getElementById("textId").value;
+	});
+</script>
+</body>
+</html>

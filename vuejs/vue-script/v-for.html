@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>vuejs</title>
+<script src="../../vendors/vue.min.js"></script>
+</head>
+<body>
+<div id="app">
+	<div v-if="Math.random() >= 0.5">随机数大于或等于0.5</div>
+	<div v-else>随机数小于0.5</div>
+
+	<h1 v-if="true">显示</h1>
+	<h1 v-if="'true'">显示</h1>
+
+	<h2 v-if="isDisplay >= 0.5">isDisplay</h2>
+	<h2 v-else>noDisplay</h2>
+
+	<h3 v-if="isShow">isShow</h3>
+
+	<div v-if="random > 0.5">随机数大于0.5</div>
+  	<div v-else-if="random = 0.5">随机数等于0.5</div>
+  	<div v-else>随机数小于0.5</div>
+
+  	<template v-if="loginType === 'username'">
+	  <label>Username</label>
+	  <input placeholder="Enter your username">
+	</template>
+	<template v-else>
+	  <label>Email</label>
+	  <input placeholder="Enter your email address">
+	</template>
+
+	<ul><li v-for="arrmember in arr">{{ str }}{{ arrmember.text }} ;</li></ul>
+	<ul><li v-for="value in obj">{{ str }}{{ value }} ;</li></ul>
+	<ul><li v-for="(value, key) in obj">{{ str }}{{ key }}: {{ value }} ;</li></ul>
+	<ul><li v-for="(value, key, index) in obj">{{ str }}{{ index }}-{{ key }}: {{ value }} ;</li></ul>
+</div>
+
+<script>
+	new Vue({
+		el: '#app',
+		data: { 
+			str: '-> ',
+			isDisplay: Math.random(),
+			random: Math.random(),
+      		isShow: Math.random() >= 0.5, 
+      		loginType: 'username',
+			arr: [ {text: 'vuejs'}, {text: 'webpack'}, {text: 'git'} ],
+			obj: {name: 'berlin', age: 28}
+		},
+	})
+</script>
+</body>
+</html>

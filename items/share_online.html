@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf8">
+<title>百度分享</title>
+<style>
+
+
+</style>
+</head>
+<body>
+<div style="margin: 2rem 0 0 2rem;">
+	<img src="http://share.baidu.com/static/web/img/imagesharepreview.jpg" data-tag="imgshare_1">
+</div>
+<script src="../vendors/jquery-3.1.1.js"></script>
+<script>
+	//通用分享设置，更详细的设置可以查看http://share.baidu.com/code/advance#example
+	window._bd_share_config = {
+	common: {
+	bdText: '多组分享设置bdText',
+	bdDesc: '多组分享设置bdDesc',
+	bdComment: '多组分享设置bdComment',
+	bdUrl: 'http://www.baidu.com/',
+	bdPic: 'http://share.baidu.com/static/base/img/logo.gif'
+	},
+	selectShare: {
+	bdSelectMiniList: ['tqq', 'tsina', 'qzone', 'sqq', 'tqf', 'kaixin001', 'renren', 'copy'],
+	},
+	image: { //image的设置与share属性类似, 多个设置使用数组
+	tag: 'imgshare_1',
+	viewPos: 'top', //值为top|bottom
+	viewList: ['tqq', 'tsina', 'qzone', 'sqq', 'tqf', 'kaixin001', 'renren', 'copy'],
+	viewSize: 16 //16|24|32
+	//viewColor : 'black', //底色 white|black
+	//viewType : 'list', //分享样式 list|collection
+	}
+	}
+	with(document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = 'http://bdimg.share.baidu.com/static/api/js/share.js?cdnversion=' + ~(-new Date() / 36e5)];
+</script>
+
+<br/><br/><textarea rows="40" cols="150">
+参考原代码 http://www.jq22.com/webqd2358
+
+</textarea>
+</body>
+</html>

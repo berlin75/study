@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>瀑布流布局</title>
+<style>
+.clearfix:after,.clearfix:before {content: " ";display: table;}
+.clearfix:after {clear: both;}
+.main {
+  position: relative;
+  [color=#ff0000]-webkit-column-width: 210px;
+  -moz-column-width: 210px;
+  -webkit-column-gap: 5px;
+  -moz-column-gap: 5px;[/color]
+}
+.box {
+  float: left;
+  padding: 15px 0 0 15px;
+}
+.box .pic {
+  width: 180px;
+  height: auto;
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0 0 5px #cccccc;
+  border: 1px solid #cccccc;
+}
+.box .pic img {
+  display: block;
+  width: 100%;
+}
+
+</style>
+</head>
+<body>
+<h4 style="text-align: center;">瀑布流布局</h4>
+<pre>
+原理：把新加载的图放入最低的那一列
+      检查是否满足加载数据条件即最后一张图显示了,lastBoxH < scrollTop + winheight;
+      scroll事件isPosting？？？？
+
+第二排开始加载每张图时比较hArr数组中值最小即最低列的元素，新加载的图绝对定位左对齐到该元素下面，然后把新图的高度加上前面的即获得该列的即时高度，最后开始加载下一张图
+
+1) 数据块排列，算法步骤简述下:
+1、初始化时，对容器中已有数据块元素进行第一次计算，获取容器元素,以此获取容器总宽度; 列宽度; 最小列数; 
+2、最终列数取的是容器宽度/列宽度和最小列数的最大值，这样保证了，当窗口很小时，仍然出现最小列数的数据;
+3、获得列数后，需要保存每个列的当前高度，在添加每个数据块时才知道起始高度是多少;
+4、依次取容器中的所有数据块，先寻找当前高度最小的某列，之后根据列序号，确定数据块的left，top值，left 为所在列的序号乘以列宽，top 为所在列的当前高度，
+5、最后更新所在列的当前高度加上这个数据块元素的高度，至此，插入一个元素结束;
+6、当所有元素插入完毕后，调整容器的高度为各列最大的高度值，结束依次调整;
+
+性能效率上的注意点: 
+a，如果当前正在调整中，又触发了 resize 事件，需要将上次调整暂停后执行这次调整(见 timedChunk 函数); 
+b，resize 触发会很频繁，可以将回调函数缓存一段时候后执行，即当这段时间内多次触发了resize事件，但回调函数只会执行一次(见 S.buffer 函数)
+
+2) 异步加载数据
+前面讲的是如何对容器中已有元素进行排列，但很多情况下，还需要不断加载新数据块，为此专门设计了一个独立的模块 KISSY.Waterfall.Loader，其实这个功能就更简单了，仅包含两个步骤:
+
+绑定滚动事件，并确定预加载线高度值，即滚动到哪个高度后，需要去加载数据，其实这个就是列的最小高度值，这样当前滚动值和最小高度值比较一下即可判断出来，是否要触发加载数据;
+
+加载数据，为了不对数据源做太多限制，完全由使用者自己决定数据源从哪边获取和其格式，这样更好的方便用户使用。
+为此，该组件只提供一个 load(success，end) 接口，怎样load 由用户自己去定义，而其中的 success/end，分别给出如何添加新数据(suceess 即同 addItems)/如何停止加载的接口。
+	</pre>
+    <div class="main clearfix" id="main">
+        <div class="box">
+            <div class="pic"><img src="../../image/l1.jpg"></div>
+        </div>
+        <div class="box">
+            <div class="pic"><img src="../../image/l2.jpg"></div>
+        </div> 
+        <div class="box">
+            <div class="pic"><img src="../../image/l3.jpg"></div>
+        </div> <div class="box">
+            <div class="pic"><img src="../../image/l4.jpg"></div>
+        </div> <div class="box">
+            <div class="pic"><img src="../../image/l5.jpg"></div>
+        </div> <div class="box">
+            <div class="pic"><img src="../../image/l6.jpg"></div>
+        </div> <div class="box">
+            <div class="pic"><img src="../../image/l7.jpg"></div>
+        </div> <div class="box">
+            <div class="pic"><img src="../../image/l8.jpg"></div>
+        </div> <div class="box">
+            <div class="pic"><img src="../../image/l9.jpg"></div>
+        </div> <div class="box">
+            <div class="pic"><img src="../../image/l10.jpg"></div>
+        </div> <div class="box">
+            <div class="pic"><img src="../../image/l11.jpg"></div>
+        </div> <div class="box">
+            <div class="pic"><img src="../../image/l12.jpg"></div>
+        </div> <div class="box">
+            <div class="pic"><img src="../../image/l13.jpg"></div>
+        </div> <div class="box">
+            <div class="pic"><img src="../../image/l14.jpg"></div>
+        </div> 
+        <div class="box">
+            <div class="pic"><img src="../../image/l1.jpg"></div>
+        </div>
+        <div class="box">
+            <div class="pic"><img src="../../image/l2.jpg"></div>
+        </div> 
+        <div class="box">
+            <div class="pic"><img src="../../image/l3.jpg"></div>
+        </div> <div class="box">
+            <div class="pic"><img src="../../image/l4.jpg"></div>
+        </div> <div class="box">
+            <div class="pic"><img src="../../image/l5.jpg"></div>
+        </div> <div class="box">
+            <div class="pic"><img src="../../image/l6.jpg"></div>
+        </div> <div class="box">
+            <div class="pic"><img src="../../image/l7.jpg"></div>
+        </div> <div class="box">
+            <div class="pic"><img src="../../image/l8.jpg"></div>
+        </div> <div class="box">
+            <div class="pic"><img src="../../image/l9.jpg"></div>
+        </div> <div class="box">
+            <div class="pic"><img src="../../image/l10.jpg"></div>
+        </div> <div class="box">
+            <div class="pic"><img src="../../image/l11.jpg"></div>
+        </div> <div class="box">
+            <div class="pic"><img src="../../image/l12.jpg"></div>
+        </div> <div class="box">
+            <div class="pic"><img src="../../image/l13.jpg"></div>
+        </div> <div class="box">
+            <div class="pic"><img src="../../image/l14.jpg"></div>
+        </div> 
+    </div>
+<script>
+//模拟json数据
+var dataJson = {
+    'data': [
+        {'src':'l1.jpg'},{'src':'l2.jpg'},{'src':'l3.jpg'},{'src':'l4.jpg'},{'src':'l5.jpg'},
+        {'src':'l6.jpg'},{'src':'l7.jpg'},{'src':'l8.jpg'},{'src':'l9.jpg'},{'src':'l10.jpg'},
+        {'src':'l11.jpg'},{'src':'l12.jpg'},{'src':'l13.jpg'},{'src':'l14.jpg'}
+    ]
+};
+
+window.onload = function(){
+    waterfall('main','box');
+
+    //监听scroll事件
+    window.onscroll = function(){
+        var isPosting = false;
+        if(checkScollSlide('main','box') && !isPosting){
+            var oParent = document.getElementById('main');
+            for(var i in dataJson.data){
+                isPosting = true;
+                var oBox = document.createElement('div');
+                oBox.className = 'box';
+                oBox.innerHTML = '<div class="pic"><img src="../../image/'+dataJson.data[i].src+'"></div>';
+                oParent.appendChild(oBox);
+            }
+            isPosting = false;
+            waterfall('main','box');
+        }
+    }
+}
+
+/*parent 父元素id clsName 块元素类*/
+function waterfall(parent,clsName){
+    var oParent = document.getElementById(parent),
+    aBoxArr = oParent.getElementsByClassName(clsName),   
+    iBoxW = aBoxArr[0].offsetWidth,                                  //单个box宽度 217
+    cols = Math.floor(document.documentElement.clientWidth / iBoxW); //列数 1349 -> 6
+    oParent.style.cssText = 'width:'+iBoxW*cols+'px;margin:0 auto;';
+
+    //储存所有的高度
+    var hArr = [];
+    for(var i = 0; i < aBoxArr.length; i++){
+        if(i < cols){
+            hArr[i] = aBoxArr[i].offsetHeight; //包括边框的可见高度
+        }else{           
+            var minH = Math.min.apply(null,hArr), //获取hArr中6个元素中的最小值           
+            minHIndex = getMinHIndex(hArr,minH);  // hArr最小值索引index
+            console.log(hArr, minH, minHIndex, aBoxArr[i].offsetHeight);   
+            //绝对定位到上排中高度最小元素的底部，左边距离和该元素相同
+            aBoxArr[i].style.cssText = 'position:absolute;top:'+minH+'px;left:'+aBoxArr[minHIndex].offsetLeft+'px;';           
+            hArr[minHIndex] += aBoxArr[i].offsetHeight;//更新hArr
+        }
+    }
+}
+
+//获取最小值索引
+function getMinHIndex(arr,val){
+    for(var i in arr){
+        if(arr[i]  == val) return i;
+    }
+}
+
+//检查是否满足加载数据条件即最后一张图显示了,checkScollSlide('main','box')
+function checkScollSlide(parentId,clsName){
+    var oParent = document.getElementById(parentId),
+        aBoxArr = oParent.getElementsByClassName(clsName),
+        lastBox = aBoxArr[aBoxArr.length - 1],
+        // 最后一个box元素的offsetTop+高度的一半
+        lastBoxH = lastBox.offsetTop + lastBox.offsetHeight / 2,
+        //兼容js标准模式和混杂模式
+        scrollTop = document.documentElement.scrollTop || document.body.scrollTop,
+        winheight = document.documentElement.clientHeight || document.body.clientHeight;
+    return lastBoxH < scrollTop + winheight;
+}
+
+</script>
+    
+</body>
+</html>

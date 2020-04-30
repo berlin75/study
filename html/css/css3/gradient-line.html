@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>渐变波浪线</title>
+<style>
+.demo2{ position: relative;width: 21rem;}
+.demo2::after { content: ''; display: block; position: absolute; top: 100%;left: 0;width: 100%;height: 8px; 
+	background: linear-gradient(135deg, transparent, transparent 45%, red, transparent 55%, transparent 100%), linear-gradient(45deg, transparent, transparent 45%, red, transparent 55%, transparent 100%); 
+	background-size: 16px 16px; 
+} 
+</style>
+</head>
+
+<body>
+<p>首先要用两段渐变构造一个基本元素：'X'，下一步截取'X'的上半部分，得到一个'V',从而结合 repeat 形成波浪线</p>
+<p style="letter-spacing: 2px;word-spacing: 2px;">XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX</p>
+<div class="demo2">波浪线波浪线波浪线波浪线波浪线波浪线波浪线</div>
+</body>
+</html>

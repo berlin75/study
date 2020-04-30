@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf8">
+<title>h5 进度条样式</title>
+<style>
+body{ background: #262E31; color: #FFC107; }
+h1{ font-weight: normal; margin: 30px 0 80px 0; text-align: center; }
+p{ font-weight: normal; font-size: 22px; clear: both; text-align: center; }
+div{ width: 30%;  margin: 0 1.5%; height: 150px; text-align: center; float: left; }
+
+progress {
+  -webkit-appearance: none;   /*appearance 属性允许您使元素看上去像标准的用户界面元素,清除默认样式*/
+     -moz-appearance: none;
+          appearance: none;
+  position: relative;
+  width: 100%;
+  height: 18px;
+}
+
+/***********************p1 样式******************************************/
+@keyframes flip {
+  0% { transform: perspective(200px) rotateX(0) rotateY(180deg); }
+  50% { transform: perspective(200px) rotateX(0) rotateY(0); }
+  100% { transform: perspective(200px) rotateX(180deg) rotateY(0); }
+}
+.p1 progress { width: 48px; height: 48px; animation: flip 1.2s infinite ease-in-out; }
+.p1 progress::-webkit-progress-bar { background: #FFEE58; }
+.p1 progress::-webkit-progress-value { background: transparent; }
+
+/***********************p2 样式******************************************/
+.p2 progress::-webkit-progress-bar { background-color: #f2f2f2; }
+.p2 progress::-webkit-progress-value {
+  background: linear-gradient(45deg, transparent 33%, rgba(0, 0, 0, 0.1) 33%, rgba(0, 0, 0, 0.1) 66%, transparent 66%);
+  background-color: #ff7584;
+  background-size: 40px 20px;
+}
+
+/***********************p3 样式******************************************/
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+.p3 { margin-top: -25px; }
+.p3 progress { width: 48px; height: 48px; }
+.p3 progress::before {
+  content: '';
+  display: block;
+  width: 48px;
+  height: 48px;
+  background: transparent;
+  border: 10px solid rgba(255, 255, 255, 0.1);
+  border-left: 10px solid #ffffff;
+  border-radius: 100%;
+  animation: spin 0.6s linear infinite;
+}
+.p3 progress::-webkit-progress-bar, .p3 progress::-webkit-progress-value { background: transparent; }
+
+/***********************p4 样式******************************************/
+@keyframes hithit {
+  0% { left: 0; }
+  100% { left: 70%; }
+}
+.p4 progress::-webkit-progress-bar, .p4 progress::-webkit-progress-value { background: #e1e1e1; }
+.p4 progress::before {
+  top: 0;
+  left: 0;
+  content: '';
+  position: absolute;
+  height: 18px;
+  width: 30%;
+  background: #009688;
+  animation: hithit 1.2s linear infinite alternate;
+}
+
+/***********************p5 样式******************************************/
+@keyframes shift {
+  0% { left: 0%; }
+  100% { left: -9900%; }
+}
+.p5 { clear: both; margin-top: 16px; }
+.p5 progress { text-align: left; overflow: hidden; }
+.p5 progress::-webkit-progress-bar, .p5 progress::-webkit-progress-value { background: white; }
+.p5 progress::before {
+  content: '';
+  width: 10000%;
+  height: 18px;
+  position: absolute;
+  background: linear-gradient(-45deg, transparent 33%, #BA68C8 33%, #BA68C8 66%, transparent 66%);
+  background-size: 40px 20px;
+  animation: shift 200s linear infinite;
+}
+
+/***********************p6 样式******************************************/
+@keyframes expand {
+  0%,
+  80%,
+  100% {
+    box-shadow: 0 0 #90A4AE;
+    height: 48px;
+  }
+  40% {
+    box-shadow: 0 -22px #90A4AE;
+    height: 58px;
+  }
+}
+.p6 progress {
+  height: 48px;
+  width: 11px;
+  animation: expand 1.2s infinite ease-in-out;
+  animation-delay: -0.32s;
+}
+.p6 progress::-webkit-progress-bar {
+  background: transparent;
+}
+.p6 progress::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 36px;
+  width: 11px;
+  height: 48px;
+  background: #90A4AE;
+  animation: expand 1.2s infinite ease-in-out;
+}
+.p6 progress::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 18px;
+  width: 11px;
+  height: 48px;
+  background: #90A4AE;
+  animation: expand 1.2s infinite ease-in-out;
+  animation-delay: -0.16s;
+}
+.p6 progress::-webkit-progress-value {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 11px !important;
+  height: 100%;
+  background: #90A4AE;
+}
+
+</style>
+</head>
+<body>
+<h1>Stylization HTML5 Progress element</h1>
+
+<div class="p2">
+    <progress max="100" value="40"></progress>
+</div>
+
+<div class="p3">
+    <progress max="100" value="70"></progress>
+</div>
+
+<div class="p4">
+    <progress></progress>
+</div>
+
+<div class="p5">
+    <progress></progress>
+</div>
+
+<div class="p1">
+    <progress max="100" value="70"></progress>
+</div>
+
+<div class="p6">
+    <progress></progress>
+</div>
+
+</body>
+</html>

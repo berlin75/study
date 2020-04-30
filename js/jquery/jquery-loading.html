@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>jquery实现进度条</title>
+<style>
+ .jd{ width:500px; height:10px; border:1px solid #98AFB7; border-radius:5px;}
+ #bar{ width:0; height:10px; background:#5EC4EA; border-radius:5px;}
+ 
+ .jd1{ width:500px; height:10px; border:1px solid #98AFB7; border-radius:5px;}
+ #bar1{ width:0; height:10px; background:#5EC4EA; border-radius:5px;}
+ 
+ .jd2{ width:500px; height:20px; border:1px solid #98AFB7; border-radius:10px; position:relative;}
+ #bar2{ width:0; height:20px; background:#5EC4EA; border-radius:10px;}
+ #num{ position:absolute;left:50%; top:0; text-align:center;}
+</style>
+<script src="../../vendors/jquery-3.1.1.js"></script>
+<script>
+ $(document).ready(function() {
+	 var timer=null;
+    $("input").eq(0).click(function(){
+		    $("#bar").width(0);
+		    clearInterval(timer);
+		    timer=setInterval(function(){
+			if($("#bar").width()<$(".jd").width())
+			{$("#bar").animate({width:"+=5px"},20)}
+			else{clearInterval(timer);}
+			},30);
+	});
+	
+	var timer1=null;
+	$("input").eq(1).click(function(){
+		    $("#bar1").width(0);
+		    clearInterval(timer1);
+		    timer1=setInterval(function(){
+			var nowWidth=parseInt($("#bar1").css("width"));
+			if($("#bar1").width()<$(".jd1").width())
+			{$("#bar1").css("width",nowWidth+3+"px");}
+			else{clearInterval(timer1);}
+			},30);
+	});
+	
+	var timer2=null;
+	$("input").eq(2).click(function(){
+		    $("#bar2").width(0);
+		    clearInterval(timer2);
+		    timer2=setInterval(function(){
+			var nowWidth2=$("#bar2").width(); 
+			var percent=(nowWidth2/($(".jd2").width()))*100;   //设置进度百分比
+			$("#num").html(Math.round(percent)+"%");
+			
+			if($("#bar2").width()<$(".jd2").width())
+			{$("#bar2").width(nowWidth2+3);}
+			else{clearInterval(timer2);}
+			},30);
+	});
+});
+</script>
+</head>
+<body>
+ <input type="button" value="开始" /><br /><br />
+ <div class="jd"><div id="bar"></div></div>
+ <br /><br />
+ <input type="button" value="开始" /><br /><br />
+ <div class="jd1"><div id="bar1"></div></div>
+ <br /><br />
+ <input type="button" value="开始" /><br /><br />
+ <div class="jd2">
+     <div id="bar2"></div>
+     <div id="num">0</div>
+ </div>
+ 
+ <br /><br />
+ <p>第一种：采用jQuery动画，animate的speed参数必须小于setInterval的时间</p>
+ <p>第二三种：jQuery操作css，width()方法返回数字，css()方法返回值，要加px</p>
+</body>
+</html>

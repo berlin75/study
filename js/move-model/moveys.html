@@ -1,0 +1,64 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>无缝滚动</title>
+<style>
+	*{ margin:0; padding:0; }
+	img{ width:178px; height:108px; }
+	#div1{ width:712px; height:108px; background:red; margin:20px auto; 
+	       position:relative; overflow:hidden;}
+	#div1 ul{ position:absolute; left:0px; top:0px;}
+	#div1 ul li{ float:left; list-style:none; width:178px; height:108px; }
+</style>
+<script>
+	window.onload=function()
+	{
+		var oDiv=document.getElementById("div1");
+		var oUl=oDiv.getElementsByTagName("ul")[0];
+		var aLi=oUl.getElementsByTagName("li");
+		oUl.innerHTML=oUl.innerHTML+oUl.innerHTML;
+		oUl.style.width=aLi[0].offsetWidth*aLi.length+"px";
+		var timer=null;
+		function start()
+		{
+			timer=setInterval(function()
+			{
+				var speed=1;
+				if(oUl.offsetLeft<(-oUl.offsetWidth/2))
+				{
+					oUl.style.left=0+"px";
+				}
+				if(oUl.offsetLeft>0)
+				{
+					oUl.style.left=(-oUl.offsetWidth/2)+"px";
+				}
+				oUl.style.left=oUl.offsetLeft+speed+"px";
+				document.title=oUl.offsetLeft;
+			 },30);
+		}
+		start();
+		oUl.onmouseover=function()
+		{
+			clearInterval(timer);
+		}
+		oUl.onmouseout=function()
+		{
+			start();
+		}
+	}
+</script>
+</head>
+
+<body>
+<div id="div1">
+  <ul>
+    <li><img src="img/1.jpg"  /></li>
+    <li><img src="img/2.jpg"  /></li>
+    <li><img src="img/3.jpg"  /></li>
+    <li><img src="img/4.jpg"  /></li>
+  </ul>
+</div>
+
+</body>
+</html>

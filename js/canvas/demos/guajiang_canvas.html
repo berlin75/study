@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf8">
+<title>刮奖</title>
+<style>
+* {
+margin:0;
+}
+#card {
+width:320px;
+height:568px;
+margin:0 auto;
+/*background:url(img/g.jpg) no-repeat; */
+background-size:320px 568px;
+position:relative;
+}
+#myCanvas {
+/*border:2px solid green;
+*/
+position:absolute;
+left:28px;
+top:30px;
+}
+#p1 {
+position:absolute;
+left:28px;
+top:30px;
+height:131px;
+width:260px;
+font-size:40px;
+text-align:center;
+line-height:131px;
+color:orange;
+}
+
+</style>
+</head>
+<body>
+<div id="card">
+	<p id="p1">特等奖</p>
+	<canvas id="myCanvas" width="265" height="135"></canvas>
+</div>
+<script>
+function randomNum(m, n) {
+	return Math.floor(Math.random() * (n - m + 1) + m);
+}
+
+var arr = [ "特等奖", "一等奖", "二等奖", "二等奖", "谢谢惠顾", "谢谢惠顾", "谢谢惠顾" ];
+for(var i = 0; i < 10; i++) arr.push("谢谢惠顾");
+
+var index = randomNum(0, arr.length - 1);    //随机下标
+var p1 = document.getElementById("p1");
+p1.innerHTML = arr[index];                   //显示奖项
+
+var c = document.getElementById("myCanvas");
+var ctx = c.getContext('2d');
+ctx.fillStyle = "darkgray";
+ctx.fillRect(0, 0, c.width, c.height);  //涂色 (刮刮乐)
+//添加鼠标按下事件
+c.onmousedown = function() {
+	//鼠标移动事件,拖动的太快了超出元素的本身的位置会停在半路,所以元素改为文档
+	document.onmousemove = function(e) {
+		var event1 = e || window.event;  //事件对象
+		var x = event1.offsetX;          //获取鼠标的位置
+		var y = event1.offsetY;
+
+		ctx.globalCompositeOperation = "destination-out"  //设置图形组合方式 保留不重合部分
+
+		//画圆
+		ctx.beginPath();
+		ctx.arc(x, y, 20, 0, Math.PI * 2, true);
+		ctx.fill();
+
+		//如果刮过部分超过80%,则全部刮掉
+		var imageData = ctx.getImageData(0, 0, c.width, c.height);
+		var colors = imageData.data;               //获取图形像素点数组
+		var count = 0;                             //存储透明区向像素点的个数
+		for (var i = 0; i < colors.length; i += 4) {
+			if (colors[i + 3] == 0) count++;         //获取透明度的值 colors[i + 3]
+		}
+		if (count > colors.length / 4 * 0.8) {
+			ctx.clearRect(0, 0, c.width, c.height);  //清空整个画布内容
+		}
+
+		// 阻止默认行为鼠标移动时选中文字触发浏览器默认拖拽文字的效果
+		return false;
+	}
+
+	//添加鼠标松开事件,如果有别的元素在拖动元素停止的位置之上，松开鼠标则还可以继续拖动，因为不是在拖动元素上松开的，所以元素应改为文档
+	document.onmouseup = function() {
+		document.onmousemove = null;
+	}
+}
+
+</script>
+
+</body>
+</html>

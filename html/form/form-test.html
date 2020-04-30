@@ -1,0 +1,128 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>无标题文档</title>
+</head>
+
+<body>
+<h1>form表单用于注册之类 </h1>
+	<FORM ACTION="http://www.mysite.com/FormSite" METHOD="POST">
+		<B><H2 align="center">证券调查示例</H2></B>
+		<p><B>投资经验</B></p>
+		<p>	<INPUT TYPE="RADIO" NAME="RESULT_RadioButton-3" VALUE="Radio-0">新手
+			<INPUT TYPE="RADIO" NAME="RESULT_RadioButton-3" VALUE="Radio-1">中级
+			<INPUT TYPE="RADIO" NAME="RESULT_RadioButton-3" VALUE="Radio-2">专家</p>
+		<p><B>投资类型</B></P>
+		<P>	<INPUT TYPE="CHECKBOX" NAME="RESULT_CheckBox-4" VALUE="CheckBox-0">股票
+			<INPUT TYPE="CHECKBOX" NAME="RESULT_CheckBox-4" VALUE="CheckBox-1">期权
+			<INPUT TYPE="CHECKBOX" NAME="RESULT_CheckBox-4" VALUE="CheckBox-2">互惠基金<BR></p>
+		<p><B>今年选择什么证券？</B></P>
+		<P>	<INPUT TYPE="TEXT" NAME="RESULT_TextField-6" SIZE="30" MAXLENGTH="30"></p>
+		<p>
+			<INPUT TYPE="SUBMIT" NAME="submit1" VALUE="提交">
+			<INPUT TYPE="RESET" NAME="reset1" VALUE="重置"></p>
+		</FORM>
+        
+        <FORM ACTION="http://www.mysite.com/FormSite" METHOD="POST">
+		<B><CENTER><H2>证券调查示例</H2></CENTER></B>
+		<P><B>有对其他投资者的建议吗？</B></P>
+		<TEXTAREA NAME="RESULT_TextArea-8" ROWS="7" COLS="20"></TEXTAREA>
+		<P>
+			<BUTTON type="submit" name="submit" value="submit">
+			发送<IMG src="submit.gif" alt="Submit"></BUTTON>
+			<BUTTON type="reset" name="reset" >
+				重置<IMG src="reset.gif" alt="Reset"></BUTTON>
+			</P>
+		</FORM>
+
+<br>
+<p>此属性指定处理提交的表单的脚本的位置。语法为：ACTION="URL" </P>
+
+<p>此属性指定向服务器发送数据的方法。如果值为GET，浏览器将创建一个请求，该请求包含页面URL、一个问号和表单的值。浏览器会将该查询返回给URL中指定的脚本，以进行处理。如果将值指定为POST，表单上的数据会作为一个数据块发送到脚本，而不使用任何请求字符串。语法为：METHOD = (GET | POST) </P>
+
+<p>TYPE 此属性指定表单元素的类型。可用的选项有TEXT、PASSWORD、CHECKBOX 选择框、RADIO单选按钮、SUBMIT表单数据提交到服务器、RESET重置为默认值、FILE、HIDDEN和BUTTON。默认值为TEXT</p>
+
+<p>NAME 此属性指定表单元素的名称。例如，如果表单上有几个文本框，可以按照名称来标识它们 - TEXT1、TEXT2或用户选择的任何名称。</p>
+
+<p>VALUE 此属性是可选属性，它指定表单元素的初始值 </p>
+
+<p>size 此属性指定表单元素的显示长度。用于文本输入的表单元素即输入类型是TEXT或PASSWORD的 </p>
+
+<p>MAXLENGHT 此属性用于指定在TEXT或PASSWORD表单元素中可以输入的最大字符数。默认值为无限的 </p>
+
+<p>CHECKED  此属性是一个Boolean属性，指定按钮是否是被选中的。当输入类型为RADIO或CHECKBOX时使用</p>
+
+<p>src  当使用IMAGE作为输入类型时使用此属性，它用于标识图像的位置</p>
+
+<p> input-type属性    &nbsp&nbsp
+TEXT &nbsp
+CHECKBOX   &nbsp
+RADIO     &nbsp
+SUBMIT    &nbsp
+RESET     &nbsp
+IMAGE     &nbsp
+BUTTON    &nbsp
+</p>
+
+<p>
+TextArea 元素:
+Cols &nbsp
+Rows   &nbsp
+Size    &nbsp
+Type     &nbsp
+Value      &nbsp
+BUTTON 元素:
+Name    &nbsp
+Value    &nbsp
+Type
+</p>
+<br>
+
+<FORM ACTION="http://www.mysite.com/FormSite" METHOD="POST">
+		<B><CENTER><H2>证券调查示例</H2></CENTER></B>
+		<P><B>您用什么方式购买证券？</B>
+		<SELECT NAME="RESULT_RadioButton-5">
+			<OPTION></OPTION>
+			<OPTION value="网上交易">1)网上交易</OPTION>
+			<OPTION value="电话交易">2)电话交易</OPTION>
+			<OPTION value="经纪人代理">3)经纪人代理</OPTION>
+图4.4：示例3的输出结果
+			<OPTION value="其他">4)其他</OPTION>
+		</SELECT>
+</P>
+		<BR><BR><BR>
+		<P><INPUT TYPE="SUBMIT" NAME="submit1" VALUE="提交">
+		<INPUT TYPE="RESET" NAME="reset1" VALUE="重置"></P>
+		</FORM>
+
+<br>
+
+<p>下拉框SELECT 元素: Name  &nbsp  &nbsp  Size  &nbsp  Multiple </p>
+
+<H1><CENTER><FONT SIZE = 4 COLOR = Forestgreen>申请表</CENTER></FONT></H1><HR><BR>
+		<FORM action="http://somesite.com/processform" method="post">
+		<P>
+		姓名：
+		<INPUT type="text" id="firstname"><BR>
+		<P>求职意向<BR><BR>
+		<INPUT TYPE=RADIO NAME="CONTROL1" VALUE="0" CHECKED>网站设计师
+		<INPUT TYPE=RADIO NAME="CONTROL1" VALUE="1" >网管
+		<INPUT TYPE=RADIO NAME="CONTROL1" VALUE="2" >网站开发人员
+		<P>工作经历<SELECT NAME="CONTROL2">
+			<OPTION>无</OPTION>
+			<OPTION>一年</OPTION>
+			<OPTION>三年</OPTION>
+			<OPTION>五年</OPTION>
+		</SELECT><BR>
+		<P>附注<BR>
+		<TEXTAREA NAME="CONTROL3" COLS="30" ROWS="5">请在这里键入附注。</TEXTAREA><BR>
+		<P><INPUT NAME="CONTROL4" TYPE=CHECKBOX CHECKED>发送确认
+		<BR>
+		<P><INPUT TYPE=SUBMIT VALUE=确定>
+		<INPUT TYPE=RESET VALUE=重置>
+		</FORM>
+
+
+</body>
+</html>

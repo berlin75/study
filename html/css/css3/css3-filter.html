@@ -1,0 +1,60 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>css3 滤镜</title>
+<style>
+img{
+	width: 250px;height: 180px;margin: 1rem;
+}
+img:nth-of-type(1){-webkit-filter: blur(1px);}
+img:nth-of-type(2){-webkit-filter: brightness(100%);}
+img:nth-of-type(3){-webkit-filter: contrast(100%);}
+img:nth-of-type(4){-webkit-filter: grayscale(100%);}
+img:nth-of-type(5){-webkit-filter: hue-rotate(90deg);}
+img:nth-of-type(6){-webkit-filter: invert(100%);}
+img:nth-of-type(7){-webkit-filter: opacity(100%);}
+img:nth-of-type(8){-webkit-filter: saturate(100%);}
+img:nth-of-type(9){-webkit-filter: sepia(100%);}
+img:nth-of-type(10){-webkit-filter: grayscale(100%);}
+img:nth-of-type(11){-webkit-filter: drop-shadow(3px 3px 3px gray);}
+</style>
+<title>css</title>
+</head>
+<body>
+<input type="number" value="100"><button>改变百分比</button>
+<div></div>
+
+<script src="../../../vendors/jquery-3.1.1.js"></script>
+<script>
+	var chtml = '<img src="../../image/4.jpg">';
+	var result = '';
+	for(var i=0; i<11; i++){
+		result += chtml
+	}
+	$('div').html(result);
+	
+	$("button").click(function(){
+		var percent = $("input").val();  
+		$("div img").each(function(){
+			var oldcss = $(this).css("-webkit-filter"); console.log(percent);
+			var newcss = oldcss.replace(/\(\d+\)/, '('+percent/100+')'); console.log(newcss);
+			$(this).css("-webkit-filter", newcss);			
+		});	
+
+	});
+</script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,61 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8"/>
+<meta name="format-detection" content="telephone=no">
+<meta name="viewport" content="width=device-width,initial-scale=1.0" >
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>HTML5移动端的消息提示层</title>
+<style>
+	*{margin: 0;padding: 0;-webkit-tap-highlight-color: transparent;-webkit-overflow-scrolling: touch;font-family: "Helvetica Neue",Helvetica,"songti",STHeiTi,sans-serif;font-size: 16px;}
+	.main{width: 332px;height: auto;margin: 100px auto;}
+	.input{width: 300px;padding: 10px 15px;border: 1px solid #ddd;border-radius: 4px;-webkit-appearance: none;}
+	.button{outline: none;-webkit-appearance: none;appearance: none;border: none;color: #fff;font-size: 18px;width: 300px;height: 46px;background: #189cfb;border-radius: 4px;margin-top: 30px;-webkit-transition: .3s;cursor: pointer;}
+	.button:active{background-color: #1170b4;}
+	.alert{min-width: 10px;max-width: 280px;position: fixed;bottom: 80px;background: rgba(0,0,0,0.6);border-radius: 6px;color: #eee;font-size: 16px;padding: 10px 15px;text-align: center;box-shadow: 0 1px 4px rgba(0,0,0,0.3);left: 50%;-webkit-transform: translate3d(-50%,0,0);-webkit-animation: alert 4s;}
+	@-webkit-keyframes alert{
+		0%{-webkit-transform: translate3d(-50%,0,0);opacity: 0;}
+		00%{-webkit-transform: translate3d(-50%,-30px,0);}
+		15%{-webkit-transform: translate3d(-50%,-25px,0);opacity: 1;}
+		100%{-webkit-transform: translate3d(-50%,-25px,0);}
+	}
+</style>
+</head>
+<body>
+	<div class="main">
+		<input type="search" class="input" placeholder="说说您此时的心情。。。">
+		<button class="button" id="btn">确定</button>
+	</div>
+	<script>
+		var btn = document.querySelector('#btn');
+		btn.onclick = function(){
+			var t = document.querySelector('input').value;
+			msg.alert(t);
+		};
+
+		var msg = {
+			alert:function(t){
+				var alt = document.querySelector('.alert');
+				if(alt){
+					// alt.parentNode.removeChild(alt); //移除原有alert
+					alt.innerHTML = t;
+					return;
+				}
+				var h = document.createElement('div');
+				h.innerHTML = t || '为什么不说话(〝-〞)';
+				h.setAttribute('class', 'alert');
+				document.querySelector('body').appendChild(h);
+				msg.fire(h);
+			},
+			fire:function(obj){  //动画结束之后删除提示层
+				var evt = ['webkitAnimationEnd', 'mozAnimationEnd', 'msAnimationEnd', 'oAnimationEnd', 'AnimationEnd'];
+				for(var i=0;i<evt.length;i++){
+					obj.addEventListener(evt[i], function(){
+						this.parentNode.removeChild(this);
+					});
+				}
+			}
+		};
+	</script>
+</body>
+</html>

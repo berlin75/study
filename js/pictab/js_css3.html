@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>js+css3轮播</title>
+<style type="text/css">
+*{ margin: 0; padding: 0; text-decoration: none;}
+body { padding: 20px;}
+#container { width: 600px; height: 200px; border: 3px solid #333; overflow: hidden; position: relative;}
+#list { height: 200px; position: absolute; z-index: 1;transition: all 1s;}
+#list ul li{width: 600px;list-style: none;float: left;}
+#list img { min-width: 100%;}
+#buttons { position: absolute; height: 10px; width: 100px; z-index: 2; bottom: 20px; left: 250px;}
+#buttons span { cursor: pointer; float: left; border: 1px solid #fff; width: 10px; height: 10px;
+		border-radius: 50%; background: #333; margin-right: 5px;}
+#buttons .on { background: orangered;}
+.arrow { cursor: pointer; display: none; line-height: 39px; text-align: center; font-size: 36px; 
+	font-weight: bold; width: 40px; height: 40px; position: absolute; z-index: 2; top: 80px; background-color: RGBA(0,0,0,.3); color: #fff;}
+.arrow:hover { background-color: RGBA(0,0,0,.7);}
+#container:hover .arrow { display: block;}
+#prev { left: 20px;}
+#next { right: 20px;}
+</style>
+</head>
+<body>
+<div id="container">
+	<div id="list" style="left:0; ">
+		<ul>
+			<li><img src="5.jpg" alt="3"/></li>
+			<li><img src="6.jpg" alt="2"/></li>
+			<li><img src="7.jpg" alt="4"/></li>
+			<li><img src="8.jpg" alt="5"/></li>
+			<li><img src="9.jpg" alt="5"/></li>
+		</ul>
+	</div><!-- 存放图片的div -->
+	<div id="buttons">
+		<span></span><span></span><span></span><span></span><span></span>
+	</div>
+	<a href="javascript:;" class="arrow" id="prev">&lt;</a>
+	<a href="javascript:;" class="arrow" id="next">&gt;</a>
+</div>
+
+<script>
+window.onload=function(){
+var container = document.getElementById('container');
+var list = document.getElementById('list');
+var ul = list.getElementsByTagName('ul')[0];
+var images = ul.getElementsByTagName('img');
+var buttons = document.getElementById('buttons').getElementsByTagName('span');
+var prev = document.getElementById('prev');
+var next = document.getElementById('next');
+var img = 600;
+var index = 1;
+ul.style.width = images.length * img + 'px';
+function setOut() {
+	for (var i = 0; i < buttons.length; i++) {
+		if (buttons[i].className == 'on') {
+			buttons[i].className = ''
+			break;
+		}
+	}
+	buttons[index - 1].className = 'on';
+}
+
+function animate(pare){
+	list.style.left= parseInt(list.style.left)+pare+'px';
+}
+
+next.onclick=function(){
+	if(list.style.left== -2400 + 'px'){
+		list.style.left=0 + 'px';
+	}
+	if(index==buttons.length){
+		index=1;
+	}else{
+		index++;
+	}
+	animate(-600);
+	setOut();
+}
+
+prev.onclick=function(){
+	if(list.style.left== 0 + 'px'){
+		list.style.left= -2400 + 'px';
+	}
+	if(index==1){
+		index=buttons.length;
+	}else{
+		index--;
+	}
+	animate(600);
+	setOut();
+}
+move();
+
+function move(){
+	for(var i=0;i<buttons.length;i++){
+		buttons[i].index=i;
+		buttons[i].onclick= function () {
+			for(var i=0;i<buttons.length;i++){
+				buttons[i].className="";
+			}
+			buttons[this.index].className="on";
+			list.style.left=-600*this.index+"px";
+		}	
+	}
+}
+
+paly();
+
+function paly(){
+	var timer=setInterval(function () {
+	next.onclick();
+	},2000)
+}
+}
+</script>
+</body>
+</html>

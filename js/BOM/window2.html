@@ -1,0 +1,31 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>window2</title>
+</head>
+
+<body>
+
+<input type="button" value="警告框" onclick="alert('警告框'+'\n'+'欢迎');"  />
+<br /><br />
+<input type="button" value="确认框" onclick="_confirm()"  />
+<br /><br />
+<input type="button" value="提示框" onclick="_prompt()"  />
+<br /><br />
+
+<script>
+function _confirm()
+{ var str=confirm("选择确认");
+  if(str) {alert("按得确认");}  
+  else {alert("按得取消");}
+}
+
+function _prompt()
+{ var name=prompt("请输入名字","Bill");
+  if(name!=null&&name!="")
+  {document.write("您好,"+name+"!")}
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>图片间距问题</title>
+<style>
+	*{margin:0; padding:0; border:0;}
+	#div1{ width:400px; height:100px; background:red; margin:50px auto;}
+	#div1 ul li{ list-style:none; float:left;  width:100px; height:100px;}
+	
+	#div2{ width:400px; height:100px; background:red; margin:50px auto; }
+	#div2 img{ width:100px; height:100px;}
+</style>
+<script>
+	window.onload=function()
+	{
+		var oImg11=document.getElementById("img11");
+		var oImg21=document.getElementById("img21");
+//		alert(oImg11.style.display);
+//		alert(oImg21.style.display);
+		}
+</script>
+</head>
+
+<body>
+<div id="div1"> 
+    <ul>
+        <li><img src="shuzi/1.jpg"  id="img11"/></li>
+        <li><img src="shuzi/2.jpg" /></li>
+        <li><img src="shuzi/3.jpg" /></li>
+        <li><img src="shuzi/4.jpg" /></li>
+    </ul>
+</div>
+
+<br />
+
+<div id="div2"> 
+    <img src="shuzi/1.jpg"  id="img21"/>
+    <img src="shuzi/2.jpg" />
+    <img src="shuzi/3.jpg" />
+    <img src="shuzi/4.jpg" />
+</div>
+
+<h1><br />
+</h1>
+<h3>消除div2中图片的间距：1.div2样式中中设置float:left; 2.div2的html代码除去空格换行； 3.div2中img的父元素即div2设置 font-size:0;</h3>
+<h1>&nbsp;</h1>
+<h1>消除图片左右上下的间距 </h1>
+<p>块级元素包含内联元素如图片文字等时，内联元素默认是和父级元素的baseline（基线）对齐的，而baseline又和父级元素底边有一定的距离（这个距离和font有关，不一定是5px），所以以上代码的效果中不同div之间有间隙，这是因为图片与父元素的底边有距离。说到baseline呢，其实它是vertical-align属性的默认值，vertical-align属性是设置元素的垂直排列的，用来定义行内元素的基线相对于该元素所在行的基线的垂直对齐，除了baseline对齐方式之外，还可以是sub | super | top | text-top | middle | bottom | text-bottom |inherit（任何的版本的Internet Explorer （包括 IE8）都不支持属性值 "inherit"）。
+</p>
+<p>知道了问题产生的原因，就好对症下药解决问题了，其实就是要消除baseline对齐方式产生的距离。
+  
+  所</p>
+<p>以方法一，很容易想到，把对齐方式改一下不就好了，于是设置img的vertical-align属性为bottom；</p>
+<p>方法二就是上文说的给父元素加上font-size:0的属性，既然这个距离和font有关，那么把字体大小设为0，总该没有距离了吧；  </p>
+<p>方法三可由方法二想到，既然为0可以，那把行高设的很小可不可以呢？经试验发现，本例图片大小为200px，设line-height不大于12就能够消除间隙了，鉴于这个距离一般是5px，所以可以把line-height设为5px左右；</p>
+<p> 另外一个间隙是多个img标签的左右间隙，是由于img标签是行内元素，而事实是当行内元素之间有“回车”、“tab”、“空格”时就会出现间隙。  </p>
+<p>所以方法就是上文提到的，去掉img标签之间所有的空格，如果又不想把所有连续的行内元素写到一行，可以多行注释，把空格回车什么的注释掉，就像下图这样；当连续的行内元素不是img时，也可以通过设置父元素的font-size为0来消除左右间隙。 </p>
+</body>
+</html>

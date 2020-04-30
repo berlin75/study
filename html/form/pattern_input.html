@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf8">
+<title>按照格式输入自动跳转</title>
+<style>
+.cha {
+float:left;
+overflow:hidden;
+}
+.tantdzuo {
+text-align:right;
+padding-right:20px;
+}
+.tantdzuok {
+padding-right:40px;
+}
+input{
+width: 50px; margin-right: 15px;
+}
+</style>
+</head>
+<body>
+ip输入自动跳转: 请输入数字查看效果
+<table style="line-height: 60px; margin-left: 30px;">
+	<tbody>
+	<tr class="tantr">
+		<td class="tantdzuo">IP:</td>
+		<td class="tantdzuok">
+			<input name="ipone" onkeyup="Inputjump(this);" type="text" placeholder=" ---" class="layui-input">
+			<input name="iptwo" onkeyup="Inputjump(this);" type="text" placeholder=" ---" class="layui-input">
+			<input name="ipthress" onkeyup="Inputjump(this);"  type="text" placeholder=" ---" class="layui-input">
+			<input name="ipfour" onkeyup="Inputjump(this);"  type="text" placeholder=" ---" class="layui-input">
+		</td>
+	</tr>
+	</tbody>
+</table>
+
+<script src="../../vendors/jquery-3.1.1.js"></script>
+<script>
+function Inputjump(ip) {
+	var input = ip.value;
+	var reg = /^[0-9]*$/;
+	if (!reg.test(input)) {
+        alert('请输入正确IP'); 
+		$(ip).val("").focus();
+		return;
+	}
+	if (input.length >= 3) {
+		if (input == $("[name='ipfour']").val()) {  
+			$(ip).blur();
+		}
+		$(ip).next().focus();
+	}
+};
+</script>
+
+</body>
+</html>

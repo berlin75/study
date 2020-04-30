@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>简易日历-选项卡的应用</title>
+<style type="text/css">
+	*{ margin:0px; padding:0px; border:none;}
+	#div0{ width:306px; height:508px; border:1px solid black;background:#C6F; margin:10px auto; }
+    #div0 div{ width:304px; height:100px; border:1px solid black; text-align:center;line-height:50px; }
+	ul{ width:306px; height:408px; }
+	li{list-style:none; float:left;text-align:center;border:1px solid black;width:100px; height:100px;line-height:50px; }
+	.active{ background:yellow; }
+</style>
+<script type="text/javascript">
+window.onload=function(){
+	var oDiv=document.getElementById("div0");
+	var oDiv1=oDiv.getElementsByTagName("div")[0];
+	var aLi=oDiv.getElementsByTagName("li");
+	var arr=[
+				"快过年了",
+				 "新年好",
+				 "3月了",
+				 "4月份了",
+				 "五月份好",
+				 "六月好",
+				 "七月好",
+				 "八月份",
+				 "九月好",
+				 "十月年好",
+				 "十一月份来了",
+				 "十二月份了",
+			 ];
+	for(var i=0;i<aLi.length;i++){
+		aLi[i].index=i;
+		aLi[i].onmouseover=function(){
+			for(var i=0;i<aLi.length;i++){
+				aLi[i].className="";
+			}
+			this.className="active";
+			oDiv1.innerHTML="<h2>"+(this.index+1)+"月</h2><p>"+arr[this.index]+"</p>"
+		}
+	}
+}
+</script>
+</head>
+
+<body>
+    <div id="div0">
+        <ul>
+            <li class="active"><h2>1</h2><p>Jan</p></li>
+            <li><h2>2</h2><p>February</p></li>
+            <li><h2>3</h2><p>March</p></li>
+            <li><h2>4</h2><p>April</p></li>
+            <li><h2>5</h2><p>May</p></li>
+            <li><h2>6</h2><p>June </p></li>
+            <li><h2>7</h2><p>July</p></li>
+            <li><h2>8</h2><p>August</p></li>
+            <li><h2>9</h2><p>September</p></li>
+            <li><h2>10</h2><p>October</p></li>
+            <li><h2>11</h2><p>November</p></li>
+            <li><h2>12</h2><p>December</p></li>         
+         </ul>
+         <div><h2>1月</h2><p>快过年了</p></div>
+    </div>
+</body>
+</html>

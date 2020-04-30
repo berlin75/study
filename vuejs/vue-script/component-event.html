@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>component-event</title>
+<script src="../../vendors/vue.min.js"></script>
+</head>
+<body>
+<div id="app">
+	<div id="counter-event-example">
+	  <button-counter v-on:increment="incrementTotal"></button-counter>
+    <span> + </span>
+	  <button-counter v-on:increment="incrementTotal"></button-counter>
+    <span> = {{ total }}</span>
+	</div>
+</div>
+
+<script>
+Vue.component('button-counter', {
+  template: '<button v-on:click="incrementHandler">{{ counter }}</button>',
+  data() {
+    return {counter: 0}
+  },
+  methods: {
+    incrementHandler: function () {
+      this.counter += 1
+      this.$emit('increment')
+    }
+  }
+})
+new Vue({
+  el: '#counter-event-example',
+  data: {
+    total: 0
+  },
+  methods: {
+    incrementTotal: function () {
+      this.total += 1
+    }
+  }
+})
+</script>
+</body>
+</html>

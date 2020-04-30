@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>syntaxhighlighter</title>
+<link type="text/css" rel="stylesheet" href="styles/shCore.css"/>
+<link type="text/css" rel="Stylesheet" href="styles/shThemeMidnight.css" />
+<style>
+.syntaxhighlighter{
+  font-size: 14px !important;
+  padding: 6px 0;
+}
+.syntaxhighlighter .gutter {
+  border: none!important;
+}
+</style>
+<!-- XRegExp is bundled with the final shCore.js during build -->
+<script src="scripts/XRegExp.js"></script> 
+<script src="scripts/shCore.js"></script>
+<script src="scripts/shBrushJScript.js"></script>
+<script src="scripts/shBrushXml.js"></script>
+<script>SyntaxHighlighter.all();</script>
+
+</head>
+<body>
+
+</pre><pre class="brush: html">
+class ProductRow extends React.Component {
+  render() {
+    const product = this.props.product;
+    const name = product.stocked ? product.name : <span style={{color: 'red'}}>{product.name}</span>;
+
+    return (
+      <tr>
+        <td>{name}</td>
+        <td>{product.price}</td>
+      </tr>
+    );
+  }
+}
+
+</pre><pre class="brush: js">
+class UserCard extends HTMLElement {
+  constructor() {
+    super();
+    // 自定义元素的this.attachShadow()方法开启 Shadow DOM,不希望用户能够看到user-card的内部代码,Web Component允许内部代码隐藏起来,这叫做Shadow DOM,即这部分DOM默认与外部DOM隔离,内部任何代码都无法影响外部。
+    // this.attachShadow()方法的参数{ mode: 'closed' },表示 Shadow DOM 是封闭的,不允许外部访问
+    var shadow = this.attachShadow( { mode: 'closed' } );
+    
+    var templateElem = document.getElementById('userCardTemplate');
+    var content = templateElem.content.cloneNode(true);
+    content.querySelector('img').setAttribute('src', this.getAttribute('image'));
+    content.querySelector('.container>.name').innerText = this.getAttribute('name');
+    content.querySelector('.container>.email').innerText = this.getAttribute('email');
+
+    shadow.appendChild(content);
+  }
+}
+// 使用浏览器原生的customElements.define()方法告诉浏览器user-card元素与这个类关联
+window.customElements.define('user-card', UserCard);
+
+</pre>
+
+</body>
+</html>

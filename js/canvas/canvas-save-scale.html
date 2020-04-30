@@ -1,0 +1,40 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>canvas 图形变换之保存状态缩放</title>
+<style>
+
+</style>
+</head>
+
+<body>
+<p>图形变换之保存状态缩放,红色缩放1倍，绿色2倍，context.strokeRect(10,10,50,50);</p>
+
+<canvas id="drawing" style="border:1px solid black">
+    <p>The canvas element is not supported!</p>
+</canvas>
+
+<script src="../../vendors/jquery-3.1.1.js"></script>
+<script>
+var drawing = document.getElementById('drawing');
+//确定浏览器支持<canvas>元素
+if(drawing.getContext){
+    var context = drawing.getContext('2d');
+    context.beginPath();
+    context.lineWidth = 3;
+    context.strokeRect(10,10,50,50);
+
+    var colorlist = ["red", "green"];
+    for(var i = 1; i <= 2; i++){
+      context.save();
+      context.strokeStyle = colorlist[i-1]; 
+      context.scale(i,i);
+      context.strokeRect(10,10,50,50);
+      context.restore();
+    }
+
+} 
+</script>
+</body>
+</html>

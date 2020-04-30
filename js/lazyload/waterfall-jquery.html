@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>瀑布流jquery</title>
+<style>
+*{margin:0;padding: 0;}
+body{min-height: 700px;}
+#main{position: relative;}
+.box{padding:15px 0 0 15px ;float: left;}
+.pic{border:1px solid #dddddd;}
+.pic img{width: 165px;}
+
+</style>
+</head>
+<body>
+    <div id="main">
+        <div class="box">
+            <div class="pic"><img src="../../image/l1.jpg"></div>
+        </div><div class="box">
+            <div class="pic"><img src="../../image/l2.jpg"></div>
+        </div> <div class="box">
+            <div class="pic"><img src="../../image/l3.jpg"></div>
+        </div> <div class="box">
+            <div class="pic"><img src="../../image/l4.jpg"></div>
+        </div> <div class="box">
+            <div class="pic"><img src="../../image/l5.jpg"></div>
+        </div> <div class="box">
+            <div class="pic"><img src="../../image/l6.jpg"></div>
+        </div> <div class="box">
+            <div class="pic"><img src="../../image/l7.jpg"></div>
+        </div> <div class="box">
+            <div class="pic"><img src="../../image/l8.jpg"></div>
+        </div> <div class="box">
+            <div class="pic"><img src="../../image/l9.jpg"></div>
+        </div> <div class="box">
+            <div class="pic"><img src="../../image/l10.jpg"></div>
+        </div> <div class="box">
+            <div class="pic"><img src="../../image/l11.jpg"></div>
+        </div> <div class="box">
+            <div class="pic"><img src="../../image/l12.jpg"></div>
+        </div> <div class="box">
+            <div class="pic"><img src="../../image/l13.jpg"></div>
+        </div> <div class="box">
+            <div class="pic"><img src="../../image/l14.jpg"></div>
+        </div>
+    </div>
+<script src="../../vendors/jquery-3.1.1.js"></script>
+<script>
+//当页面加载完毕
+$(window).on('load',function () {
+    waterFall();
+    
+    //2.滚动加载
+    $(window).on('scroll',function () {
+        if (checkWillLoad()){  //判断是否加载
+            var data = {
+                'dataImg': [
+                    {'img':'l1.jpg'},{'img':'l2.jpg'},{'img':'l3.jpg'},{'img':'l4.jpg'},{'img':'l5.jpg'},
+                    {'img':'l6.jpg'},{'img':'l7.jpg'},{'img':'l8.jpg'},{'img':'l9.jpg'},{'img':'l10.jpg'},
+                    {'img':'l11.jpg'},{'img':'l12.jpg'},{'img':'l13.jpg'},{'img':'l14.jpg'}
+                ]
+            };
+
+            //遍历创建盒子
+            $.each(data.dataImg,function (index,value){ 
+               //创建一个div标签 设置它的类为'box' 添加到'main'里面去
+               var newBox = $('<div>', {"class": 'box'}).appendTo($('#main'));
+               var newPic = $('<div>').addClass('pic').appendTo($(newBox));
+               //创建img  取出遍历的对象value的img属性对应的值
+               $('<img>').attr('src','../../image/'+$(value).attr('img')).appendTo($(newPic));
+            })
+            waterFall();
+        }
+    });
+});
+
+//实现瀑布流布局
+function waterFall () {
+    var allBox = $('#main > .box');    
+    var boxWidth = $(allBox).eq(0).outerWidth();   //取出其中一个盒子的宽度    
+    var screenWidth = $(window).width();           //取出屏幕的高度
+    var cols = Math.floor( screenWidth/boxWidth);  //求出列数
+    //父标签居中
+    $('#main').css({
+        'width':cols * boxWidth + 'px',
+        'margin':'0 auto'
+    });
+    //对子盒子定位
+    var heightArr = [];
+    //遍历
+    $.each(allBox,function (index,value) {
+        //取出单独盒子的高度
+        var boxHeight = $(value).outerHeight();
+        //判断是否第一行 //剩余的盒子要瀑布流布局
+        if(index < cols){
+            heightArr[index] = boxHeight;
+        }else{           
+            var minBoxHeight = Math.min.apply(null,heightArr);   //求出最矮的盒子高度
+            //取出最矮高度对应的索引  封装了js的这个方法
+            var minBoxIndex = $.inArray(minBoxHeight,heightArr);
+            //定位
+            $(value).css({
+                'position':'absolute',
+                'top':minBoxHeight + 'px',
+                'left':minBoxIndex * boxWidth + 'px'
+            });
+            
+            heightArr[minBoxIndex] += boxHeight;   //更新数组中最矮的高度
+        }
+    })  
+}
+
+//判断是否符合加载条件
+function checkWillLoad() {    
+    var lastBox = $('#main > div').last();          //直接取出最后一个盒子
+    //取出最后一个盒子高度的一半 + 头部偏离的位置
+    var lastBoxDis = $(lastBox).outerHeight() + $(lastBox).offset().top;    
+    var clientHeight = $(window).height();          //求出浏览器的高度   
+    var scrollTopHeight = $(window).scrollTop();    //求出页面偏离浏览器高度
+    return lastBoxDis <= clientHeight + scrollTopHeight;    
+}
+
+</script>
+</body>
+</html>

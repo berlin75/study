@@ -1,0 +1,35 @@
+{
+  "name": "koa-module",
+  "version": "1.0.0",
+  "description": "koa-module",
+  "repository": {
+    "type": "git",
+    "url": "https://path/to/url"
+  },
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "koa": "^2.4.1",
+    "koa-basic-auth": "^4.0.0",
+    "koa-body": "^4.1.0",
+    "koa-bodyparser": "^4.2.0",
+    "koa-ejs": "^4.2.0",
+    "koa-jwt": "^3.5.1",
+    "koa-logger": "^3.2.0",
+    "koa-router": "^7.3.0",
+    "koa-session": "^5.12.0",
+    "koa-static": "^5.0.0",
+    "mime": "^2.2.0",
+    "mysql": "^2.15.0",
+    "mysql2": "^1.5.1",
+    "mz": "^2.7.0",
+    "node-uuid": "^1.4.8",
+    "nunjucks": "^3.0.1",
+    "sequelize": "^5.8.11",
+    "ws": "^4.0.0"
+  }
+}

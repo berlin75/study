@@ -1,0 +1,43 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>canvas 图形变换之保存状态平移</title>
+<style>
+
+</style>
+</head>
+
+<body>
+<p>图形变换之保存状态平移，每次平移之前保存状态，确保始终以坐标原点为基准</p>
+
+<canvas id="drawing" style="border:1px solid black">
+    <p>The canvas element is not supported!</p>
+</canvas>
+
+<script src="../../vendors/jquery-3.1.1.js"></script>
+<script>
+var drawing = document.getElementById('drawing');
+//确定浏览器支持<canvas>元素
+if(drawing.getContext){
+    var context = drawing.getContext('2d');
+    context.beginPath();
+    context.fillStyle = "#00aaaa";
+    context.fillRect(0, 0, 100, 50);
+
+    context.save();
+    context.fillStyle = "red";
+    context.translate(50, 50);
+    context.fillRect(0, 0, 100, 50);
+    context.restore();
+
+    context.save();
+    context.fillStyle = "lightblue";
+    context.translate(100, 100);
+    context.fillRect(0, 0, 100, 50);
+    context.restore();
+
+} 
+</script>
+</body>
+</html>

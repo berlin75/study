@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>首页</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+<div style="margin-top:20px;color: black;font-size: 20px;line-height: 20px;text-align: center;";>
+    欢迎{{user.username}}&nbsp;&nbsp;{{user.email}}&nbsp;&nbsp;{{user.is_authenticated}}登录成功!
+    <br/>
+    <a href="/auth/home/">主页</a>
+    <a href="/auth/logout/">退出</a>
+</div>
+</body>
+</html>

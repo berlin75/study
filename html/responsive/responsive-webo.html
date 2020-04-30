@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Responsive Web Design</title>
+<style>
+	*{ margin:0; padding:0; font-size:100%;}
+	ul{ list-style:none;}
+	a{ text-decoration:none;}
+	
+	nav{ background:#333;}
+    nav li{ padding-right:10px;display:inline-block; text-align:center;}
+	nav li a{color:white; font-size:1.5em;}
+	nav li a:hover,#menuIcon:hover{ color:#ddd; }
+	#menuIcon{ display:none;  text-align:right;  padding:0 10px; 
+	           font-family: arial; text-decoration: none; border-bottom:1px solid #ccc;
+	           font-size:2em; font-weight:bold;color:white;}
+	
+	aside{ width:15%; float:left; }
+	aside ul{ padding-left:8%;}
+	aside li{ margin:10% auto; font-weight:bold; text-align:center;}
+	aside li a{ display:block;}
+	aside li a:hover{ background:#ddd;}
+	
+	
+	section{ width:70%; float:left;}
+	#subtitle2 div{ width:30%; height:180px; float:left; background:#ddd; margin:2% 1%;}
+	#subtitle4{ width:100%;}
+	#subtitle3{ clear:both;}
+	#subtitle1,#subtitle2,#subtitle3,#subtitle4,#subtitle5,#subtitle6{ margin:2% auto;}
+	
+	footer{ text-align:center; clear:both; background:#333;;}
+	
+	@media only screen and (max-width:650px) {
+		aside{ display:none;}
+		section{ width:100%; float:none; padding:5px; 
+		         box-sizing:border-box; 
+				 -webkit-box-sizing:border-box;
+				 -moz-box-sizing:border-box;}
+	}
+	
+	@media only screen and (max-width:520px) {
+		#menuIcon{ display:block;}
+		#dhul{ display:none;}
+		#dhul li{ display:block; text-align:left;}
+		#dhul li:hover{ background:#666;}
+    }
+	
+	@media only screen and (max-width:520px) {
+		#menuIcon{ display:block;}
+		#dhul{ display:none;}
+		#dhul li{ display:block; text-align:left;}
+		#dhul li:hover{ background:#666;}
+		
+		#subtitle2 div{ width:100%; height:70px; margin:5px auto; float:none;}
+    }
+</style>
+<script src="../../vendors/jquery-3.1.1.js"></script>
+<script>
+$(document).ready(function() {
+   $(function(){
+			$("#menuIcon,nav ul li").click(function(){
+				if ($("#menuIcon").is(":visible")) {
+				$("nav ul").toggle(300);
+				};
+			});
+			$( window ).resize(function() {
+				if (!$("nav ul").is(":visible")) {
+					$('nav ul').attr('style', function(i, style)
+						{
+						    return style.replace(/display[^;]+;?/g, '');
+						});
+				};
+			});
+}); 
+});
+
+</script>
+</head>
+
+<body>
+<nav>
+    <a href="#" id="menuIcon">Ξ</a>
+    <ul id="dhul"> 
+        <li><a href="javascript:;">Home</a></li>
+        <li><a href="javascript:;">Articles</a></li>
+        <li><a href="javascript:;">Gallery</a></li>
+        <li><a href="javascript:;">Forum</a></li>
+        <li><a href="javascript:;">About</a></li>
+    </ul>
+</nav>
+
+<aside>
+    <ul>
+        <li><a href="#subtitle1"><big>item1</big></a></li>
+        <li><a href="#subtitle2"><big>item2</big></a></li>
+        <li><a href="#subtitle3"><big>item3</big></a></li>
+        <li><a href="#subtitle4"><big>item4</big></a></li>
+        <li><a href="#subtitle5"><big>item5</big></a></li>
+        <li><a href="#subtitle5"><big>item6</big></a></li>
+    </ul>
+</aside>
+<section>
+    <article>
+        <h1>Sample Title</h1>
+        <h3 id="subtitle1">subtitle1</h3>
+        <p>对于“插入”选项卡上的库，在设计时都充分考虑了其中的项与文档整体外观的协调性。 您可以使用这些库来插入表格、页眉、页脚、列表、封面以及其他文档构建基块。 您创建的图片、图表或关系图也将与当前的文档外观协调一致。 在“开始”选项卡上，通过从快速样式库中为所选文本选择一种外观，您可以方便地更改文档中所选文本</p>
+    </article>
+    <article id="subtitle2">
+        <h3>subtitle2</h3>
+        <div>
+            #1调一致。 在“开始”选项卡上，通过从快速样式库中为所选文本选择一种外观，您可以方便地更改文档中所选文本的格式。
+        </div>
+        <div>
+            #2若要更改快速样式库中的可用外观，请使用“更改当前快速样式集”命令。主题库和快速样式库都提供了重置命令，因而您总是能够将文档外观还原为当前模板所包含的原始外观。
+        </div>
+        <div>
+            #3本格式。大多数控件都允许您选择是使用当前主题外观，还是使用某种直接指定的格式。若要更改文档的整体外观，请在“页面布局”选项卡上选择新的“主题”元素。
+        </div>
+    </article>
+    <article id="subtitle3">
+        <h3>subtitle3</h3>
+        <p>您可以使用这些库来插入表格、页眉、页脚、列表、封面以及其他文档构建基块。 您创建的图片、图表或关系图也将与当前的文档外观协调一致。 在“开始”选项卡上，通过从快速样式库中为所选文本选择一种外观，您可以方便地更改文档中所选文本的格式。您还可以使用“开始”选项卡上的其他控件来直接设置文本格式。大多数控件都允许您选择是使用当前主题外观，还是使用某种直接指定的格式。若要更改文档的整体外观，请在“页面布局”选项卡上选择新的“主题”元素。若要更改快速样式库中的可用外观，请使用“更改当前快速样式集”命令。主题库和快速样式库都提供了重置命令，因而您总是能够将文档外观还原为当前模板所包含的原始外观。对于“插入”选项卡上的库，在设计时都充分考虑了其中的项与文档整体外观的协调性。 您可以使用这些库来插入表格、页眉、页脚、列表、封面以及其他文档构建基块。</p><br />
+        <h3>subtitle4</h3><img src="2.jpg" alt="seaon" id="subtitle4"/>
+        <h3 id="subtitle5">subtitle5</h3>
+        <p>您创建的图片、图表或关系图也将与当前的文档外观协调一致。 在“开始”选项卡上，通过从快速样式库中为所选文本选择一种外观，您可以方便地更改文档中所选文本的格式。您还可以使用“开始”选项卡上的其他控件来直接设置文本格式。大多数控件都允许您选择是使用当前主题外观，还是使用某种直接指定的格式。若要更改文档的整体外观，请在“页面布局”选项卡上选择新的“主题”元素。若要更改快速样式库中的可用外观，请使用“更改当前快速样式集”命令。主题库和快速样式库都提供了重置命令，因而您总是能够将文档外观还原为当前模板所包含的原始外观。对于“插入”选项卡上的库，在设计时都充分考虑了其中的项与文档整体外观的协调性。 您可以使用这些库来插入表格、页眉、页脚、列表、封面以及其他文档构建基块。 您创建的图片、图表或关系图也将与当前的文档外观协调一致。</p>
+    </article>
+    <div>
+	输入：<input type="text"  /><br />
+    性别：<input type="radio" name="sex" value="male"  />男
+         <input type="radio" name="sex" value="female"  />女<br />
+    <input type="button" value="确定" />
+</div>
+
+</section>
+<footer id="subtitle5">
+    <ul>
+        <li><span style="font-family:Arial;">Copyright©2016All Rright Reserved</span></li>
+        <li><span style="font-family:Arial;">©2016All Rright Reserved</span></li>
+		<li><span style="font-family:Arial;">&copy2016All Rright Reserved</span></li>
+    </ul>
+</footer>
+</body>
+</html>

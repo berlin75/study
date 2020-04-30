@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf8">
+<title>流动的虚线框</title>
+<style>
+.dashed-box {
+width:500px;
+height:100px;
+border:2px solid #ccc;
+}
+.dashed-box:hover {
+width:504px;
+height:104px;
+overflow:hidden;
+position:relative;
+border:none;
+}
+.dashed-box:hover .dashed-top {
+width:2000px;
+height:0px;
+border-bottom:2px #ccc dashed;
+position:absolute;
+top:0;
+left:-1400px;
+}
+.dashed-box:hover .dashed-top {
+width:2000px;
+height:0px;
+border-bottom:2px #ccc dashed;
+position:absolute;
+top:0;
+left:-1400px;
+}
+.dashed-box:hover .dashed-left {
+width:0px;
+height:2000px;
+border-left:2px #ccc dashed;
+position:absolute;
+left:0;
+top:-1600px;
+}
+.dashed-box:hover .dashed-bottom {
+width:2000px;
+height:0px;
+border-bottom:2px #ccc dashed;
+position:absolute;
+left:0px;
+bottom:0;
+}
+.dashed-box:hover .dashed-right {
+width:0px;
+height:2000px;
+border-left:2px #ccc dashed;
+position:absolute;
+right:0;
+top:-1600px;
+}
+.dashed-box-content {
+padding:5px;
+}
+.dashed-box:hover .dashed-box-content {
+padding:7px;
+}
+
+</style>
+</head>
+<body>
+<div class="dashed-box">
+	<div class="dashed-top"></div>
+	<div class="dashed-left"></div>
+	<div class="dashed-right"></div>
+	<div class="dashed-bottom"></div>
+	<div class="dashed-box-content">
+		<p>鼠标移到这里看看效果</p>
+		<p>.dashed-box内部上下左右4个成线条的元素绝对定位,设置定时器使其移动</p>
+		<p>.dashed-box的overflow样式去掉即可看见运行原理</p>
+	</div>
+</div>
+<script src="../../vendors/jquery-3.1.1.js"></script>
+<script>
+	setInterval(function() {
+		var $left = $(".dashed-top").css("left");
+		var $top = $(".dashed-bottom").css("left");
+		$left = parseInt($left);
+		$top = parseInt($top);
+		if ($left < 0) {
+			$left += 2;
+		} else {
+			$left = -1400;
+		}
+
+		if ($top > -1000) {
+			$top -= 2;
+		} else {
+			$top = 0;
+		}
+		$(".dashed-top").css("left", $left + "px");
+		$(".dashed-right").css("top", $left + "px");
+		$(".dashed-bottom").css("left", $top + "px");
+		$(".dashed-left").css("top", $top + "px");
+	}, 60);
+</script>
+
+</body>
+</html>

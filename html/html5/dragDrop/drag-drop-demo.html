@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>HTML5拖放应用</title>
+<style>
+ul{ width:300px; height:200px; border:1px solid;}
+li{ border:1px solid; margin:5px; list-style:inside;}
+</style>
+</head>
+
+<body>
+<ul id="ul1"></ul>
+<ul id="ul2">
+    <li id="li1" draggable="true">list1</li>
+    <li id="li2" draggable="true">list2</li>
+    <li id="li3" draggable="true">list3</li>
+    <li id="li4" draggable="true">list4</li>
+    <li id="li5" draggable="true">list5</li>
+    <li id="li6" draggable="true">list6</li>
+</ul>
+
+<script>
+var ul1=document.getElementById('ul1');
+var ul2=document.getElementById('ul2');
+var lis=ul2.getElementsByTagName('li');
+
+for(var i=0; i<lis.length;i++){
+	lis[i].ondragstart=function(event){ event.dataTransfer.setData("Text",event.target.id);}
+	
+ul1.ondragover=function(event){event.preventDefault();}
+
+ul1.ondrop=function(event){
+	event.preventDefault();    
+	var data=event.dataTransfer.getData("Text"); 
+	event.target.appendChild(document.getElementById(data));
+};
+
+ul2.ondragover=function(event){event.preventDefault();}
+
+ul2.ondrop=function(event){
+	event.preventDefault();    
+	var data=event.dataTransfer.getData("Text"); 
+	event.target.appendChild(document.getElementById(data));
+};
+}
+</script>
+</body>
+</html>

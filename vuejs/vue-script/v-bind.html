@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">	
+<title>vuejs</title>
+<style> 
+  .graybg{background: gray; }
+  #list-1{color: red;}
+  #list-2{color: green;}
+</style>
+<script src="../../vendors/vue.min.js"></script>
+</head>
+<body>
+<div id="app">
+	<label for="i1">修改背景</label>
+	<input type="checkbox" id="i1" v-model="isgraybg">
+	<div v-bind:class="{'graybg': isgraybg}">绑定class属性,选中选框改变背景颜色</div>
+
+    <div v-bind:id="'list-' + id">绑定id属性</div>
+</div>
+<script>
+new Vue({
+  el: '#app',
+  data: {
+    isgraybg: false,
+    id: Math.random() > 0.5 ? 1 : 2
+  }
+})
+</script>
+</body>
+</html>

@@ -1,0 +1,108 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>window计时</title>
+<style type="text/css">
+</style> 
+<script type="text/javascript">
+window.onload=function()
+{
+	var oBtn1=document.getElementById("btn1");
+	var oTxt1=document.getElementById("txt1");
+	var oBtn2=document.getElementById("btn2");
+	var i=0;
+	oBtn1.onclick=function()
+	{
+		oTxt1.value="";
+		var timer=setInterval(function(){oTxt1.value=++i;},1000);
+		oBtn2.onclick=function()
+	    {
+		  clearInterval(timer);
+	    }
+	}
+/*********************************************************************/
+	var oBtn3=document.getElementById("btn3");
+	var oBtn4=document.getElementById("btn4");
+	var oTxt3=document.getElementById("txt3");
+	var oNum=document.getElementById("num");
+	oBtn3.onclick=function()
+	{
+		var n=oNum.value; 
+		if(n)
+		{  
+			oTxt3.value=oNum.value; 
+			var timer3=setInterval(function()
+			{  
+				--n; 
+				oTxt3.value=n; 
+				if(!n)
+				{
+					 clearInterval(timer3);
+					 alert("时间到！");
+				}
+			},1000);
+		}
+		oBtn4.onclick=function()
+	    {
+		  clearInterval(timer3);
+	    }
+	}
+/*********************************************************************/
+
+	var oBtn5=document.getElementById("btn5");
+	var oTxt5=document.getElementById("txt5");
+	var oBtn6=document.getElementById("btn6");
+	var m=0;
+	var timer5=null;
+//	oBtn5.onclick=function()
+//	{
+//		count();
+//	}
+//	 oBtn5.onclick=function()
+//	    {
+//		  clearInterval(timer5);
+//	    }
+//	function count()
+//	{
+//		oTxt5.value=m++;
+//		clearInterval(timer5);
+//		timer5=setTimeout(count(),1000);
+//	}
+	oBtn5.onclick=function()
+	{timeCount();}
+	oBtn6.onclick=function()
+	{timeStop();}
+	
+	function timeCount()
+	{
+		oTxt5.value=m++;
+		timer5=setTimeout(timeCount(),1000);
+	}
+	function timeStop()
+	{
+		setTimeout("oTxt5.value=0",0);
+		clearTimeout(timer5);
+	}
+}
+</script>
+</head>
+<body>
+<input type="button" value="开始计时" id="btn1"  />
+<input type="text" id="txt1"  />
+<input type="button" value="结束计时" id="btn2"  />
+<br /><hr /><br />
+
+
+倒计时间（秒）：<input type="text" id="num"/>          <br /><br />
+<input type="button" value="开始倒计时" id="btn3"  />
+<input type="text" id="txt3"  />
+<input type="button" value="停止倒计时" id="btn4"  />
+<br /><hr /><br />
+
+<p>setTimeout自调函数</p>
+<input type="button" value="开始计时" id="btn5"  />
+<input type="text" id="txt5"  />
+<input type="button" value="结束计时" id="btn6"  />
+</body>
+</html>

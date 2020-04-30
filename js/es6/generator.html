@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>通过 Generator 函数逐行读取文本文件</title>
+</head>
+<body>
+
+<script>
+/* 通过 Generator 函数逐行读取文本文件*/
+
+function* numbers() {
+  let file = new FileReader("text.txt");
+  try {
+    while(!file.eof) {
+      yield parseInt(file.readLine(), 10);
+    }
+  } finally {
+    file.close();
+  }
+}
+
+var num = numbers();
+num.next();
+</script>
+</body>
+</html>

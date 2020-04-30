@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>ejs for loop</title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+  	<% if(titles){ %>
+	    <ul>
+	    	<% for(var i = 0; i < titles.length; i++){ %>
+	    		<li><%= titles[i]['name'] %> : <%= titles[i]['url'] %></li>
+	    	<% } %>
+	    </ul>
+    <% } %>
+  </body>
+</html>

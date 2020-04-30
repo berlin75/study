@@ -1,0 +1,123 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>content属性和伪类选择器</title>
+<style>
+.container{float: left;}
+
+/*scss预处理css
+.valid { border-color: #429032; box-shadow: inset 5px 0 0 #429032;}
+.invalid { border-color: #D61D1D; box-shadow: inset 5px 0 0 #D61D1D;}
+.form-group { width: 32rem; padding: 1rem; border: 1px solid transparent; &:hover { border-color: #eee; transition: border .2s; } label { display: block; font-weight: normal; } input, textarea { display: block; width: 100%; line-height: 2rem; padding: .5rem .5rem .5rem 1rem; border: 1px solid #ccc; outline: none; &:valid { @extend .valid; } &:invalid { @extend .invalid; } }}*/
+
+::selection{color: yellow;background: rgba(29,163,98,1);}
+::-moz-selection{color: yellow;background: rgba(29,163,98,1);}
+
+.form-group {margin-bottom: 1rem;}
+.form-group:not(.choose) input{width: 20rem;line-height: 1.5rem;text-indent: 6px;}
+.form-group:not(.choose) label{display: block;}
+
+.form-group input[name=name]:invalid {color: red;border-color: red;box-shadow: inset 5px 0 0 red;}
+.form-group input[name=name]:valid {color: green;border-color: green;box-shadow: inset 5px 0 0 green;}
+
+.form-group input[type=email]:invalid {color: red;border-color: red;box-shadow: inset 5px 0 0 red;}
+.form-group input[type=email]:valid {color: green;border-color: green;box-shadow: inset 5px 0 0 green;}
+
+.form-group input:read-only{ background-color: silver;}
+
+.form-group textarea:required{background: yellow;}
+.form-group textarea:optional{background: pink;}
+
+.form-group input[name=range]:out-of-range{border:2px solid red;}
+.form-group input[name=range]:in-range{border:2px solid green;}
+
+.choose input:checked + span{color: purple;}
+
+</style>
+</head>
+<body>
+
+<div class="container"> 
+	<div class="row" style="margin-top: 2rem;"> 
+		<form> 
+			<p>鼠标选中文本测试::selection选择器，显示color/background/cursor/outline</p>
+			<div class="form-group"> 
+				<label>valid-pattern</label> 
+				<input type="text" name="name" placeholder="请输入3-6个字母或数字的名称" pattern="[A-z0-9]{3,6}"> 
+			</div> 
+			<div class="form-group"> 
+				<label>valid-email-required</label> 
+				<input type="email" required placeholder="请输入邮箱"> 
+			</div> 
+			<div class="form-group"> 
+				<label>range</label> 
+				<input type="number" name="range" placeholder="请输入年龄" min="18" max="120" value="20"> 
+			</div> 
+			<div class="form-group"> 
+				<label>readonly</label> 
+				<input type="text" readonly value="readonly"> 
+			</div> 
+			<div class="form-group"> 
+				<label>required</label> 
+				<textarea required cols="40"></textarea> 
+			</div> 
+			<div class="form-group"> 
+				<label>optional</label> 
+				<textarea  cols="40"></textarea> 
+			</div>
+			<div class="form-group"> 
+				<label>select</label> 
+				<select name="optional">
+					<option value="1">电影</option>
+					<option value="2">小说</option>
+					<option value="3">游戏</option>
+				</select> 
+			</div> 
+			<div class="form-group choose">
+				<p>性别
+					<label><input type="radio" checked="checked" value="male" name="gender" /><span>Male</span></label>
+					<label><input type="radio" value="female" name="gender" /><span>Female</span></label>
+				</p>
+				<p>交通工具
+					<label><input type="checkbox" checked="checked" value="Bike" /><span>bike</span></label>
+					<label><input type="checkbox" value="Car" /><span>car</label>
+				</p>		
+			</div>			
+		</form> 
+	</div> 
+</div>
+
+<style>
+.demo { width: 32rem; padding: 1rem; border: 1px solid transparent;}
+.demo:hover { border-color: #eee; transition: border .2s; } 
+.demo label { display: block;} 
+.demo input, .demo textarea { display: block; width: 100%; line-height: 2rem; padding: .5rem .5rem .5rem 1rem; border: 1px solid #ccc; outline: none;}
+.demo input:valid,.demo textarea:valid {border-color: #429032; box-shadow: inset 5px 0 0 #429032;} 
+.demo input:invalid,.demo textarea:invalid { border-color: #D61D1D; box-shadow: inset 5px 0 0 #D61D1D; } 
+</style>
+
+<div class="container"> 
+	<div class="row" style="margin-top: 2rem;"> 
+		<form> 
+			<div class="demo"> 
+				<label>name</label> 
+				<input type="text" required placeholder="请输入名称"> 
+			</div> 
+			<div class="demo"> 
+				<label>email</label> 
+				<input type="email" required placeholder="请输入邮箱"> 
+			</div> 
+			<div class="demo"> 
+				<label>homepage</label> 
+				<input type="url" placeholder="请输入博客url"> 
+			</div> 
+			<div class="demo"> 
+				<label>Comments</label> 
+				<textarea required></textarea> 
+			</div> 
+		</form> 
+	</div> 
+</div>
+</body>
+</html>

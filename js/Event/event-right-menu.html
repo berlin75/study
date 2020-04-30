@@ -1,0 +1,47 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>event默认行为弹出自定义右键菜单</title>
+<style type="text/css">
+*{ margin:0px; padding:0px; }
+body{ height:1800px;}
+#div1{ width:80px; height:100px; background:#ccc; position:absolute; display:none;}
+ul,li{ list-style:none;}
+</style> 
+<script type="text/javascript">
+document.oncontextmenu=function(ev)
+{
+	var oEvent=ev||event;
+	function getPos(ev)
+	{
+		var scrollTop=document.documentElement.scrollTop||document.body.scrollTop;
+		var scrollLeft=document.documentElement.scrollLeft||document.body.scrollLeft;
+		return {x:ev.clientX+scrollLeft,y:ev.clientY+scrollTop}
+	}
+	var oDiv=document.getElementById("div1");
+	oDiv.style.left=getPos(oEvent).x+"px";
+	oDiv.style.top=getPos(oEvent).y+"px";
+	oDiv.style.display="block";
+	return false;
+}
+document.onclick=function()
+{
+	var oDiv=document.getElementById("div1");
+	oDiv.style.display="none";
+}
+</script>
+</head>
+
+<body>
+<div id="div1">
+	<ul>
+        <li>11111111</li>
+        <li>11111111</li>
+        <li>11111111</li>
+        <li>11111111</li>
+        <li>11111111</li>
+    </ul>
+</div>
+</body>
+</html>

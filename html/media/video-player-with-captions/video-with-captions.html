@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en-IE">
+<head>
+<meta charset="utf-8" />
+<title>Video Player with Subtitles - Mozilla</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<style>
+html, body {margin:0;padding:0;width:100%;height:100%;}
+body {color:#666;background-color:#ccc;}
+a {color:#0095dd;text-decoration:none;}
+a:hover, a:focus {color:#2255aa;text-decoration:underline;}
+figure {position:relative;max-width:64rem;width:100%;max-height:30.875rem;height:100%;margin:1.25rem auto;padding:1.051%;background-color:#666;}
+figcaption {display:block;font-size:0.75rem;color:#fff;}
+video {width:100%;}
+
+/* WebVTT cues */
+::cue { color:#ccc;}
+::cue(v[voice='Test']) {color:#fff;background:#0095dd;}
+
+/* fullscreen */
+html:-ms-fullscreen {width:100%;}
+:-webkit-full-screen {background-color:transparent;}
+
+@media screen and (max-width:1024px) {
+	figure {padding-left:0;padding-right:0;height:auto;	}
+}
+@media screen and (max-width:42.5em) {
+	figcaption {text-align:center;margin-top:0.5rem;	}
+}
+</style>
+</head>
+<body>
+	<figure id="videoContainer">
+		<video id="video" controls autoplay preload="metadata">
+			<source src="video/sintel-short.mp4" type="video/mp4">
+			<source src="video/sintel-short.webm" type="video/webm">
+			<track label="English" kind="subtitles" srclang="en" src="subtitles/vtt/sintel-en.vtt" default>
+			<track label="Deutsch" kind="subtitles" srclang="de" src="subtitles/vtt/sintel-de.vtt">
+			<track label="Español" kind="subtitles" srclang="es" src="subtitles/vtt/sintel-es.vtt">
+			抱歉,您的浏览器不支持内嵌视频,不过不用担心,你可以 <a href="video/sintel-short.mp4">下载</a> 并用你喜欢的播放器观看!
+		</video>
+		<figcaption>&copy; copyright Blender Foundation | <a href="http://www.sintel.org">www.sintel.org</a></figcaption>
+	</figure>
+</body>
+</html>

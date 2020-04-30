@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>切换幻灯片-函数传参改变img的src属性</title>
+<style>
+  #div1 ,img{ width:700px; height:467px; }
+  input{width:75px;}
+</style>
+<script>
+ function show(luj,wenb){
+	var oimg=document.getElementById("img1");
+	oimg.src=luj;
+	oimg.alt=wenb;
+ }
+</script>
+</head>
+
+<body>
+  <input  type="button" value="点击图片1" onclick="show('img/1.jpg','img1')"/>
+  <input  type="button" value="点击图片2" onclick="show('img/2.jpg','img2')"/>
+  <input  type="button" value="点击图片3" onclick="show('img/3.jpg','img3')"/>
+    <input  type="button" value="图片1" onmouseover="show('img/1.jpg','img1')"/>
+  <input  type="button" value="图片2" onmouseover="show('img/2.jpg','img2')"/>
+  <input  type="button" value="图片3" onmouseover="show('img/3.jpg','img3')"/>
+  <div id="div1">
+  <img id="img1" src="img/1.jpg" alt="img1" />
+  </div>
+  
+</body>
+</html>

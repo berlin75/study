@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>css 技巧</title>
+<style>
+/*CSS3：全屏背景*/
+/*html {
+background: url('../../image/2.jpg') no-repeat center center fixed;
+-webkit-background-size: cover;
+-moz-background-size: cover;
+-o-background-size: cover;
+background-size: cover;
+}*/
+
+/*禁止选择文本*/
+body {
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+/*网页顶部盒阴影*/
+body:before {
+	content: "";
+	position: fixed;
+	top: -10px;
+	left: 0;
+	width: 100%;
+	height: 10px;
+	-webkit-box-shadow: 0px 0px 10px rgba(0,0,0,.8);
+	-moz-box-shadow: 0px 0px 10px rgba(0,0,0,.8);
+	box-shadow: 0px 0px 10px rgba(0,0,0,.8);
+	z-index: 100;
+}
+
+/*锚链接伪类*/
+a:link { color: blue; }
+a:visited { color: purple; }
+a:hover { color: red; }
+a:active { color: yellow; }
+
+/*在可点击的项目上强制手型*/
+a[href], input[type='submit'], input[type='image'], label[for], select, button, .pointer {
+	cursor: pointer;
+}
+
+/*CSS3 鲜艳的输入（边框渐变）*/
+input[type=text], textarea {
+	-webkit-transition: all 0.30s ease-in-out;
+	-moz-transition: all 0.30s ease-in-out;
+	-ms-transition: all 0.30s ease-in-out;
+	-o-transition: all 0.30s ease-in-out;
+	outline: none;
+	padding: 3px 0px 3px 3px;
+	margin: 5px 1px 3px 0px;
+	border: 1px solid #ddd;
+}
+input[type=text]:focus, textarea:focus {
+	box-shadow: 0 0 5px rgba(81, 203, 238, 1);
+	padding: 3px 0px 3px 3px;
+	margin: 5px 1px 3px 0px;
+	border: 1px solid rgba(81, 203, 238, 1);
+}
+
+/*在可打印的网页中显示URLs*/
+@media print {
+	a:after {
+		content: " [" attr(href) "] ";
+	}
+}
+
+/*深灰色的点击渐变按钮*/
+.graybtn {
+-moz-box-shadow:inset 0px 1px 0px 0px #ffffff;
+-webkit-box-shadow:inset 0px 1px 0px 0px #ffffff;
+box-shadow:inset 0px 1px 0px 0px #ffffff;
+background:-webkit-gradient( linear, left top, left bottombottom, color-stop(0.05, #ffffff), color-stop(1, #d1d1d1) );
+background:-moz-linear-gradient( center top, #ffffff 5%, #d1d1d1 100% );
+filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#d1d1d1');
+background-color:#ffffff;
+-moz-border-radius:6px;
+-webkit-border-radius:6px;
+border-radius:6px;
+border:1px solid #dcdcdc;
+display:inline-block;
+color:#777777;
+font-family:arial;
+font-size:15px;
+font-weight:bold;
+padding:6px 24px;
+text-decoration:none;
+text-shadow:1px 1px 0px #ffffff;
+}
+.graybtn:hover {
+background:-webkit-gradient( linear, left top, left bottombottom, color-stop(0.05, #d1d1d1), color-stop(1, #ffffff) );
+background:-moz-linear-gradient( center top, #d1d1d1 5%, #ffffff 100% );
+filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#d1d1d1', endColorstr='#ffffff');
+background-color:#d1d1d1;
+}
+.graybtn:active {
+position:relative;
+top:1px;
+}
+
+
+/*三角形列表项目符号*/
+ul {
+	margin: 0.75em 0;
+	padding: 0 1em;
+	list-style: none;
+}
+li:before {
+	content: "";
+	border-color: transparent #111;
+	border-style: solid;
+	border-width: 0.35em 0 0.35em 0.45em;
+	display: block;
+	height: 0;
+	width: 0;
+	left: -1em;
+	top: 0.9em;
+	position: relative;
+}
+
+/*内部CSS3 盒阴影*/
+#mydiv1 {
+	-moz-box-shadow: inset 2px 0 4px #000;
+	-webkit-box-shadow: inset 2px 0 4px #000;
+	box-shadow: inset 2px 0 4px #000;
+	padding: 0.5rem;
+}
+
+/*外部CSS3 盒阴影*/
+#mydiv2 {
+-webkit-box-shadow: 0 2px 2px -2px rgba(0, 0, 0, 0.52);
+-moz-box-shadow: 0 2px 2px -2px rgba(0, 0, 0, 0.52);
+box-shadow: 0 2px 2px -2px rgba(0, 0, 0, 0.52);
+}
+
+/*@font-face模板*/
+@font-face {
+font-family: 'MyWebFont';
+src: url('webfont.eot'); /* IE9 Compat Modes */
+src: url('webfont.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+url('webfont.woff') format('woff'), /* Modern Browsers */
+url('webfont.ttf') format('truetype'), /* Safari, Android, iOS */
+url('webfont.svg#svgFontName') format('svg'); /* Legacy iOS */
+}
+body {
+font-family: 'MyWebFont', Arial, sans-serif;
+}
+
+/*CSS3渐变模板*/
+#colorbox {
+background: #629721;
+background-image: -webkit-gradient(linear, left top, left bottombottom, from(#83b842), to(#629721));
+background-image: -webkit-linear-gradient(top, #83b842, #629721);
+background-image: -moz-linear-gradient(top, #83b842, #629721);
+background-image: -ms-linear-gradient(top, #83b842, #629721);
+background-image: -o-linear-gradient(top, #83b842, #629721);
+background-image: linear-gradient(top, #83b842, #629721);
+}
+
+/*通用媒体查询*/
+
+/* Smartphones (portrait and landscape) ----------- */
+@media only screen
+and (min-device-width : 320px) and (max-device-width : 480px) {
+/* Styles */
+}
+/* Smartphones (landscape) ----------- */
+@media only screen and (min-width : 321px) {
+/* Styles */
+}
+/* Smartphones (portrait) ----------- */
+@media only screen and (max-width : 320px) {
+/* Styles */
+}
+/* iPads (portrait and landscape) ----------- */
+@media only screen and (min-device-width : 768px) and (max-device-width : 1024px) {
+/* Styles */
+}
+/* iPads (landscape) ----------- */
+@media only screen and (min-device-width : 768px) and (max-device-width : 1024px) and (orientation : landscape) {
+/* Styles */
+}
+/* iPads (portrait) ----------- */
+@media only screen and (min-device-width : 768px) and (max-device-width : 1024px) and (orientation : portrait) {
+/* Styles */
+}
+/* Desktops and laptops ----------- */
+@media only screen and (min-width : 1224px) {
+/* Styles */
+}
+/* Large screens ----------- */
+@media only screen and (min-width : 1824px) {
+/* Styles */
+}
+/* iPhone 4 ----------- */
+@media only screen and (-webkit-min-device-pixel-ratio:1.5), only screen and (min-device-pixel-ratio:1.5) {
+/* Styles */
+}
+
+/*跨浏览器透明*/
+.transparent {
+filter: alpha(opacity=50); /* internet explorer */
+-khtml-opacity: 0.5; /* khtml, old safari */
+-moz-opacity: 0.5; /* mozilla, netscape */
+opacity: 0.5; /* fx, safari, opera */
+}
+
+/*图片边框偏光*/
+img.polaroid {
+background:#000; /*Change this to a background image or remove*/
+border:solid #fff;
+border-width:6px 6px 20px 6px;
+box-shadow:1px 1px 5px #333; /* Standard blur at 5px. Increase for more depth */
+-webkit-box-shadow:1px 1px 5px #333;
+-moz-box-shadow:1px 1px 5px #333;
+height:200px; /*Set to height of your image or desired div*/
+width:200px; /*Set to width of your image or desired div*/
+}
+
+/*制造模糊文本*/
+.blurry-text {
+color: transparent;
+text-shadow: 0 0 5px rgba(0,0,0,0.5);
+}
+
+/*用CSS动画实现省略号动画*/
+.loading:after {
+overflow: hidden;
+display: inline-block;
+vertical-align: bottombottom;
+animation: ellipsis 2s infinite;
+content: "6"; /* ascii code for the ellipsis character */
+}
+@keyframes ellipsis {
+from {
+width: 2px;
+}
+to {
+width: 15px;
+}
+}
+
+/*包裹长文本 文本过长自动换行不会穿破盒子*/
+pre {
+whitewhite-space: pre-line;
+word-wrap: break-word;
+}
+
+/*背景渐变色*/
+.bg {
+background-image: linear-gradient(#5187c4, #1c2f45);
+background-size: auto 200%;
+background-position: 0 100%;
+transition: background-position 0.5s;
+}
+.bg:hover {
+background-position: 0 0;
+}
+
+/*输入框改变placeholder字体颜色*/
+::-webkit-input-placeholder {color: red;}
+:-moz-placeholder {color: red;}
+::-moz-placeholder{color: red;}
+:-ms-input-placeholder {color: red;}
+
+</style>
+</head>
+<body>
+<p class="loading">页面加载中</p>
+
+<p class="blurry-text">模糊文本</p>
+
+<p class="bg">背景渐变色</p>
+
+<p>css 技巧测试</p>
+<input type="text" name="input" value="鲜艳的输入">
+<input type="text" name="input" placeholder="改变placeholder字体颜色">
+<button class="graybtn">深灰色的点击渐变按钮</button>
+
+<p><a href="http://www.baidu.com">锚链接伪类</a></p>
+
+<div><img src="../../image/l12.jpg" class="polaroid"></div>
+
+<div id="colorbox">
+	<p>CSS3渐变模板</p>
+	<p>CSS3渐变模板</p>
+</div>
+
+<ul>
+	<li>apple</li>
+	<li>banana</li>
+</ul>
+
+
+<ul contenteditable="true">
+	<li>内容可编辑（contenteditable="true"） </li>
+	<li>内容可编辑（contenteditable="true"）</li>
+	<li>内容可编辑（contenteditable="true"）</li>
+</ul>
+
+<div id="mydiv1">
+	<p>盒子测试</p>
+	<p>盒子测试</p>
+</div>
+
+<div id="mydiv2">
+	<p>盒子测试</p>
+	<p>盒子测试</p>
+</div>
+</body>
+</html>

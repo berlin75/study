@@ -1,0 +1,77 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>touch_picture</title>
+<style>
+#outbox{ width:400px; height:245px; position:relative; border:3px solid blue; overflow:hidden;}
+#box{ width:2400px; height:245px; position:absolute; left:-400px;}
+#box img{ width:400px; height:245px; float:left}
+
+</style>
+<script>
+window.onload=function()
+{
+  var outbox=document.getElementById('outbox');
+  var box=document.getElementById('box');
+  var a=0;
+  function run(){
+	 a++;
+	 if(a==5){a=1;}
+	 var l=-400*a;
+	 box.style.left=l+'px';
+  }
+  var timer=setInterval(run,2000);
+  
+  outbox.addEventListener('touchstart',start,false);
+  var startX,dl;
+  function start(e){
+	  var e=e||window.event;
+	  clearInterval(timer);
+	  startX=e.changedTouches[0].clientX;
+	  dl=parseInt(box.style.left);
+  }
+  
+  outbox.addEventListener('touchmove',move,false);
+  var moveX,newX
+  function move(c){
+	  var c=c||window.event;
+	  moveX=c.changedTouches[0].clientX;
+	  newX=moveX-startX;
+	  box.style.left=dl+newX+'px';
+  }
+  
+  outbox.addEventListener('touchend',end,false);
+  
+  function end(ev){
+	timer=setInterval(run,2000);  
+//	if(newX<0){
+//		a++;
+//		box.style.left=-400*a+'px';
+//		
+//	}
+//	if(newX>0){
+//		
+//	}
+  }
+}
+</script>
+</head>
+
+<body>
+<div id="outbox">
+	<div id="box">
+    	<img src="14.jpg" />
+        <img src="11.jpg" />
+        <img src="12.jpg" />
+        <img src="13.jpg" />
+        <img src="14.jpg" />
+        <img src="11.jpg" />
+    </div>
+</div>
+
+<br />
+<a href="http://www.chuanke.com/v1253098-155057-603567.html">百度传课视频</a>
+</body>
+</html>

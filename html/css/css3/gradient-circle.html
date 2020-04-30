@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>css3 圆饼效果 linear-gradient</title>
+<style>
+div{width: 100px;height: 100px;margin: 0 auto;border-radius: 50%;background-color: yellowgreen;color: #655;
+	background-image:linear-gradient(to right, transparent 50%, currentColor 0);}
+div:before{content: '';
+		   display: block;
+		   margin-left: 50%;
+		   height: 100%;
+		   border-radius: 0 100% 100% 0/50%;
+	       background-color: inherit;
+	       transform-origin: left;
+	       animation: spin 3s linear infinite,bg 6s step-end infinite;
+}
+@keyframes spin{
+	to{transform: rotate(.5turn);}
+}
+@keyframes bg{
+	50%{background: currentColor;}
+}
+
+section{width: 100px;height: 100px;margin: 3rem auto;border-radius: 50%;background-color: yellowgreen;}
+section:before{content: '';
+		   display: block;
+		   margin-left: 50%;
+		   height: 100%;
+		   border-top-right-radius: 100% 50%;
+	       background-color: inherit;
+	       transform-origin: left;
+}
+</style>
+</head>
+<body>
+<div></div>
+
+<section>内容</section>
+<pre>
+border-radius: 0 100% 100% 0/50%;
+border-top-left-radius: 0px 50%;
+border-top-right-radius: 100% 50%;
+border-bottom-right-radius: 100% 50%;
+border-bottom-left-radius: 0px 50%;
+
+</pre>
+</body>
+</html>

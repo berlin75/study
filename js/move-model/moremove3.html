@@ -1,0 +1,85 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>多元素同时运动基础</title>
+<style type="text/css">
+	*{ margin:0px; padding:0px; }
+	#bk{ width:100px; height:100px; background:pink; margin-bottom:10px;}
+	#bg{ width:100px; height:100px; background:red;}
+	
+</style>
+<script type="text/javascript">
+window.onload=function()
+{
+	var oBk=document.getElementById("bk");
+	var oBg=document.getElementById("bg");
+		oBk.onmouseover=function()
+		{
+			startmove(this,500);
+		}
+		oBk.onmouseout=function()
+		{
+			startmove(this,100);
+		}
+//		oBg.onmouseover=function()
+//		{
+//			startmove2(this,500);
+//		}
+//		oBg.onmouseout=function()
+//		{
+//			startmove2(this,100);
+//		}
+}
+
+function getStyle(obj,name)
+{
+	if(obj.currentStyle) {return obj.currentStyle[name];}
+	else {return getComputedStyle(obj,false)[name];}	
+}
+var timer=null;	
+function startmove(obj,iTarget)
+{
+	clearInterval(timer);
+	timer=setInterval(function()
+	{
+		var speed=(iTarget-parseInt(getStyle(obj,"width")))/7;
+		speed=speed>0?Math.ceil(speed):Math.floor(speed);
+		if(iTarget==parseInt(getStyle(obj,"width")))
+		{
+			clearInterval(timer);
+		}
+		else
+		{
+			obj.style.width=parseInt(getStyle(obj,"width"))+speed+"px";
+		}
+	},30);
+}
+//var timer2=null;
+//function startmove2(obj,iTarget)
+//{
+//	clearInterval(timer2);
+//	timer2=setInterval(function()
+//	{
+//		var speed=(iTarget-obj.offsetHeight)/7;
+//		speed=speed>0?Math.ceil(speed):Math.floor(speed);
+//		if(iTarget==obj.offsetHeight)
+//		{
+//			clearInterval(timer2);
+//		}
+//		else
+//		{
+//			obj.style.height=obj.offsetHeight+speed+"px";
+//		}
+//	},30);
+//}
+	
+</script>
+</head>
+
+<body>
+<div id="bk"></div>
+<div id="bg"></div>
+<div style="width:1px;height:500px; background:black; position:absolute; left:500px; top:0px;"></div>
+</body>
+</html>

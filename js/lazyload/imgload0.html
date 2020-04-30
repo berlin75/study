@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>图片懒加载</title>
+</head>
+<body>
+<h1>图片懒加载、延迟加载:延迟加载图片或触发、符合某些条件时才加载某些图片</h1>
+
+<button>加载图片</button>
+<img src="#" alt="测试" data-src= "../../image/8.jpg" width="100" height="100">
+<script>
+	var oBtn = document.getElementsByTagName('button')[0];
+	var oImg = document.images[0];  
+	oBtn.onclick = function(){
+	  oImg.src = "../image/7.gif";
+	 if(oImg.dataset){
+		oImg.src=oImg.dataset.src;  
+	  }else{
+		oImg.src=oImg.getAttribute("data-src");
+	  }
+	}
+</script> 
+
+<pre>
+1）屏幕可视窗口大小：
+原生方法：window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight 
+            标准浏览器及IE9+ || 标准浏览器及低版本IE标准模式          || 低版本混杂模式
+jQuery方法：$(window).height()
+
+2）浏览器窗口顶部与文档顶部之间的距离,也就是滚动条滚动的距离：
+原生方法：window.pagYoffset || document.documentElement.scrollTop || document.body.scrollTop
+		 ——IE9+及标准浏览器 || 兼容ie低版本的标准模式             || 兼容混杂模式
+jQuery方法：$(document).scrollTop();
+
+3）获取元素的尺寸：
+$(o).width() = o.style.width;
+$(o).innerWidth() = o.style.width+o.style.padding;
+$(o).outerWidth() = o.offsetWidth = o.style.width+o.style.padding+o.style.border;
+$(o).outerWidth(true) = o.style.width+o.style.padding+o.style.border+o.style.margin;
+
+要使用原生的style.xxx方法获取属性,这个元素必须已经有内嵌的样式
+如果原先是通过外部或内部样式表定义css样式,必须使用o.currentStyle[xxx] || document.defaultView.getComputedStyle(0)[xxx]来获取样式值
+
+4）获取元素的位置信息：
+1）返回元素相对于文档document顶部、左边的距离；
+jQuery：
+	$(o).offset().top   元素距离文档顶的距离
+	$(o).offset().left  元素距离文档左边缘的距离
+
+原生：getoffsetTop()
+
+返回元素相对于第一个定位的父元素的偏移距离,注意与上面偏移距的区别；
+jQuery：position()返回一个对象,$(o).position().left = style.left,$(o).position().top = style.top；
+
+<script>
+(function imgsize(imgobj) {
+    imgobj.addEventListener("load", function () {
+    	this.style.width = this.style.height = '80px';
+
+        var z = this.naturalWidth;
+        var m = this.naturalHeight;
+        console.log("原始大小:" + z + "X" + m);   //654*654
+
+        var imgw = this.width;
+        var imgH = this.height;
+        console.log("属性显示:" + imgw + "X" + imgH); //80*80
+
+        var imgwidth = this.style.width;
+        var imgheight = this.style.height;
+        console.log("样式显示:" + imgwidth + "X" + imgheight); //80px*80px
+    })
+})(document.images[0])
+</script>
+</body>
+</html>

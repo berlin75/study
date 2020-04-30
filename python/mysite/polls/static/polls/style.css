@@ -1,0 +1,12 @@
+body {
+    background: white url("images/bg.jpg") no-repeat;
+}
+
+ul,li{
+  list-style: none
+}
+
+li a {
+    color: red;
+    text-decoration: none
+}

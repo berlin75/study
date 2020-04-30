@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>弹球</title>
+<style>
+  
+html, body {
+  margin: 0;
+}
+
+html {
+  font-family: sans-serif;
+  height: 100%;
+}
+
+body {
+  overflow: hidden;
+  height: inherit;
+}
+
+h1 {
+  font-size: 2rem;
+  letter-spacing: -1px;
+  position: absolute;
+  margin: 0;
+  top: -4px;
+  right: 5px;
+
+  color: transparent;
+  text-shadow: 0 0 4px white;
+} 
+</style>
+</head>
+
+<body>
+<h1>弹球</h1>
+<canvas></canvas>
+
+<script>
+/*
+本文通过编写一个弹球demo来展示JavaScript中对象的重要性。小球会在屏幕上弹跳,当它们碰到彼此时会变色
+
+这个实例将会利用Canvas API来在屏幕上画小球,还会用到requestAnimationFrame API来使整个画面动起来
+这个过程中会展示一些技巧,比如小球从墙上反弹,检查它们是否撞到了对方 (也就是碰撞检测)。
+
+*/
+
+const BALLS_NUM = 50;
+
+// 设定画布
+const canvas = document.querySelector('canvas');
+const ctx = canvas.getContext('2d');
+
+// 设定画布长宽
+const width = canvas.width = window.innerWidth;
+const height = canvas.height = window.innerHeight;
+
+// 生成随机数的函数
+function random(min,max) {
+  return Math.floor(Math.random()*(max-min)) + min;
+}
+
+// 生成随机颜色的函数
+function randomColor() {
+  return 'rgb(' + random(0, 255) + ', ' + random(0, 255) + ', ' + random(0, 255) + ')';
+}
+
+// 为程序中的小球建立模型
+// 项目中会有很多小球在屏幕上跳来跳去。因此这些小球会以相同的方式运作,从而可以通过一个对象实例化它们
+function Ball(x, y, velX, velY, color, size) {
+  this.x = x;
+  this.y = y;
+  this.velX = velX;
+  this.velY = velY;
+  this.color = color;
+  this.size = size;
+}
+
+/*
+这个构造器中定义了每个小球的属性：
+xy坐标 —— 小球在屏幕上最开始时候的坐标,范围从0(左上角)到浏览器视口的宽和高(右下角)
+水平和竖直速度(velX和velY):会给每个小球一个水平和竖直速度,这些球开始运动时候每过一帧都会给小球的x和y坐标加一次这些值。
+color —— 每一个小球会有自己的颜色。
+size —— 小球的半径,以像素为单位。
+*/
+
+// 画小球,首先给小球的原型加上draw()方法：
+// 最后两个参数是开始和结束,也就是圆弧对应的夹角,单位以弧度表示,这里用的是0和2*PI即360度,0和1*PI则只会出现一个半圆即180度
+Ball.prototype.draw = function() {
+  ctx.beginPath();
+  ctx.fillStyle = this.color;
+  ctx.arc(this.x, this.y, this.size, 0, 2 * Math.PI);
+  ctx.fill();
+}
+
+// 更新小球的数据
+// 可以在一个固定位置画出小球,但是他们不会动,需要一个函数来更新一些东西,给小球原型加上一个update()方法。
+Ball.prototype.update = function() {
+  // 检查小球是否碰到画布的边缘。如果碰到则反转小球的速度方向来让它向反方向移动
+  if ((this.x + this.size) >= width)  this.velX = -(this.velX);
+  if ((this.x - this.size) <= 0)      this.velX = -(this.velX);
+  if ((this.y + this.size) >= height) this.velY = -(this.velY);
+  if ((this.y - this.size) <= 0)      this.velY = -(this.velY);
+
+  // 将velX的值加到x的坐标上,将velY的值加到y坐标上,每次调用这个方法的时候小球就移动这么多
+  this.x += this.velX;
+  this.y += this.velY;
+}
+
+// 给项目加上碰撞检测,从而小球会知道他们正在撞击其他的球,碰撞之后变成相同的颜色
+Ball.prototype.collisionDetect = function() {
+  for (var j = 0; j < balls.length; j++) {
+    if (!(this === balls[j])) {
+      var dx = this.x - balls[j].x;
+      var dy = this.y - balls[j].y;
+      var distance = Math.sqrt(dx * dx + dy * dy);
+
+      if (distance < this.size + balls[j].size) {
+        balls[j].color = this.color = randomColor();
+      }
+    }
+  }
+}
+
+// 测试
+// var testBall = new Ball(50, 100, 4, 4, 'blue', 10);
+// testBall.draw()
+
+// 画布上加上一些小球,并且让他们动起来,先存储小球
+var balls = [];  
+
+// 几乎所有的动画效果都会用到一个运动循环,也就是每一帧都自动更新视图,这是大多数游戏或者其他类似项目的基础
+function loop() {
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.25)';
+  ctx.fillRect(0, 0, width, height);
+
+  while (balls.length < BALLS_NUM) {
+    var ball = new Ball( random(0,width), random(0,height), random(-7,7), random(-7,7), randomColor(), random(10,20));
+    balls.push(ball);
+  }
+
+  for (var i = 0; i < balls.length; i++) {
+    balls[i].draw();
+    balls[i].update();
+    balls[i].collisionDetect();
+  }
+
+  // 递归
+  requestAnimationFrame(loop);
+}
+
+loop();
+
+/*
+添加一个由玩家控制的“恶魔圈”的互动,如果恶魔圈抓到弹球会把它会吃掉,添加一个计分器来记录剩下的球数
+
+1、首先创建一个通用Shape()对象,然后由它派生出弹球和恶魔圈
+首先改变现有的构造器Ball()使其成为构造器Shape()并添加一个新的构造器Ball()
+构造器Shape()应该像构造器Ball()那样的方式定义x, y, velX和velY属性,但不包括color和size 
+还应该定义一个叫exists的新属性,用来标记球是否存在于程序中没有被恶魔圈吃掉,这应该是一个布尔型
+构造器Ball()应该从构造器Shape()继承x, y, velX, velY和exists属性。
+构造器Ball()还应该像最初的构造器Ball()那样定义一个color和一个size属性。
+请记得给构造器Ball()的prototype和constructor属性设置适当的值。
+draw(),update()和collisionDetect()方法定义应保持不变。
+
+还需要为new Ball() { ... }构造器添加第五个参数—— exists,且值为true
+
+2、定义恶魔圈EvilCircle()
+游戏中只会有一个恶魔圈,但仍然要使用继承自Shape()的构造器来定义它,这是为让你得到锻炼。 
+之后可能会想再添加一个由另一个玩家控制的恶魔圈到程序中,或有几个电脑控制的恶魔圈
+
+EvilCircle()构造器应该从Shape()继承x, y和exists ,velX和velY要恒为20
+可以这样做：Shape.call(this, x, y, 20, 20, exists);
+
+它还应该定义自己的一些属性,如：
+color —— 'white'
+size —— 10
+再次记得给EvilCircle()构造器的传递的参数中定义你继承的属性,并且给prototype和constructor属性设置适当的值。
+
+3、定义EvilCircle()以下四个方法：
+draw()方法和Ball()'s draw()方法有着相同的目的：它们把都是对象的实例画在画布上,它们实现的方式差不多,所以可以先复制Ball.prototype.draw的定义。
+然后需要做下面的修改：
+不想让恶魔圈是实心的,而是一个圈或环。可以通过将fillStyle和fill()修改为strokeStyle和stroke()而实现这个效果。
+让这个圈更厚一点, 从而更好地辨认它。可以在调用beginPath()的后面给lineWidth赋值实现这个效果
+
+checkBounds()方法和 Ball()的update()函数做相同的事情: 查看恶魔圈是否将要超出屏幕的边界, 并且禁止它超出。 同样可以直接复制Ball.prototype.update的定义, 但是需要做一些修改：
+删除最后两行 — 不想要在每一帧中自动的更新恶魔圈的位置,因为会以下面所述的方式移动它。
+在if()语句中如果检测为真(即小恶魔圈超出边界),不需要更新velX/velY；取而代之的是,想要修改x/y的值,使恶魔圈稍微地弹回屏幕。增加或减去(根据实际判断)恶魔圈size的值即可实现。
+
+setControls()
+这个方法将会一个onkeydown的事件监听器给window对象,这样当特定的键盘按键按下的时候就可以移动恶魔圈。下面的代码块应该放在方法的定义里：
+
+window.onkeydown = e => {
+  if (e.key === 'a') {
+    this.x -= this.velX;
+  } else if (e.key === 'd') {
+    this.x += this.velX;
+  } else if (e.key === 'w') {
+    this.y -= this.velY;
+  } else if (e.key === 's') {
+    this.y += this.velY;
+  }
+};
+所以当一个按键按下时, 事件对象的key属性就可以请求到按下的按键值。如果是代码中那四个指定的键值之一, 那么恶魔圈将会左右上下的移动。
+
+collisionDetect()方法和Ball()'s collisionDetect()方法很相似,所以可以从它那里复制过来作为新方法的基础。但有一些不同之处：
+在外层的if语句中,不需要再检验循环到的小球是否是当前collisionDetect()所在的对象,因为它不再是一个小球了,它是恶魔圈,而是检查小球是否存在,如果小球不存在说明它已经被恶魔圈吃掉了,那么就不需要再检测它是否与恶魔圈碰撞了。
+在里层的if语句中,不再需要在碰撞被检测到时去改变对象的颜色,而是需要将与恶魔圈发生碰撞的小球设置为不存在(再次提问,你觉得你该怎么实现呢？)。
+
+4、把恶魔圈带到程序中
+现在已经定义了恶魔圈,需要让它显示到屏幕中,所以需要修改一下loop()函数：
+首先创建一个新的恶魔圈的对象实例,同时指定必需的参数,然后调用它的setControls()方法。 这两件事只需要做一次,不需要放在loop的循环中。
+在每一次遍历小球并调用draw(),update()和collisionDetect()函数的地方进行修改, 使这些函数只会在小球存在(exists)时被调用。
+在每个loop的循环中调用恶魔圈实例的方法 draw(), checkBounds(), 和collisionDetect() 。
+
+5、计算得分
+为了计算得分,需按照以下步骤：
+在HTML文件中添加一个p元素到h1元素的下面,其中包含文本 "还剩多少个球"。
+在CSS文件中,添加: p { position: absolute; margin: 0; top: 35px; right: 5px; color: #aaa;}
+在js文件中,做下列的修改：
+创建一个变量存储段落的引用。
+以同样的方式在屏幕上显示小球的数量。
+增加球数并在每次将球添加到屏幕里时显示更新的球数量。
+减少球数并在每次恶魔吃球时显示更新的球数(因为被吃掉的球不存在了)
+*/  
+
+</script>
+
+</body>
+</html>

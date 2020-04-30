@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>查看详细信息</title>
+</head>
+<body>
+<h2>{{user.username}}主页</h2>
+{% for product in products %}
+<p>
+    名称：{{ product.name }}<br/>
+    详细信息：{{product.detail}}<br/>
+    价格：{{product.price}}<br/>
+</p>
+{% endfor %}
+{{ message }}
+{% if canAdd %} <!--判断有没有添加权限 -->
+<a href="/auth/addProduct/">添加商品</a>
+{% endif %}
+</body>
+</html>

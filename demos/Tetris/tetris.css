@@ -1,0 +1,42 @@
+.wrap{ 
+	width:430px;
+  padding-top:10px;
+	margin:0 auto;
+} 
+
+#tetris{
+	background:#000;
+	float:left;
+}
+
+.rightBlock{
+  margin-left:5px;
+  width:122px;
+	float:right;
+}
+
+.rightBlock input{
+  width:100px;
+}
+
+.rightBlock #autoPlay{
+  width:20px;
+  margin-left:20px;
+}
+
+.rightBlock #audioOpen{
+  width:20px;
+  margin-left:20px;
+}
+
+#block{
+	background:#000;
+}
+
+#playControl{
+  margin:30px;
+  padding:20px;
+  cursor:pointer;
+  background:green;
+  color:white;
+}

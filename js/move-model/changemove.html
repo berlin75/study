@@ -1,0 +1,65 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>缓冲基础</title>
+<style type="text/css">
+	*{ margin:0px; padding:0px; }
+	#div1{ width:100px; height:100px; background:pink; position:absolute; left:0px; top:50px; }
+</style>
+<script type="text/javascript">
+window.onload=function()
+{
+	var oBtn1=document.getElementById("btn1");
+	var oBtn2=document.getElementById("btn2");
+	oBtn1.onclick=function()
+	{
+		startmove(300);
+	}
+	oBtn2.onclick=function()
+	{
+		startmove(0);
+	}
+	
+}
+	
+	var timer=null;
+	function startmove(iTarget)
+	{
+		var oDiv=document.getElementById("div1");
+		clearInterval(timer);
+		timer=setInterval(function()
+		{
+			var speed=(iTarget-oDiv.offsetLeft)/10;
+			if(speed>0)
+			{
+			 	speed=Math.ceil(speed);    //向上取整
+			}
+			else
+			{
+				speed=Math.floor(speed);    //向下取整
+			}
+			if(oDiv.offsetLeft==iTarget)
+			{
+				clearInterval(timer);
+			}
+			else
+			{
+				oDiv.style.left=oDiv.offsetLeft+speed+"px";
+				document.title=oDiv.offsetLeft+" "+speed+"px";
+			}
+		},30);
+	}
+</script>
+</head>
+
+<body>
+<p>缓冲运动基础：当速度小于1时，元素的offsetLeft为带小数的px，计算机会自动忽略小数而停止运动，所以当速度为小数是应该用Math的方法取整数。</p>
+
+<input  id="btn1" type="button"  value="开始" />
+<input  id="btn2" type="button"  value="结束" />
+<div id="div1">
+
+</div>
+</body>
+</html>

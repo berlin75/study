@@ -1,0 +1,68 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>css3</title>
+<style>
+#div0{ width:500px; height:500px; padding:5px; color:#900; float:left;
+     background:url(flower.gif) center; 
+     background-color: rgba(0,153,255,0.8); background-clip:content-box;
+     background-size:100% 90%; background-repeat:no-repeat; 
+	 background-origin:content-box;
+     border:3px solid rgba(0,153,255,0.8);
+     border-radius:10%; box-shadow:2px 2px 3px #888888 inset;}
+	 
+p{ font-size:2em; font-weight:bold; text-shadow:3px 3px 5px rgba(0,0,0,1);}
+#div1{ width:20em; height:1em; border:1px solid white; margin:2px;
+       overflow:hidden; }
+
+#div33{ width:50px; height:800px; float:left; margin:5px;}
+#div33 div{ width:30px; height:30px; margin:5px auto; background:red; border:1px solid; 
+            border-radius:50%; box-shadow:2px 2px 3px #888888; transform:rotate(45deg);}
+#div44{ width:50px; height:800px; float:left; margin:5px;}
+#div44 div{ width:30px; height:30px; margin:5px auto; background:red; border:1px solid; 
+            border-radius:0%; box-shadow:3px 3px 3px #888888; transform:rotate(45deg);}
+
+#div2{ float:left; width:300px; height:800px; border:1px solid;
+       border-radius:10%; padding:22px;}
+#div2 div{ width:100px; height:100px; border:1px solid; background:rgba(255,255,0,1);}
+#div22{ transform:translate(80px,10px);}
+#div23{ transform:rotate(45deg);}
+#div24{ transform:scale(1,2);}
+#div25{ transform:skew(10deg,20deg);}
+#div26{ transform:matrix(0.866,0.5,-0.5,0.866,0,0);}
+</style>
+</head>
+
+<body>
+<div id="div0">
+    <p>文本阴影效果</p>
+    <div id="div1">
+        <mark>This is some long text that will not fit in the box</mark>
+    </div>
+    
+mark标签高亮显示 <br />
+text-shadow:3px 3px 5px rgba(0,0,0,1); <br />
+background-size:63px 100px; <br />
+background-origin:content-box; <br />
+border-radius:10%; <br />
+box-shadow:2px 2px 3px #888888;<br />
+</div>
+
+<div id="div33">
+<div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+</div>
+<div id="div44">
+<div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+</div>
+
+<div id="div2">
+	<div id="div21">transform:</div>
+    <div id="div22">translate(80px,10px)移动</div>
+    <div id="div23">rotate(45deg)旋转</div>
+    <div id="div24">scale(1,2)缩放</div>
+    <div id="div25">skew(10deg,10deg)翻转</div>
+    <div id="div26">matrix组合2D方法,六个值的矩阵</div>
+</div>
+</body>
+</html>

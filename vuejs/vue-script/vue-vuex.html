@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>vue-vuex</title>
+<style>
+	button{margin-left: 1rem;}
+</style>
+<script src="../../vendors/vue.min.js"></script>
+<script src="../../vendors/vuex.js"></script>
+</head>
+<body>
+<div id="app1">
+	<p>{{ counter }} <button @click="inc"> + </button><button @click="dec"> - </button></p>
+</div>
+<hr/>
+<div id="app2">
+	<p>{{ counter }} <button @click="inc"> + </button><button @click="dec"> - </button></p>
+</div>
+
+<script>
+new Vue({
+	el: "#app1",
+	data: {
+		counter: 0
+	},
+	methods: {
+		inc(){ this.counter++},
+		dec(){ this.counter--}
+	}
+})
+
+const store = new Vuex.Store({
+	state: {
+		counter: 0
+	},
+	mutations: {
+		inc: state => state.counter++,
+		dec: state => state.counter--
+	},
+	actions: {
+		inc (context) {
+	      	context.commit('inc')
+	    },
+	    dec ({commit}) {
+	    	commit('dec')
+	    }
+	}
+})
+
+new Vue({
+	el: '#app2',
+	computed: {
+		counter(){ 
+			return store.state.counter 
+		}
+	},
+	methods: {
+		// inc: () => store.commit('inc'),
+		// dec: () => store.commit('dec')
+		inc: () => store.dispatch('inc'),
+		dec: () => store.dispatch('dec')
+	}
+})
+</script>
+</body>
+</html>

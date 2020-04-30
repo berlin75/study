@@ -1,0 +1,62 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>无标题文档</title>
+</head>
+
+<body>
+<div>
+    <video id="video1" width="300" height="300" controls='controls' loop autoplay>
+      <source src="lover-KATE.ogg" type="video/ogg" />
+      <source src="lover-KATE.mp4" type="video/mp4" />
+      <source src="lover-KATE.webm" type="video/webm" />
+      your browser does not support the video tag!
+    </video>
+    <p>
+        <button type="button" onclick='playPause()'>播放/暂停</button>
+        <button type="button" onclick="tobig()">大</button>
+        <button type="button" onclick="normal()">中</button>
+        <button type="button" onclick="tosmall()">小</button>
+        <button type="button" onclick="load()">下载</button>
+    </p>
+</div>
+
+<p>video元素同时加入不同格式的视频,供浏览器选择</p>
+<h3>video标签的属性</h3>
+<p>height/width/src</p>
+<p>controls属性显示播放控件</p>
+<p>autoplay属性自动播放</p>
+<p>loop属性自动重复播放</p>
+<p>paused/ended/volume/erro</p>
+
+<h3>video标签的方法</h3>
+<p>play()</p>
+<p>pause()</p>
+<p>load()</p>
+<p>canPlayType</p>
+
+<h3>video标签的事件</h3>
+<p>play</p>
+<p>pause</p>
+<p>waiting</p>
+<p>progress</p>
+<p>ended</p>
+<p>error</p>
+
+<script>
+var video1=document.getElementById('video1');
+
+function playPause(){
+if(video1.paused){ video1.play();}
+else{ video1.pause();}	
+}
+
+function tobig(){ video1.width=500; video1.height=500;}
+
+function normal(){ video1.width=300;video1.height=300;}
+
+function tosmall(){ video1.width=200;video1.height=200;}
+</script>
+</body>
+</html>

@@ -1,0 +1,43 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>开关按钮</title>
+<style>
+.chooseBtn {display: none;}
+.choose-label {box-shadow: #ccc 0px 0px 0px 1px;width: 40px;height: 20px;display: inline-block;border-radius: 20px;position: relative;background-color: #bdbdbd;overflow: hidden;}
+.choose-label:before {content: '';position: absolute;left: 0;width: 20px;height: 20px;display: inline-block;border-radius: 20px;background-color: #fff;z-index: 20;-webkit-transition: all 0.5s;transition: all 0.5s;}
+.chooseBtn:checked + label.choose-label:before {left: 20px;}
+.chooseBtn:checked + label.choose-label {background-color: #51ccee;}
+
+
+/*样式二*/
+#toggle-button{ display: none; }
+.button-label{position: relative;display: inline-block;width: 80px;height: 30px;background-color: #ccc;border: 2px solid #ccc;border-radius: 30px;overflow: hidden;}
+.button-label .circle{position: absolute;top: 0;left: 0;width: 30px;height: 30px;border-radius: 50%;background: #fff;left: 0;transition: all 0.3s;}
+.button-label .on,.button-label .off{line-height: 30px;color: #fff;font-size: 18px;}
+.button-label .on {display: none; text-indent: 10px;}
+.button-label .off {display: inline-block; text-indent: 45px;}
+#toggle-button:checked + label.button-label .circle{left: 50px;}
+#toggle-button:checked + label.button-label .on{ display: inline-block; }
+#toggle-button:checked + label.button-label .off{ display: none; }
+#toggle-button:checked + label.button-label{background-color: #1e992a;}
+</style>
+</head>
+
+<body>
+<p>样式一</p>
+<input type="checkbox" name="sex" id="male" class="chooseBtn" />
+<label for="male" class="choose-label"></label>
+
+<br/><br/><br/><p>样式二</p>
+<div class="toggle-button-wrapper">
+    <input type="checkbox" id="toggle-button" name="switch" checked="checked">
+    <label for="toggle-button" class="button-label">
+        <span class="circle"></span>
+        <span class="on">ON</span>
+        <span class="off">OFF</span>
+    </label>
+</div>
+</body>
+</html>

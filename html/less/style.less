@@ -1,0 +1,30 @@
+@primarycolor: #FF7F50;
+@color:#800080;
+@baseFontSize: 16px;
+@width:1.0;
+
+.container{
+  	h1{
+       	font-size: @baseFontSize * 2;
+       	color:@primarycolor;
+  	}
+  	h3{
+		color: @color;
+	}
+  	p{
+       	font-size: 25px;
+       	color:~"green";
+       	width: percentage(@width);
+  	}
+
+ 	.myclass{
+	  	h1{
+	        font-size: 25px;
+	        color:#E45456;
+	  	}
+	  	p{
+	       font-size: 25px;
+	       color:#3C7949;
+	  	}
+ 	}
+}

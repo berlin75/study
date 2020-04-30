@@ -1,0 +1,90 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>时间显示函数记录点击时间</title>
+<style>
+</style>
+<script>
+window.onload=function()
+{
+	setInterval(function()
+	{
+		var oDiv1=document.getElementById("div1");
+		var oTime=new Date();
+		var weekday=new Array(7);
+		weekday[0]="星期日";
+		weekday[1]="星期一";
+		weekday[2]="星期二";
+		weekday[3]="星期三";
+		weekday[4]="星期四";
+		weekday[5]="星期五";
+		weekday[6]="星期六";
+		var sTime=oTime.getFullYear()+"年"+(oTime.getMonth()+1)+"月"+oTime.getDate()+"日"+weekday[oTime.getDay()]+"\n"+oTime.getHours()+"点"+oTime.getMinutes()+"分"+oTime.getSeconds()+"秒" ;
+		oDiv1.innerHTML=sTime;
+	},1000);
+/******************************************************************************************/
+	setInterval(nowAmPm,1000);
+	function nowAmPm()
+	{
+		var oDiv2=document.getElementById("div2");
+		var oTime=new Date();
+		var h=0;
+		if(oTime.getHours()<6)
+		{
+			 h="凌晨"+oTime.getHours();
+		}
+		else if(oTime.getHours()>=6&&oTime.getHours()<=12)
+		{
+			 h="上午"+oTime.getHours();
+		}
+		else if
+		(oTime.getHours()>12&&oTime.getHours()<18)
+		{
+			 h="下午"+(oTime.getHours()%12);
+		}
+		else if
+		(oTime.getHours()>18&&oTime.getHours()<23)
+		{
+			 h="晚上"+(oTime.getHours()%12);
+		}
+		var weekDay=["星期日","星期一","星期二","星期三","星期四","星期五","星期六"];
+		var sTime=oTime.getFullYear()+"年"+(oTime.getMonth()+1)+"月"+oTime.getDate()+"日"+weekDay[oTime.getDay()]+"\n"+h+"点"+oTime.getMinutes()+"分"+oTime.getSeconds()+"秒";
+		
+		oDiv2.innerHTML=sTime;
+	}
+/******************************************************************************************/
+
+function todou(n)
+  {
+	  if(n<10)
+	  {
+		  return  "0"+n;	    //将个位数变为0开头的两位数，并改为字符串
+	  }
+	  else
+	  {
+		  return  ""+n;
+	  }
+  }
+  
+	var obtn=document.getElementById("btn1");
+	var odiv=document.getElementById("div3");
+	obtn.onclick=function()
+	{
+		var odate=new Date();
+		var str=todou(odate.getFullYear())+todou((odate.getMonth()+1))+todou(odate.getDate())+todou(odate.getHours())+todou(odate.getMinutes())+todou(odate.getSeconds());
+		odiv.innerHTML=str;
+	}
+	
+}
+</script>
+</head>
+
+<body>
+<div id="div1" style="margin:10px; height:50px;"></div>
+<div id="div2" style="margin:10px;  height:50px;"></div>
+<br />
+<input id="btn1" type="button" value="记录点击时的时间" />
+<div id="div3"></div>
+</body>
+</html>

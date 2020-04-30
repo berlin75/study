@@ -1,0 +1,52 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>事件冒泡、捕获及终止</title>
+<style>
+*{ margin:0; padding:0;}
+#one {
+	background-color: #F00;
+	height: 300px;
+	width: 300px;
+}
+#two {
+	background-color: #0F0;
+	height: 200px;
+	width: 200px;
+}
+#three {
+	background-color: #00F;
+	height: 100px;
+	width: 100px;
+}
+</style>
+<script>
+</script>
+</head>
+
+<body>
+<h2>addEventListener第三个参数为TRUE表示事件的捕获，false表示事件冒泡.</h2>
+<h2>终止传播的2种方法： 1.oEvent.cancelBubble=true;
+  2.oEvent.stopPropagation(); </h2>
+<h2>事件捕获是为了逐层确定事件的来源，事件冒泡是为了逐级响应事件</h2><br />
+<div id="one">
+  <div id="two">
+    <div id="three">此处显示  id "one" 的内容</div>
+  </div>
+</div>
+</body>
+<script>
+ var useCapture=false;
+ var one=document.getElementById("one");
+ var two=document.getElementById("two");
+ var three=document.getElementById("three");
+ one.addEventListener("click",function(event){alert("one");},useCapture);
+ var oEvent=window.event||event;
+// oEvent.cancelBubble=true;
+ oEvent.stopPropagation();
+ two.addEventListener("click",function(){alert("two");},useCapture);
+ three.addEventListener("click",function(){alert("three");},useCapture);
+
+</script>
+</html>

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf8" />
+<title>同步滚动进度条</title>
+<style>
+	*{padding: 0;margin:0;}
+	body{min-height: 2000px}
+	.progress{position: fixed;width: 0px;height: 2px;background: #0a74d4;}
+</style>
+</head>
+<body>
+	<div class="progress"></div>
+
+<script>
+	doch = document.body.getBoundingClientRect().height; 
+	winh=window.innerHeight||document.documentElement.clientHeight||document.body.clientHeight;
+	console.log(doch+"-"+winh);
+	hh = doch - winh;
+	window.onscroll=function(){
+		scrollh = document.documentElement.scrollTop||document.body.scrollTop;  
+		// console.log(scrollh);
+		document.querySelector(".progress").style.width = (scrollh/hh)*100 + "%";
+	}
+</script>
+</body>
+</html>

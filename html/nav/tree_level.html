@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf8">
+<title>树形层级展示</title>
+<style>
+.div_inline {
+display:inline;
+}
+/* 设置子节点属性 */
+.tree_node_child {
+margin-left:50px;
+}
+</style>
+</head>
+<body>
+
+<div class="tree_content">
+<div class="tree_node">
+<div class="div_inline">
+<input type="button" value="-" class="tree_node_toggle_button">
+</div>
+<div class="div_inline tree_node_parent">
+<input type="checkbox" class="tree_node_parent_checkbox">父节点1
+<div class="tree_node_child">
+<input type="checkbox" class="tree_node_child_checkbox">子节点1<br>
+<input type="checkbox" class="tree_node_child_checkbox">子节点2<br>
+<input type="checkbox" class="tree_node_child_checkbox">子节点3<br>
+</div>
+</div>
+</div>
+<div class="tree_node">
+<!-- 切换子目录隐藏或显示的按钮 -->
+<div class="div_inline">
+<input type="button" value="-" class="tree_node_toggle_button">
+</div>
+<div class="div_inline tree_node_parent">
+<input type="checkbox" class="tree_node_parent_checkbox">父节点2
+<div class="tree_node_child">
+<input type="checkbox" class="tree_node_child_checkbox">子节点1<br>
+<input type="checkbox" class="tree_node_child_checkbox">子节点2<br>
+<input type="checkbox" class="tree_node_child_checkbox">子节点3<br>
+</div>
+</div>
+</div>
+<div class="tree_node">
+<div class="div_inline">
+<input type="button" value="-" class="tree_node_toggle_button">
+</div>
+<div class="tree_node_parent div_inline">
+<input type="checkbox" class="tree_node_parent_checkbox">父节点3
+<div class="tree_node_child">
+<input type="checkbox" class="tree_node_child_checkbox">子节点1<br>
+<input type="checkbox" class="tree_node_child_checkbox">子节点2<br>
+<input type="checkbox" class="tree_node_child_checkbox">子节点3<br>
+</div>
+</div>
+</div>
+</div>
+
+<script src="../../vendors/jquery-3.1.1.js"></script>
+<script>
+// 页面加载完成后调用
+$(function() {
+$('.tree_node_parent_checkbox').click(function() {
+if ($(this).is(':checked')) {
+$(this).next('div').children().prop('checked', true);
+} else {
+$(this).next('div').children().prop('checked', false);
+}
+})
+// 为所有的子节点添加点击事件
+$('.tree_node_child_checkbox').click(function() {
+var length = $(this).parent().find('input:checkbox:checked').length;
+if (length > 0) {
+$(this).parent().prev().prop("checked", true);
+} else {
+if ($(this).is(':checked')) {
+$(this).parent().prev().prop("checked", true);
+} else {
+if ($(this).parent().prev().prop("checked", true)) {
+$(this).parent().prev().prop("checked", false);
+}
+}
+}
+})
+
+
+// 为所有的切换按钮添加点击事件
+$(".tree_node_toggle_button").click(function() {
+// 获取需要隐藏或显示的节点
+var $toggle_node = $(this).parent().next().find(".tree_node_child");
+$toggle_node.toggle(); // 切换隐藏或显示
+// 切换按钮的显示
+if ($toggle_node.is(":visible")) {
+$(this).val("-");
+} else {
+$(this).val("+");
+}
+});
+//为按钮绑定切换事件
+$('.tree_node_toggle_button').click(function() {
+var $toggle = $(this).parent().next().find('.tree_node_child_checkbox');
+//切换事件
+//$($toggle).toggle();
+//都可以，知识点为jquery 对象与dom对象区分
+$toggle.toggle();
+if ($toggle.is(':visible')) {
+$(this).val('+');
+}
+})
+});
+</script>
+
+<br/><br/><textarea rows="4" cols="150">
+参考原代码 http://www.jq22.com/webqd1841
+
+</textarea>
+</body>
+</html>

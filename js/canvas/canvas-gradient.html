@@ -1,0 +1,56 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>canvas 渐变</title>
+<style>
+
+</style>
+</head>
+
+<body>
+<p>创建一个垂直方向的从红到蓝色的线性渐变和从红到蓝色的径向渐变</p>
+
+<canvas id="drawing" style="border:1px solid black">
+    <p>The canvas element is not supported!</p>
+</canvas>
+
+<script src="../../vendors/jquery-3.1.1.js"></script>
+<script>
+var drawing = document.getElementById('drawing');
+//确定浏览器支持<canvas>元素
+if(drawing.getContext){
+    var context = drawing.getContext('2d');
+    var lineargradient = context.createLinearGradient(10, 10, 110, 110); 
+    lineargradient.addColorStop(0, 'rgba(210,29,26,.5)');
+    lineargradient.addColorStop(1, 'rgba(0,153,204,.5)');
+    context.fillStyle = lineargradient;
+    context.strokeStyle = lineargradient;
+    context.fillRect(10, 10, 100, 100);
+    context.strokeRect(10, 10, 100, 100);
+
+    var raialgradient = context.createRadialGradient(170, 60, 0, 170, 60, 50);
+    raialgradient.addColorStop(0, 'rgba(210,29,26,.5)');
+    raialgradient.addColorStop(1, 'rgba(0,153,204,.5)');
+    context.fillStyle = raialgradient;
+    context.strokeStyle = raialgradient;
+    context.fillRect(120, 10, 100, 100);
+    context.strokeRect(120, 10, 100, 100);
+
+    var fontSize = 50;
+    var str = '小火柴'; 
+    context.textAlign = 'start';
+    context.textBaseline = 'middle';
+    context.font = fontSize + 'px arial';
+    console.log(context.measureText(str).width);
+    while(context.measureText(str).width > 100){
+        fontSize--;
+        context.font = fontSize + 'px arial';
+    }
+    console.log(fontSize);
+    context.fillText(str, 10, 30);
+    context.strokeText(str, 10, 80);
+} 
+</script>
+</body>
+</html>

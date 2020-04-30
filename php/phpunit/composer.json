@@ -1,0 +1,12 @@
+{
+    "name": "lenovo/phpunit",
+    "require": {
+        "phpunit/phpunit": "5.7.*"
+    },
+    "authors": [
+        {
+            "name": "berlin75",
+            "email": "465137869@qq.com"
+        }
+    ]
+}

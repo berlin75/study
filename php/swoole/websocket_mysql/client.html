@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Mysql实时数据</title>
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <!--[if lt IE 9]>
+    <script src="https://cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"
+            integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+            crossorigin="anonymous"></script>
+</head>
+<body>
+<div class="container">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">swoole_test</h3>
+        </div>
+        <div class="panel-body">
+            <table class="table table-bordered  table-hover">
+                <thead id="thead">
+                </thead>
+                <tbody id="tbody">
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+    var websocket = new WebSocket('ws://127.0.0.1:9501');
+
+    websocket.onopen = function (event) {
+        console.log('websocket connect');
+        websocket.send('hello swoole');
+    };
+
+    websocket.onclose = function (event) {
+        console.log('websocket close');
+    };
+
+    websocket.onerror = function (event, e) {
+        console.log('error occured:' + event.data);
+    };
+
+    websocket.onmessage = function (event) {
+
+        data = JSON.parse(event.data)['swoole_test'];
+        var th = '<tr>';
+        var width = 1 / json_length(data[0]) * 100;
+        for (var key in data[0]) {
+            th += "<th style='width:" + width + "%'>" + key + "</th>";
+        }
+        th += '</tr>';
+        $("#thead").html(th);
+
+        var tbody = '';
+        for (var line in data) {
+            tbody += '<tr>';
+            var td = '';
+            for (var column in data[line]) {
+                td += "<td>" + data[line][column] + "</td>";
+            }
+            tbody += td + '</tr>';
+        }
+        $("#tbody").html(tbody);
+    };
+
+    function json_length(json) {
+        var length = 0;
+        for (var item in json) {
+            length++;
+        }
+        return length;
+    }
+</script>
+</body>
+</html>

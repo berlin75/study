@@ -1,0 +1,46 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>offset</title>
+<style>
+	#div1{ width:150px; height:150px; background:red; 
+	     border:1px solid black; margin-bottom:5px;}
+    #div2{ background:blue; border:1px solid black; margin-bottom:5px;}
+	#div3{ width:150px; height:150px; background:green; 
+	     border:1px solid black; margin-bottom:5px;}
+</style>
+<script>
+window.onload=function()
+{
+	var odiv1=document.getElementById("div1");
+	setInterval(function()
+	{odiv1.style.width=odiv1.offsetWidth-1+"px"},300);/*********************************************************************/
+	var odiv2=document.getElementById("div2");
+	setInterval(function()
+	{odiv2.style.width=parseInt(odiv2.style.width)-1+"px"},300);
+/*********************************************************************/
+	function getStyle(obj,name)
+	{
+		if(obj.currentStyle){return obj.currentStyle[name]}
+		else{return getComputedStyle(obj,false)[name];}     //obj.任意字符串
+	}
+	var odiv3=document.getElementById("div3");
+	setInterval(function()
+	{odiv3.style.width=parseInt(getStyle(odiv3,"width"))-1+"px"},300);
+}
+</script>
+</head>
+
+<body>
+<div id="div1">
+</div>
+<div id="div2" style="width:150px; height:150px;">
+</div>
+<div id="div3">
+</div>
+<p>offsetWIdth包含了width、边框、内间距，speed=-1时width变化为200、201、202，不减反增</p>
+<p>obj.style.width取得仅仅是行间的样式，可以把样式设置在行间，直接获取行间样式再转变为整数</p>
+<p>obj.style在css内则需要先获取元素的样式</p>
+</body>
+</html>

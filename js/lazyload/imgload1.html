@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>图片懒加载</title>
+<style>
+	div,ul,li,img{margin:0; padding:0; list-style:none;}
+	li{ width:640px; height:480px; background:url(../../image/7.gif) center center no-repeat; background-size:442px 244px;}
+	img{ width:100%; }
+</style>
+</head>
+<body>
+<h1>图片懒加载、延迟加载:延迟加载图片或触发、符合某些条件时才加载某些图片</h1>
+<p>obj.offsetTop当前对象距离页面顶端的距离小于滚动距离加窗口高度，即显示区域及以上的内容全部加载</p>
+<div>
+	<ul>
+		<li data-src="../../image/l1.jpg"></li>
+		<li data-src="../../image/l2.jpg"></li>
+		<li data-src="../../image/l3.jpg"></li>
+		<li data-src="../../image/l4.jpg"></li>
+		<li data-src="../../image/l5.jpg"></li>
+		<li data-src="../../image/l6.jpg"></li>
+		<li data-src="../../image/l7.jpg"></li>
+		<li data-src="../../image/l8.jpg"></li>
+		<li data-src="../../image/l9.jpg"></li>
+		<li data-src="../../image/l10.jpg"></li>
+		<li data-src="../../image/l11.jpg"></li>
+		<li data-src="../../image/l12.jpg"></li>
+		<li data-src="../../image/l13.jpg"></li>
+		<li data-src="../../image/l14.jpg"></li>
+	</ul>
+</div>
+
+<script>
+function setImg(index){
+	var oDiv=document.getElementsByTagName("div")[0];
+	var oUl=oDiv.children[0];
+	var aLi=oUl.children;
+    if (aLi[index].dataset) {
+        var src=aLi[index].dataset.src;
+    } else{
+        var src=aLi[index].getAttribute('data-src');
+    }
+    var oImg=document.createElement('img');
+    oImg.src=src;
+    if (aLi[index].children.length==0) {
+        aLi[index].appendChild(oImg); 
+    }
+}
+//获得当前对象距离页面顶端的距离  
+function getH(obj) {   
+	// return obj.offsetTop;
+
+	var h = 0;  
+	while (obj) {  
+		h += obj.offsetTop;  
+		obj = obj.offsetParent;   //寻找某一元素用来定位的父级元素
+	}  
+	return h;  
+} 
+//当网页滚动时判断当前li的位置
+window.onscroll = function () {
+  	var oDiv=document.getElementsByTagName("div")[0];
+	var oUl=oDiv.children[0];
+	var aLi=oUl.children;
+	for (var i = 0, l = aLi.length; i < l; i++) {
+        var oLi = aLi[i];
+         //检查oLi是否在可视区域
+         var t = document.documentElement.clientHeight + (document.documentElement.scrollTop || document.body.scrollTop);
+         var h = getH(oLi);
+         if (h < t) {
+              setTimeout("setImg(" + i + ")", 500);
+         }
+      }
+ };	
+window.onload=function(){
+	window.onscroll();
+}	
+
+</script>
+</body>
+</html>

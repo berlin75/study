@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>css垂直菜单栏taget</title>
+<style>
+.container{position: relative;}
+.container>div>a{display: inline-block;width: 50px;height: 10px;margin: 1px;padding: 20px 55px;background: #ddd;border-radius: 3px;box-shadow: 0 4px 10px -5px #000000;text-decoration: none;}
+.container>div>div{position: absolute;left: 180px;top: 0;width: 400px;min-height: 250px;padding: 20px;background: #ddd;}
+.container>div:target>a{background: #333;color: white;text-shadow: 0 1px 0 #4C4648;}
+.container>div:target>div{z-index: 3;}
+.container>div:not(:target) > a {}
+</style>
+</head>
+<body>
+	<div class="container">
+		<div id="c1">
+			<a href="#c1">First</a>
+			<div>First</div>
+		</div>
+		<div id="c2">
+			<a href="#c2">Second</a>
+			<div>Second</div>
+		</div>
+		<div id="c3">
+			<a href="#c3">Third</a>
+			<div>Third</div>
+		</div>
+		<div id="c4">
+			<a href="#c4">Fourth</a>
+			<div>Fourth</div>
+		</div>
+	</div>
+</body>
+</html>

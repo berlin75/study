@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>css3-2D-3D</title>
+<style>
+p{ width:150px; height:90px; background:rgba(255,0,0,1); border:1px solid; 
+   border-radius:8px; text-align:center; line-height:90px;cursor: pointer;}
+#p1{ transform:rotate(0deg);}
+
+#p2{ transition:transform 2s;}
+#p2:hover{ transform:rotate3d(1, 1, 1, 360deg);}
+
+#p3{ width:100px; height:100px; transition: width 2s,height 2s,transform 2s;}
+#p3:hover{ width:200px; height:200px; transform:rotate(360deg);}
+
+#p4{ width:100px; height:100px;transform: scale(-1);}
+</style>
+<script>
+window.onload=function(){
+	var p1=document.getElementById('p1');
+	p1.onclick=function(){
+		var i=0;
+		var timer = null;
+		timer = setInterval(function(){
+			if(i<360) {
+				i=i+10;
+				p1.style.transform="rotate("+i+"deg)";
+			}else{
+				clearInterval(timer);
+			}
+		},30);
+	};
+
+	var p4=document.getElementById('p4');
+	p4.onclick=function(){ 
+		var i=0;
+		var timer = null;
+		timer = setInterval(function(){ console.log(1);
+			if(i<5) {				
+				p4.style.transform="scale("+i+")";
+				i=i+1;
+			}else{
+				clearInterval(timer);
+			}
+		},1000);
+	};	
+};
+	
+</script>
+</head>
+
+<body>
+<p id="p1">2D:click定时rotate</p>      <hr />
+
+<p id="p2">3D</p>      <hr />
+ 
+<p id="p3">过渡</p>    <hr />
+
+<p id="p4">定时器scale</p>    <hr />
+
+<pre>
+transform:rotate3d(1, 1, 1, 360deg);
+4个参数，前三个，对应x,y,z 轴，是标示你是否希望沿着该轴旋转，是为1，不是为0，最后一个标示旋转的角度
+</pre>
+</body>
+</html>

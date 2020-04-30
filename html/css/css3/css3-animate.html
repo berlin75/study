@@ -1,0 +1,32 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>css3 动画</title>
+<style>
+div{ width:300px; height:100px; background:red;
+     animation: myfirst 5s;} 
+	 
+@keyframes myfirst{ from{ background:red;} to{ background:yellow;}}
+
+p{width:100px; height:100px; background:red; position:relative; 
+  animation: mysecond 5s linear 2s infinite alternate ;}
+@keyframes mysecond{
+	0%{ background:red; left:0px; top:150px;}
+	25%{ background:yellow; left:200px; top:150px;}
+	50%{ background:blue; left:200px; top:350px;}
+	75%{ background:green; left:0px; top:350px;}
+	100%{ background:red; left:0px; top:150px;}
+	}
+</style>
+</head>
+
+<body>
+<div>
+animation: myfirst 5s;绑定动画，设置时间。<br />
+@keyframes 动画名{ from{} to{}}
+</div>
+
+<p></p>
+</body>
+</html>

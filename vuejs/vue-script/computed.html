@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">	
+<title>vuejs</title>
+<script src="../../vendors/vue.min.js"></script>
+</head>
+<body>
+<div id="app">
+	<p>{{ message }}</p>
+	<p>{{ capitalizeMessage }}</p>
+	<p>{{ capitalizeMessage2() }}</p>
+</div>
+<script>
+	new Vue({
+		el: '#app',
+		data: {message: 'hello Vuejs!'},
+		computed: {
+			capitalizeMessage: function(){
+				alert(this.message);
+				value = this.message.toString();
+				return value.charAt(0).toUpperCase() + value.slice(1);
+			}
+		},
+		methods: {
+			capitalizeMessage2: function(){
+				alert(this.message);
+				value = this.message.toString();
+				return value.charAt(0).toUpperCase() + value.slice(1);
+			}
+		}
+	})
+</script>
+</body>
+</html>

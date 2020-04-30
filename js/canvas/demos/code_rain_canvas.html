@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>黑客帝国代码雨canvas</title>
+<style>
+	* {margin:0;padding:0;}
+	body {background:black;}
+	canvas {display:block;}
+	textarea{margin-top: 10rem;}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+
+<script src="../../../vendors/jquery-3.1.1.js"></script>
+<script>
+	var c = document.getElementById("c");
+	var ctx = c.getContext("2d");
+
+	c.height = window.innerHeight;
+	c.width = window.innerWidth;
+	var chinese = "ceshi";
+	chinese = chinese.split("");
+
+	var font_size = 10;
+	var columns = c.width / font_size;
+	//an array of drops - one per column
+	var drops = [];
+	for (var x = 0; x < columns; x++)
+	drops[x] = 1;
+	//drawing the characters
+	function draw() {
+		ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+		ctx.fillRect(0, 0, c.width, c.height);
+
+		ctx.fillStyle = "#0F0"; 
+		ctx.font = (Math.random() * font_size) + "px arial";
+		//looping over drops
+		for (var i = 0; i < drops.length; i++) {
+			var text = chinese[Math.floor(Math.random() * chinese.length)];
+			ctx.fillText(text, i * font_size, drops[i] * font_size);
+
+			if (drops[i] * font_size > c.height && Math.random() > 0.975){
+				drops[i] = 0;
+			}				
+			drops[i]++;
+		}
+	}
+	setInterval(draw, 50);
+</script>
+
+<br/><br/><textarea rows="4" cols="150">
+参考原代码 http://www.jq22.com/webqd1311
+
+</textarea>
+</body>
+</html>

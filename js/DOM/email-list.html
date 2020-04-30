@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>邮箱全选不选反选</title>
+<style>
+</style>
+<script>
+window.onload=function(){
+   var alli1=document.getElementById("input1");
+   var alli2=document.getElementById("input2");
+   var alli3=document.getElementById("input3");
+   var odiv=document.getElementById("div1");
+   var oinput=odiv.getElementsByTagName("input");
+   alli1.onclick=function()   {  
+	  for(var i=0;i<oinput.length;i++){
+		 oinput[i].checked=true; 
+	  }
+	
+   }
+   alli2.onclick=function(){  
+	  for(var i=0;i<oinput.length;i++){
+		 oinput[i].checked=false; 
+	  }
+	
+   }
+   alli3.onclick=function(){  
+	  for(var i=0;i<oinput.length;i++){
+		 if(oinput[i].checked==false){
+			oinput[i].checked=true; 
+		 }else{
+		    oinput[i].checked=false;	 
+		 }
+	  }	
+   } 
+}
+</script>
+</head>
+
+<body>
+<input id="input1" type="button" value="全选"/>
+<input id="input2" type="button" value="全不选"/>
+<input id="input3" type="button" value="反选"/>
+<div id="div1">
+<input  type="checkbox" value="" />  <br />
+<input  type="checkbox" value="" />  <br />
+<input  type="checkbox" value="" />  <br />
+<input  type="checkbox" value="" />  <br />
+<input  type="checkbox" value="" />  <br />
+<input  type="checkbox" value="" />  <br />
+<input  type="checkbox" value="" />  <br />
+<input  type="checkbox" value="" />  <br />
+<input  type="checkbox" value="" />  <br />
+<input  type="checkbox" value="" />  <br />
+<input  type="checkbox" value="" />  <br />
+<input  type="checkbox" value="" />  <br />
+<input  type="checkbox" value="" />  <br />
+<input  type="checkbox" value="" />  <br />
+<input  type="checkbox" value="" />  <br />
+<input  type="checkbox" value="" />  <br />
+<input  type="checkbox" value="" />  <br />
+<input  type="checkbox" value="" />  <br />
+<input  type="checkbox" value="" />  <br />
+</div>
+</body>
+</html>

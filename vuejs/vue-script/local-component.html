@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>local-component.html</title>
+<script src="../../vendors/vue.min.js"></script>
+</head>
+<body>
+<div id="app">
+	<local-component1></local-component1>
+	<local-component1></local-component1>
+</div>
+
+<script>
+var child = {
+	template: '<h3>注册一个只在父模板中可用局部组件local-component1</h3>'
+}
+
+new Vue({
+	el: '#app',
+	components: {
+		'local-component1': child
+	}
+})
+
+</script>
+</body>
+</html>

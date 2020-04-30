@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>nodejs静态服务器首页</title>
+</head>
+<body>
+<hr>
+<h1>hello nodejs</h1>
+<pre>
+NodeJS独立开发web框架 https://www.html-js.cn/details/VkAlvVSa.html
+
+开发一个WEB服务器框架，首先要解决的是扩展性问题。扩展性就是通过插件或中间件的形式，扩展其功能。扩展性就是让框架支持中间件的插件形式
+
+框架实现的方式很多，这里采用中间件的形式为框架添加功能，那就要在执行主逻辑代码之前执行中间件，中间件应该具有顺序性
+
+WEB服务器的request事件的触发，表示有客户访问服务器资源。服务器主逻辑，就是为了响应request事件的
+
+App.js文件是框架的核心部分，static.js是一个中间件，然后通过app.use方法加入static中间件。
+
+var app = ...
+var middle1 = ... 
+var middle2 = ...
+app.use(middle1)   // 加入中间件
+app.use(middle2)   // 加入第二个中间件，中间件有先后顺序，middle1会先于middle2执行。
+
+保证其顺序的一个方法，是给中间件函数内部一个next函数，当执行next函数时，表示中间件自身已执行完成，下狠心把权力交给下一个中间件
+
+路由功能是根据url进行路由的，根据不同的url自定义的规则，进入不同的url资源处理器，处理后响应结果。之前stuwebfk对GET/POST方法进行了路由，但还无法对url进行路由
+
+原始的node.js http模块没有静态服务器和路由的功能，通过扩展功能
+
+路由的泛式规则很灵活。在这里，我们列出几个使用的路由泛式功能。今天要实现如下两个泛式路由。
+/doc/:id   符合这个泛式的url可以是  /doc/id0001。
+/doc/title/*   符合这个泛式的url可以是  /doc/title/abcd 或 /doc/title
+
+当有个请求的url符合某个泛式路由时，就会执行对应的处理器。那内部如何判断url符合路由泛式规则呢？答案是把泛式规则转换正则表达式，然后加以判断即可
+
+路由判断的是路径，而不应掺杂请求参数
+
+</pre>
+
+<script type="text/javascript">
+function routeRegexp (route){
+    var reg = route
+
+       // 去掉后缀后面的内容
+       .replace(/\?(.*)$/,"")
+
+       // 把所有 * 替换成正则表达式(.*)
+       .replace(/((\*{1}(?=\/))|(\*{1}(?=$)))/g,"(.*)")
+
+       // 把所有 :xxx 替换成正则表达式(.*)
+       .replace(/(:(.*?(?=\/)))|(:(.*?(?=$)))/g,"(.*)")
+
+       // 把所有 / 路径 变为匹配正则表达式的 \/ 的形式
+       .replace(/\//g,"\\\/")
+
+    console.log(reg);
+
+    //通过生成正则表达式,前后的 ^ 和 & 要严格匹配整个路径。  
+    return new RegExp("^"+reg+"$");
+}
+
+// 测试代码如下：
+var url = "/article/324234/dsd/ccc";
+console.log(url);
+var routeRule = "/article/:id/:name/*";
+console.log(routeRule);
+var route_regexp = routeRegexp(routeRule);
+console.log(route_regexp);             // /^\/article\/(.*)\/(.*)\/(.*)$/
+console.log(route_regexp.test(url));   // true
+
+</script>
+
+<pre>
+简单的路由功能，对GET/POST进行了分离处理，也就是说 app.get("/abc") 和 app.post("/abc") 是不同的，stuwebfk框架会根据get或post方法智能判断路由到的处理器。那么，即使是泛式，也必然会分两个仓库对象，保存路由和其处理函数
+
+开发一个post.js中间件。让框架具有req.body属性。
+
+开发完post.js中间件之后，接下来研究接收上传数据的原理，上传必须是post方法请求，但和纯粹的post方法请求还有些差别，弄明白这些后，要扩展post.js插件，让框架具有req.files属性
+
+让stuwebfk框架具有了req.params和req.query属性，其中req.query可以得到http get的请求参数
+
+http get方法请求有个限制，是2048个字符，也就是无法传递大数据量的请求参数。可以使用post方法请求来突破这个限制，但通过这个方法请求，我们就不能通过 req.query 得到post方法的请求参数了
+
+name=leo&age=30
+
+我们兴奋的发现，post方法请求，得到的数据和GET的一致，虽然获取方式不同，GET的是通过url解析出请求数据，而POST是通过读取body体数据 获得。
+
+很好！弄明白这点之后，下一节就可以着手开发post.js中间件了。
+
+开发post.js插件就有切入口了。通过得到post方法请求数据，然后用querystring模块的parse方法就可把字符串形式转换为json格式
+
+post.js中间件，可以让stuwebfk框架具有req.body属性。而req.query只能接收小数据，req.body却可以接受大数据，比如博客文章的表单提交都是通过POST方法请求，进行提交的
+
+post文件上传
+当二进制转换为字符形式处理后，再转回二进制形式，里面的数据结构就变化
+
+var buf = new Buffer([0,1,21,0]);
+console.log(buf); // <Buffer 00 01 15 00>
+
+var buf2 = new Buffer(buf.toString("ascii"),"ascii");
+console.log(buf2);// <Buffer 20 01 15 20>
+
+> var buf = new Buffer([0,1,21,0]);
+undefined
+> console.log(buf);
+<Buffer 00 01 15 00>
+undefined
+> var buf2 = new Buffer(buf.toString());
+undefined
+> console.log(buf2);
+<Buffer 00 01 15 00>
+
+开发的post.js插件，只是一种实现方式，下面介绍其他两种实现方式。
+
+方式一
+
+可以先把整个上传的body信息，保存到一个临时文件中，可以通过流的pipe方法做到。下面是演示代码：
+
+// 创建一个写入流
+var wstream = fs.createWriteStream("tmp");
+// 通过管道方式写入
+req.pipe(wstream);
+这样就可以把上传来的数据保存到临时文件tmp中，当然具体实现还有很多注意事项，这只是个演示代码。然后，可以通过fs.read方式，循环读取tmp文件，并对其进行分析。部分代码如下：
+
+fs.open("tmp",function(err,"r",fd){
+   fs.read(fd ... , function(err, bytesRead, buffe){
+          // 分析二进制数据
+   }); 
+})
+这里的fs.open可以打开一个文件，并对其进行读取，过程中，并不会都加载到内存中，所以节省内存使用量。fs.read方法是实际读取文件的方法，这种方式对服务器端的压力相对很小，所以推荐这种方式。
+方式二
+
+上传的数据要是比较大，就会多次调用req.on("data",function(chunk){})，那就可以每次对chunk数据进行分析，而不必都加载后再处理，处理完这个chunk后，再进行下一个chunk，以此类推。不过需要用到 req.pause() 方法暂停读取客户端上传来的数据，然后处理完这个chunk后，再调用req.resume()继续接收客户端的数据流。这个方式比第一个方式还要更好些。
+
+第9天response 响应渲染
+之前响应客户端的方式是通过res.write方法，这个过于低级
+
+基本的响应渲染功能，包括以下几个：
+
+页面跳转 redirect
+
+文本 text
+
+静态页 static 中间件
+
+下载 down
+
+动态页 view
+
+编译(模板 + 数据) => html
+ejs：嵌入js语法的模板引擎（e = embed）
+jade：缩进式极简写法的模板引擎，发展历史 HAML -> Jade -> Slim -> Slm，最早是ruby里有的，目前以jade用的最多，这种写法虽好，，但需要大脑去转换，这其实是比较麻烦的，如果对html不是特别熟悉，这种思维转换是非常难受的
+
+模板的诞生是为了将显示与数据分离，模板技术多种多样，但其本质是将模板文件和数据通过模板引擎生成最终的HTML代码
+是拼接字符串的体力活。模板引擎就是利用正则表达式识别模板标识，并利用数据替换其中的标识符
+
+//字符串替换的思想
+function tmpl(str, obj) {
+    if (typeof str === 'string') {
+        return str.replace(/<%=\s*([^%>]+)\s*%>/g, function() {
+            var key = arguments[1];
+            return obj[key];
+        });
+    }
+}
+
+var str = "Hello, <%= name%>";
+var obj = {name: "Lzz"};
+
+
+通常需要以下几个步骤：
+
+利用正则表达式分解出普通字符串和模板标识符，<%=%>的正则表达式为/<%=\s*([^%>]+)\s*%>/g.
+将模板标识符转换成普通的语言表达式
+生成待执行语句
+将数据填入执行，生成最终的字符串
+
+//编译的思想
+function tmpl(str, obj) {
+    if (typeof str === 'string') {
+        var tm = str.replace(/<%=\s*([^%>]+)\s*%>/g, function() {
+            var key = arguments[1];
+            return "' + obj." + key; // 在函数字符串中利用'包裹正常字符串
+        });
+
+        tm = "return '" + tm; //"'Hello' + obj.name"
+        var compile = new Function('obj', tm);
+        return compile(obj);
+    }
+}
+
+var str = "Hello, <%= name%>";
+var obj = {name: "Lzz"}; // Hello, Lzz
+
+用js输出：模板字符串`` templete
+< !doctype html>
+< html>
+    < body>
+        <%for(var i=0 ; i< 10 ; i++){%>
+            < p><%=i%>< /p>
+        <%}%>
+    < /body>
+< /html>
+
+var result = '';
+result += `
+	< !doctype html>
+	< html>
+	    < body>
+    `;
+for(var i =0; i < 10; i++){
+ 	result += `<p>${i}</p>`;
+}
+
+result += `
+		< /body>
+	< /html>
+    `;
+
+
+
+
+</pre>
+<hr>
+</body>
+</html>

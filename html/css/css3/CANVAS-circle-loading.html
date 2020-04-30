@@ -1,0 +1,47 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>CANVAS 画环形进度条</title>
+</head>
+<body>
+<canvas id="c1" width="400" height="400"></canvas>
+
+
+<script>
+window.onload = function() {
+	var t = 75;
+	var oC = document.getElementById('c1');
+	var oGC = oC.getContext('2d');
+	var oB = (-90)*Math.PI/180;
+	var oR = (-25+t)*3.6*Math.PI/180;
+
+	// var timer = setInterval(function(){
+	// 	t++;
+	// 	toDraw();
+	// 	if(i>100)clearInterval(timer);
+	// },1000);
+
+	toDraw();
+
+	function toDraw(){
+		var x = oC.width/2;
+		var y = oC.width/2;
+		var r = 150;
+
+		oGC.strokeStyle = '#abcdef';
+		oGC.lineWidth = '10';
+		oGC.beginPath();
+		oGC.arc(x,y,r,oB,oR,false);
+		oGC.stroke();
+		
+		oGC.font = "Bold 50px Arial";
+		oGC.fillStyle = "#ccc"; 
+		oGC.textAlign = "center";
+		oGC.fillText(t+'%',x,y+10);
+	}
+	
+}
+</script>
+</body>
+</html>

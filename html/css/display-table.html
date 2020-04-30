@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>css display table</title>
+<style>
+.grid {
+	display: table;
+	border-spacing: 4px;
+}
+.row {
+	display: table-row;
+}
+.image {
+	display: table-cell;
+	width: 240px;
+	background-color: #000;
+	border: 8px solid #000;
+	vertical-align: top;
+	text-align: center;
+}
+.image img{
+	width: 320px;
+	height: 240px;
+}
+.image p {
+	color: #fff;
+	font-size: 85%;
+	text-align: left;
+	padding-top: 8px;
+}
+</style>
+</head>
+<body>
+<p>display: table/table-row/table-cell</p>
+<div class="grid">
+	<div class="row">
+		<div class="image">
+			<img src="../../image/l1.jpg" alt="A Lily" />
+			<p>A lily in the gardens of The Vyne Country House</p>
+		</div>
+		<div class="image">
+			<img src="../../image/l3.jpg" alt="A Fuchsia plant" />
+			<p>Fuchsia plant in my garden</p>
+		</div>
+	</div>
+	<div class="row">
+		<div class="image">
+			<img src="../../image/l2.jpg" alt="A crazy looking Allium flower" />
+			<p>A crazy looking flower</p>
+		</div>
+		<div class="image">
+			<img src="../../image/l4.jpg" alt="A Robin sitting on a fence" />
+			<p>This robin has been visiting our garden over the summer.
+		He is very friendly and doesn’t seem to be too worried about sharing the garden with us.</p>
+		</div>
+	</div>
+</div>
+
+*******************************************************************************************************
+<h3>两列自适应布局:左边头像部分使用了float左浮动属性，左侧使用 display: table-cell则实现了两列自适应布局</h3>
+<style>
+.content {
+    display: table;
+    padding: 10px;
+    border: 2px solid #999;
+    margin-top: 2rem;
+}
+.content:after{
+	content: "";
+	clear: both;
+	display: block;
+}
+.left-box {
+    float: left;
+    margin-right: 10px;
+}
+.right-box {
+    display: table-cell;
+    height: 2rem;
+    line-height: 2rem;
+    width: 1200px;
+    vertical-align: top;
+    border: 1px solid #ccc;
+}
+</style>
+<div class="content">
+    <div class="left-box">
+        <img src="../../image/l12.jpg" width="70">
+    </div>
+    <!-- <div class="right-box">...</div> -->
+    <input type="text" name="" class="right-box" placeholder="...">
+</div>
+
+*******************************************************************************************************
+<h3>大小不固定元素的垂直居中</h3>
+<style>
+.content1 { display: table-cell; padding: 10px; border: 2px solid #999;margin-top: 2rem;}
+.content1 div { display: inline-block; vertical-align: middle; }
+</style>
+<div class="content1">
+    <div style="padding: 50px 40px;background: #cccccc;color: #fff;"></div>
+    <div style="padding: 60px 40px;background: #639146;color: #fff;"></div>
+    <div style="padding: 70px 40px;background: #2B82EE;color: #fff;"></div>
+    <div style="padding: 80px 40px;background: #F57900;color: #fff;"></div>
+    <div style="padding: 90px 40px;background: #BC1D49;color: #fff;"></div>
+</div>
+
+
+*******************************************************************************************************
+<h3>等高布局</h3>
+<style>
+.content2 {
+    display: table;
+    padding: 10px;
+    border: 2px solid #999;
+}
+
+.box1 {
+    display: table-cell;
+    width: 100px;
+    border: 1px solid #ccc;
+}
+
+.box2 {
+    display: table-cell;
+    border: 1px solid #ccc;
+}
+</style>
+<div class="content2">
+        <div class="box1">我和右边等高</div>
+        <div class="box2">table表格中的单元格最大的特点之一就是同一行列表元素都等高。所以，很多时候，我们需要等高布局的时候，就可以借助display:table-cell属性。说到table-cell的布局，不得不说一下“匿名表格元素创建规则”</div>
+</div>
+
+*******************************************************************************************************
+<h3>和inline-block组合使用:AB小方格设置inline-block</h3>
+<style>
+.content3 {
+    display: table;
+    padding: 10px;
+    margin: 10px auto;
+    width: 1000px;
+    border: 2px solid #999;
+}
+ .left {
+    display: table-cell;
+    text-align: left;
+    border: 1px solid #0cf;
+}
+
+.right {
+    display: table-cell;
+    text-align: right;
+    border: 1px solid #fc0;
+}
+.box {
+    display: inline-block;
+    width: 100px;
+    height: 100px;
+    border: 1px solid #ccc;
+}
+</style>
+<div class="content3">
+    <div class="left">
+        <div class="box">A</div>
+    </div>
+    <div class="right">
+        <div class="box">B</div>
+    </div>
+</div>
+
+
+*******************************************************************************************************
+<h3>列表布局</h3>
+<pre>这类布局常用浮动布局（给每个li加上float：left属性）实现，但这样做有明显不足：
+
+需要清除浮动
+不支持不定高列表的浮动
+display：table-cell可以代替浮动布局，但是其不是最好的方法。其他方法有待进一步学习</pre>
+<style>
+.content4 {
+    padding: 10px;
+    margin: 10px auto;
+    border: 2px solid #999;
+}
+
+.content4 ul {
+  display: table;
+  width: 100%;
+  padding: 0;
+}
+
+.content4 ul li {
+  display: table-cell;
+  height: 100px;
+  line-height: 100px;
+  text-align: center;
+  border: 1px solid #ccc;
+}
+</style>
+<div class="content4">
+    <ul>
+      <li>1</li>
+      <li>2</li>
+      <li>3</li>
+      <li>4</li>
+      <li>5</li>
+    </ul>
+</div>
+
+
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>数码时钟</title>
+<style>
+	span{ font-size:160px; color:black;}
+	#div1{ width:850px;margin:50px auto;}
+</style>
+<script>
+    function todou(n)
+	{
+		if(n<10)
+		{
+			return  "0"+n;	    //将个位数变为0开头的两位数，并改为字符串
+		}
+		else
+		{
+			return  ""+n;
+		}
+	}
+	window.onload=function()
+	{
+	  function tick()
+		  {
+			var odiv=document.getElementById("div1");
+			var aimg=odiv.getElementsByTagName("img");
+			var odate=new Date();
+			var str=todou(odate.getHours())+todou(odate.getMinutes())+todou(odate.getSeconds());
+//			alert(str);			
+			
+				for(var i=0;i<aimg.length;i++)
+				{
+					aimg[i].src="../shuzi/"+str.charAt(i)+".jpg"	;  //str[i]存在兼容性问题，低版本浏览器不显示图片
+				}
+			}
+			setInterval(tick,1000);
+			tick();                       // 再页面打开等待刷新的那段时间先执行一次
+	}
+</script>
+</head>
+
+<body>
+    <div id="div1">
+        <img src="../shuzi/0.jpg" />
+        <img src="../shuzi/0.jpg" />
+        <span>:</span>
+        <img src="../shuzi/0.jpg" />
+        <img src="../shuzi/0.jpg" />
+        <span>:</span>
+        <img src="../shuzi/0.jpg" />
+        <img src="../shuzi/0.jpg" />
+    </div>
+</body>
+</html>

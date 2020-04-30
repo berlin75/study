@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>with验证email</title>
+<script type="text/javascript">
+
+function validate_required(field,alerttxt){
+  	with (field){
+		if (value==null||value==""){
+			alert(alerttxt);
+			return false
+		}else {
+			return true
+		}
+  	}
+}
+  
+function validate_email(field,alerttxt){
+	with (field){
+	  	apos=value.indexOf("@")
+	  	dotpos=value.lastIndexOf(".")
+	  	if (apos<1||dotpos-apos<2){
+	  		alert(alerttxt);
+	  		return false
+	  	}else {
+	  		return true
+	  	}
+	}
+}
+  
+function validate_form(thisform){
+	with (thisform){
+		if (validate_required(email,"Email必填!")==false){
+			email.focus();
+			return false;
+		}
+		if (validate_email(email,"请输入正确的Email!")==false){
+			email.focus();
+			return false;
+		}
+	}
+}
+</script>
+</head>
+
+<body>
+	<form action="" onsubmit="return validate_form(this)" method="post">
+		Email: <input type="text" name="email" size="30">
+		<span style="color:red">*必填</span>
+		<br/><br/>
+		<input type="submit" value="Submit"> 
+	</form>
+
+	<p>with 语句用于设置代码在特定对象中的作用域</p>
+</body>
+</html>

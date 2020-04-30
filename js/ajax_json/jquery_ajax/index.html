@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>jquery-AJAX</title>
+<script src="../../../vendors/jquery-3.1.1.js"></script>
+<script>
+$(document).ready(function() {
+	$("button").eq(0).click(function(){
+		 $(".div1").load("test.txt .p1" ,function(responseTxt,statusTxt,xhr){
+			if(statusTxt=="success"){alert("外部内容加载成功");};
+			if(statusTxt=="error"){alert("Error"+xhr.status+":"+xhr.statusText);} 
+		 });
+	});
+	
+	$("button").eq(1).click(function(){
+		 $.get("test.php" ,function(data,status){
+			alert("数据："+data+"\n状态："+status);
+		 });
+	});
+	
+	$("button").eq(2).click(function(){
+		 $.post("test_post.php", { name:"jolie",city:"American"}, function(data,status){
+		    alert("数据："+data+"\n状态："+status);
+		 });
+	});
+});
+</script>
+</head>
+
+<body>
+	<button type="button">load点击获取内容</button>
+    <button type="button">get点击获取内容</button>
+    <button type="button">post点击获取内容</button>
+	<div class="div1"></div>
+</body>
+</html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf8">
+<title>彩虹球跟随鼠标效果canvas</title>
+<style>
+
+</style>
+</head>
+<body>
+<canvas id="canvas" width="1300" height="800" style="border:1px solid #000;margin: 0px auto;display: block;"></canvas>
+<script src="../../../vendors/jquery-3.1.1.js"></script>
+<script>
+var canvas = document.getElementById("canvas");
+var c = canvas.getContext("2d");
+var arr = [];
+var winw = canvas.width;
+var winh = canvas.height;
+var time = false
+var px;
+var py;
+
+function ain() {
+c.clearRect(0, 0, winw, winh)
+requestAnimationFrame(ain);
+try {
+for (var i = 0; i < arr.length; i++) {
+arr[i].r;
+arr[i].y += arr[i].speedY;
+arr[i].x += arr[i].speedX;
+arr[i].r += 0.2;
+arr[i].alpha -= 0.005
+if (arr[i].alpha <= 0) {
+arr.splice(i, 1)
+}
+c.save()
+c.beginPath();
+c.translate(-0.5 * arr[i].r, -0.5 * arr[i].r)
+c.fillStyle = "rgba(" + arr[i].red + "," + arr[i].green + "," + arr[i].blue + "," + arr[i].alpha + ")"
+c.arc(arr[i].x, arr[i].y, arr[i].r, 0, 2 * Math.PI);
+c.fill()
+c.restore()
+}
+} catch (e) {}
+console.log(arr.length)
+}
+ain()
+canvas.addEventListener("mousemove", function(e) {
+
+var e = e || event;
+px = e.offsetX;
+py = e.offsetY;
+
+var red = Math.round(Math.random() * 255);
+var green = Math.round(Math.random() * 255);
+var blue = Math.round(Math.random() * 255);
+var r = 1;
+var speedX = Math.ceil(Math.random() * 10) - 5;
+var speedY = Math.ceil(Math.random() * 10) - 5;
+var alpha = 0.5;
+
+arr.push({
+red: red,
+green: green,
+blue: blue,
+speedX: speedX,
+speedY: speedY,
+x: px,
+y: py,
+r: r,
+alpha: alpha
+})
+})
+</script>
+
+</body>
+</html>

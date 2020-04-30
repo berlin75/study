@@ -1,0 +1,208 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>canvas 绘制路径图形</title>
+<style>
+img{max-width: 500px;max-width: 400px}
+hr{background-color: yellow;height: 2px;}
+p:before{content: "\2726";color: red;font-size: 1.5rem;}
+</style>
+</head>
+<body>
+<p>linewidth线宽越大最后闭合的缺口越大，线宽使用默认的1时不存在问题，加入closePath即可</p>
+<canvas id="drawing" style="border:1px solid black">
+    <p>The canvas element is not supported!</p>
+</canvas>
+
+<p>绘制弧线</p>
+<canvas id="drawing1" style="border:1px solid black">
+    <p>The canvas element is not supported!</p>
+</canvas>
+
+<hr/><p>绘制圆角矩形</p>
+<canvas id="drawing2" style="border:1px solid black">
+    <p>The canvas element is not supported!</p>
+</canvas>
+
+<hr/><img src="../../image/tan.png">
+<p>绘制弯月<br>
+也可以取图层叠加区域</p>
+<canvas id="drawing3" style="border:1px solid black">
+    <p>The canvas element is not supported!</p>
+</canvas>
+
+<hr/><p>绘制正方形魔性图案，当坐标位置x或y变化1px时，宽度或高度需要变化2px</p>
+<canvas id="drawing4" style="border:1px solid black">
+    <p>The canvas element is not supported!</p>
+</canvas>
+
+<hr/><img src="../../image/star.png">
+<p>绘制五角星,五角星可分为大圆和小圆两部分。大圆控制外侧5个点的坐标位置，小圆控制内侧5个点的坐标位置</p>
+<canvas id="drawing5" style="border:1px solid black">
+    <p>The canvas element is not supported!</p>
+</canvas>
+
+<hr/><img src="../../image/circle.jpg">
+<p>绘制螺旋线,从圆心点开始，按照圆的公式向外移动，每次移动时，圆心角逐渐增大，半径逐渐增大</p>
+<canvas id="drawing6" style="border:1px solid black">
+    <p>The canvas element is not supported!</p>
+</canvas>
+<script>
+//绘制线条，闭合图形
+var drawing = document.getElementById('drawing');
+if(drawing.getContext){
+    var context = drawing.getContext('2d');
+    context.beginPath();
+    context.moveTo(10,10);
+    context.lineTo(50,50);
+    context.lineTo(10,100);
+    context.lineWidth = 5;
+    context.strokeStyle = "lightgreen";
+    context.stroke();
+
+    context.beginPath();
+    context.moveTo(60,10);
+    context.lineTo(100,50);
+    context.lineTo(60,100);
+    context.lineWidth = 5;
+    context.strokeStyle = "lightblue";
+    context.stroke();
+
+    context.beginPath();
+    context.moveTo(110,10);
+    context.lineTo(210,10);
+    context.lineTo(210,110);
+    context.lineTo(110,110);
+    context.lineTo(110,10);   //closePath时该句可省略
+    context.closePath();      //线宽越大最后闭合的缺口越大，线宽使用默认的1时不存在问题，加入closePath即可
+    context.lineWidth = 10;
+    context.strokeStyle = "pink";
+    context.stroke(); 
+} 
+
+//绘制弧线、圆
+if(drawing1.getContext){
+  drawing1.width = 1000;
+  drawing1.height = 200;
+  drawing1.style.width = "400px";
+  var context = drawing1.getContext("2d");
+  context.lineWidth = 5;
+  context.strokeStyle = "#058";
+  for(var i = 0; i < 10; i++){
+    context.beginPath();
+    context.arc(50+i*100, 100, 40, 0, 2*Math.PI*(i+1)/10);
+    context.closePath();
+    context.stroke();
+  }
+}
+
+//绘制圆角矩形
+if(drawing2.getContext){
+  drawing2.width = 900;
+  drawing2.height = 200;
+  var context = drawing2.getContext("2d");
+  context.lineWidth = 10;
+  context.strokeStyle = "rgba(8,46,84,1)";
+  var W = 300, H = 150, r = 50;
+  drawRoundRect(context, 0, 0, W, H, r);
+
+  function drawRoundRect(context, x, y, w, h, r){  //xy为矩形左上角坐标
+      context.beginPath();  
+      context.arc(x+r, y+r, r, Math.PI, Math.PI*3/2);  //Math.PI=180°
+      context.lineTo(x+w-r, y);
+      context.arc(x+w-r, y+r, r, Math.PI*3/2, Math.PI*2);
+      context.lineTo(x+W, y+h-r);
+      context.arc(x+w-r, y+h-r, r, 0, Math.PI/2);
+      context.lineTo(x+r, y+h);
+      context.arc(x+r, y+h-r, r, Math.PI/2, Math.PI);
+      context.closePath();
+      context.stroke();
+  }
+}
+
+//绘制弯月
+if(drawing3.getContext){
+  var W = H = drawing3.width = drawing3.height = 200;
+  var context = drawing3.getContext("2d");
+  function dis(x1,y1,x2,y2){
+    return Math.sqrt((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2)); //求平方根
+  }
+  //xy平移，rot旋转角度度数
+  function fillMoon(cxt,d,x,y,r,rot){
+    context.save();
+    context.translate(x,y);
+    context.rotate(rot*Math.PI/180); //Math.PI=180°
+    context.scale(r,r);
+    context.beginPath();
+    context.arc(0,0,1,0.5*Math.PI,1.5*Math.PI,true); //以p1 p2位圆心，p3半径，起始弧度为p4 p5,p6顺逆时针方向
+    context.moveTo(0,-1);
+    context.arcTo(d,0,0,1,dis(0,-1,d,0)/d); //从上点穿过p1 p2点到p3 p4点，半径为p5的弧线
+    context.closePath();
+    context.restore();
+  }
+  fillMoon(context,2,100,100,100,0)
+  context.fillStyle = 'rgba(94,196,234,1)';
+  context.fill();
+}
+
+//绘制正方形魔性图案
+var canvas = document.getElementById("drawing4");
+if(canvas.getContext){
+  drawing4.width = drawing4.height = 300;
+  var context = canvas.getContext("2d");  
+  for(var i=0; i<=20; i++){
+    drawRect(context, 0 + 15 * i, 0 + 15 * i, 300 - 30 * i, 300 - 30 * i);
+  }
+  function drawRect(cxt,x,y,width,height){
+    cxt.beginPath();
+    cxt.rect(x, y, width, height);
+    cxt.lineWidth = 5;
+    cxt.strokeStyle = "blue";
+    cxt.stroke();    
+  }
+}
+
+//绘制五角星
+var canvas = document.getElementById('drawing5');
+if(canvas.getContext){
+    var cxt = canvas.getContext('2d');
+    var H = 100,W = 200;
+    canvas.height = H;
+    canvas.width = W;    
+    function drawStar(cxt,r,R,x,y,rotate){
+        if(rotate == undefined){
+            rotate = 0;
+        }
+        cxt.beginPath();
+        for(var i = 0; i < 5; i++){
+            cxt.lineTo(Math.cos((18 + i*72 - rotate)/180*Math.PI)*R + x,-Math.sin((18+i*72 - rotate)/180 * Math.PI) * R + y);
+            cxt.lineTo(Math.cos((54 + i*72 - rotate)/180*Math.PI)*r + x,-Math.sin((54+i*72 - rotate)/180 * Math.PI) * r + y);
+        }
+        cxt.closePath();
+        cxt.stroke();
+    }  
+    drawStar(cxt,30,50,50,50);    
+}
+
+//绘制螺旋线
+var drawing = document.getElementById('drawing6');
+if(drawing.getContext){
+    var context = drawing.getContext('2d');
+    var x = drawing.width/2;
+    var y = drawing.height/2;
+    var deg = 0;
+    var r = 1;
+    context.strokeStyle = 'red';
+    context.lineWidth = 2;
+    context.moveTo(x,y);
+    for(var i = 0; i < 4800; i++){
+        deg++;
+        r+=0.01;
+        context.lineTo(x+Math.cos(deg * Math.PI/180)*r,y+Math.sin(deg * Math.PI/180)*r);
+    }
+    context.stroke();
+}
+</script>
+</body>
+</html>

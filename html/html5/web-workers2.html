@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8"/>
+<title>HTML5 web workers</title>
+</head>
+<body>
+<p>web worker 是运行在后台的 JavaScript，不会影响页面的性能</p>
+<p>输入：<input type="number" name="number" value="100000000">
+	  <input type="submit" name="submit" value="叠加求和" onclick="count()">
+</p>
+<p>结果：<input type="text" name="result" value=""></p>
+<p>耗时：<input type="text" name="time" value=""></p>
+<p>后台js测试从0加到100,前台计算这个过程需要的耗时,前后台通过监听message事件POSTMessage传递数据</p>
+<p>多个监听事件</p>
+
+<script>
+function count(){
+	var number=document.getElementsByName("number")[0].value;
+	var result=document.getElementsByName("result")[0];
+	var time=document.getElementsByName("time")[0];
+	result.value=time.value='';
+	var i=0
+	var timer=setInterval(function(){i++;time.value=i;},1000);   //点击之后开始计时
+	if(Worker){
+		if(typeof(w)=="undefined"){
+			var w=new Worker("demo_workers1.js");
+		}
+		//w.addEventListener("message",function (event){result.value=event.data;},false);
+		w.onmessage=function(event){
+			result.value=event.data;
+			result.style.background='yellow';
+			clearTimeout(timer);          //获得返回数据之后停止计时
+			w.terminate();                //终止web worker，释放系统资源
+		}
+		w.postMessage(number);		
+	}else{
+		alert("抱歉，您的浏览器不支持Web Workers...");
+	}
+}
+</script>
+
+</body>
+</html>

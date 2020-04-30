@@ -1,0 +1,67 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>实现列表鼠标悬浮内容自动撑开的过渡动画</title>
+<style>
+*{margin: 0;padding: 0;}
+body { font-family: 'Microsoft YaHei';}
+a{text-decoration: none;}
+ol{width: 150px;border: 1px solid #ccc;margin: 1rem 0 0 1rem;list-style-position: inside;}
+h3{border-bottom: 1px solid #ccc;background: #f2f2f2;text-align: center;}
+ol li{margin: .5rem 0 0 .5rem;}
+ol li:last-child{margin-bottom: .5rem;}
+.hd{padding: .5rem 0;}
+.bd { max-height:0; overflow:hidden; transition: all 1s ease-out; }
+.bd p{margin-left: 1rem;line-height: 1.8rem;}
+ol li:hover .hd{background: #f2f2f2;border-left: 3px solid rgba(8,46,84,1);}
+ol li:hover .bd { max-height: 600px; transition-timing-function: ease-in;}
+</style>
+</head>
+<body>
+<p>需要为一个列表添加个动画，容器的高度是不确定的，也就是高度为 auto，悬浮时候撑开内容有个过渡动画</p>
+<p>.bd { max-height:0; overflow:hidden; transition: all 1s ease-out; }</p>
+<p>li:hover .bd { max-height: 600px; transition-timing-function: ease-in;}</p>
+<ol> 
+	<h3>menu</h3>
+	<li> 
+		<div class="hd"> 列表项目 </div> 
+		<div class="bd">
+			<p><a href="####">列表内容</a></p><p><a href="####">内容列表内容</a></p><p><a href="####">内容列表内容</a></p><p><a href="####">列表内容</a></p>
+		</div>
+	</li> 
+	<li> 
+		<div class="hd"> 列表项目 </div> 
+		<div class="bd">
+			<p><a href="####">列表内容</a></p><p><a href="####">内容列表内容</a></p><p><a href="####">内容列表内容</a></p><p><a href="####">列表内容</a></p>
+		</div> 
+	</li> 
+	<li> 
+		<div class="hd"> 列表项目 </div> 
+		<div class="bd">
+			<p><a href="####">列表内容</a></p><p><a href="####">内容列表内容</a></p><p><a href="####">内容列表内容</a></p><p><a href="####">列表内容</a></p>
+		</div> 
+	</li>
+	<li> 
+		<div class="hd"> 列表项目 </div> 
+		<div class="bd">
+			<p><a href="####">列表内容</a></p><p><a href="####">内容列表内容</a></p><p><a href="####">内容列表内容</a></p><p><a href="####">列表内容</a></p>
+		</div>
+	</li> 
+	<li> 
+		<div class="hd"> 列表项目 </div> 
+		<div class="bd">
+			<p><a href="####">列表内容</a></p><p><a href="####">内容列表内容</a></p><p><a href="####">内容列表内容</a></p><p><a href="####">列表内容</a></p>
+		</div> 
+	</li> 
+	<li> 
+		<div class="hd"> 列表项目 </div> 
+		<div class="bd">
+			<p><a href="####">列表内容</a></p><p><a href="####">内容列表内容</a></p><p><a href="####">内容列表内容</a></p><p><a href="####">列表内容</a></p>
+		</div> 
+	</li>
+</ol>
+
+
+</body>
+</html>

@@ -1,0 +1,37 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>canvas 定时绘制矩形</title>
+<style>
+
+</style>
+</head>
+
+<body>
+<p>在(0,0)点绘制尺寸为100*100背景为半透明红色的矩形， 2s后在(50,50)点绘制尺寸为100*100，描边为半透明蓝色的矩形，2s后使用clearRect()清除矩形</p>
+
+<canvas id="drawing" style="border:1px solid black">
+    <p>The canvas element is not supported!</p>
+</canvas>
+
+<script src="../../vendors/jquery-3.1.1.js"></script>
+<script>
+var drawing = document.getElementById('drawing');
+//确定浏览器支持<canvas>元素
+if(drawing.getContext){
+    var context = drawing.getContext('2d');
+    context.fillStyle = 'rgba(255,0,0,.5)';
+    context.fillRect(0,0,100,100);
+    setTimeout(function(){
+    	context.strokeStyle = 'rgba(0,0,255,.5)';
+　　	context.strokeRect(50,50,100,100);
+    },2000);
+    setTimeout(function(){
+    	context.clearRect(0,0,300,150);
+    },4000);
+      
+} 
+</script>
+</body>
+</html>

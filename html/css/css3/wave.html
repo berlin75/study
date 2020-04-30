@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>a标签按钮 水波纹 冲击波</title>
+<style>
+html,body{font-family:"微软雅黑";background: rgba(0,0,0,.1);}
+.wave,.wave1,.warap{float: left;}
+p{margin-left: 1rem;}
+
+:root{
+	--awidth: 8rem;
+	--aheight: 3rem;
+	--wavewidth: 12rem;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+
+.wave{
+	display: block;width: var(--awidth);height: var(--aheight);line-height: var(--aheight);
+	position: relative;text-decoration: none;text-align: center;color: white;overflow: hidden;
+	background: rgba(156,0,0,1);margin: 5rem;border-radius: 5px;
+}
+.wave:link:before,.wave:visited:before{
+	content: '';
+	display: block;
+	width: var(--wavewidth);
+	height: var(--wavewidth);	
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%,-50%);
+	background: rgba(255,255,255,0);
+	border-radius: 50%;
+	transition: all 1s;
+}
+.wave:active:before{
+	width: 0rem;
+	height: 0rem;
+	background: rgba(255,255,255,.8);	
+	transition-duration: 0s;
+}
+
+/************************样式二****************************/
+.wave1{
+	display: block;width: var(--awidth);height: var(--aheight);line-height: var(--aheight);
+	position: relative;text-decoration: none;text-align: center;color: white;overflow: hidden;
+	background: rgba(34,139,34,1);margin: 5rem;border-radius: 5px;
+}
+.wave1:link:before,.wave1:visited:before{
+	content: '';
+	display: block;
+	width: var(--wavewidth);
+	height: var(--wavewidth);	
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	margin-left: calc(-1*var(--wavewidth)/2);
+	margin-top: calc(-1*var(--wavewidth)/2);
+	transform: scale(3);
+	background: rgba(255,255,255,0);
+	border-radius: 50%;
+	transition: all 1s;        /*过渡到link、visited状态需要1s*/
+}
+.wave1:active:before{
+	transform: scale(0);
+	background: rgba(255,255,255,.6);	
+	transition-duration: 0s;   /*过渡到active状态需要0s,即无过度效果*/
+}
+
+
+/************************样式三****************************/
+.wrap{
+    position:relative;
+    float:left;
+    width:50%;
+    height:420px;
+    background-color:blue;
+}
+.wrap a{
+    position:absolute;
+    top:50%;
+    left:50%;
+    display:inline-block;
+    width:120px;
+    height:50px;
+    margin-left:-60px;
+    margin-top:-25px;
+    line-height:50px;
+    text-align:center;
+    border-radius:5px;
+    color:red;
+    font-size:16px;
+    cursor:pointer;
+    background-color:pink;
+    /*overflow:hidden;*/
+     
+}
+.wrap a:after{      
+    content: "";
+    display: block;
+    position: absolute;
+    left: -40px;
+    top: -75px;
+    width: 200px;
+    height: 200px;
+    background: rgba(255,255,255,0.8);
+    border-radius: 50%;
+    opacity:0;
+    transition: all 1s;
+}
+.wrap a:active:after{     
+    width: 0;
+    height: 0;
+    left:60px;
+    top: 25px;
+    opacity: 1;
+    transition-duration: 0s;
+}
+</style>
+</head>
+<body>
+<p>链接点击的四个阶段：link -> hover -> active -> visited</p>
+<p>.wave:link:before,.wave:visited:before .wave:active:before</p>
+<p>active按下鼠标没有效果，松开瞬间才有,表示元素处于点击激活瞬间的状态</p>
+<p>水波纹/冲击波效果分为2种状态：不透明小半径状态一过渡到透明大半径的状态二，</p>
+<p>过渡到半径最大时的状态透明,过渡时间为0即无过渡效果，过渡到半径最小时的状态不透明，过渡时间</p>
+<p>响应式居中：用 position top、left为50%，同时translate(-50%,-50%)xy是百分比时是以自己为基准</p>
+<p>采用scale缩放，圆心不变,元素的尺寸不会变，但是translate同时使用会很麻烦，所有偏移改用margin</p>
+
+<a href="javascript:;" class="wave">水波纹</a>
+
+<a href="javascript:;" class="wave1">冲击波</a>
+
+<div class="wrap">
+    <a>点我</a>
+</div>
+</body>
+</html>

@@ -1,0 +1,36 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>border箭头对话框</title>
+<style>
+div{width: 250px;height: 60px;line-height: 60px;text-align: center;position: relative;border-radius: 5px;
+	background: rgba(0,201,87,1);margin: 3rem auto;color: #fff;}
+div:before{content: '';position: absolute;left: -20px;top: 20px;border: 10px solid transparent;}
+
+.div1:before{border-right-color: rgba(0,201,87,1);}
+.div2:before{border-top-color: red;border-bottom-color: green;}
+.div3:before{top: 0;left: 0;border: 30px solid red;border-right-color: transparent;}
+.div4:before{border-width: 5px 10px;border-color: transparent rgba(0,201,87,1) rgba(0,201,87,1) transparent;}
+</style>
+</head>
+<body>
+	<h4 align="center">boder-left/right/top/bottom-style-width-color</h4>
+	<div class="div1">border箭头对话框</div>
+	<div class="div2">沙漏 高脚杯</div>
+	<div class="div3">border箭头对话框</div>
+	<div class="div4">border箭头对话框</div>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf8">
+<title>移动广告-碰壁反弹</title>
+<style>
+* {
+	margin:0;
+	padding:0;
+}
+#ad {
+	width:100px;
+	height:100px;
+	background:#369;
+	border-radius:50%;
+	position:absolute;
+	z-index: 99;
+}
+
+</style>
+</head>
+<body>
+<p>定时器，#ad的left、top值每次同时增加，判断#ad将要移出window时往相反方向移动</p>
+<div id="ad"></div>
+
+<script src="../vendors/jquery-3.1.1.js"></script>
+<script>
+var timer = null;
+var stepX = 2;
+var stepY = 1;
+
+autoRun();
+
+function autoRun() {
+	timer = setInterval(function(){	
+		var _l = $('#ad').position().left;   //相对于父元素的偏移
+		var _t = $('#ad').position().top;
+		var newL = _l + stepX;
+		var newT = _t + stepY;
+		var maxLeft = $(window).width() - $('#ad').width();
+		var maxTop = $(window).height() - $('#ad').height();
+		if (newL >= maxLeft || newL <= 0) {   
+			stepX = -stepX;                  //#ad将要移出window时往相反方向移动
+		}
+		if (newT >= maxTop || newT <= 0) {
+			stepY = -stepY;
+		}
+
+		$('#ad').css({
+			left: newL + 'px',
+			top: newT + 'px'
+		});
+	}, 10);
+}
+
+</script>
+
+</body>
+</html>

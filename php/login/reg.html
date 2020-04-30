@@ -1,0 +1,94 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="shortcut icon" href=../../../favicon.ico />
+<title>用户注册</title>
+<script src="../../ajax_f.js"></script>
+<script>
+var logo="✈✈✈✈✈✈✈✈✈✈✈✈✈✈✈✈✈✈✈✈✈✈✈✈✈✈✈✈✈✈✈✈✈✈✈✈✈✈✈✈✈✈✈";
+console.log(logo);
+</script>
+<style>
+.error{ color:red; }
+label{ display:inline-block; width:80px; text-align:right; }
+</style>
+</head>
+
+<body>
+<fieldset>
+<legend>用户注册</legend>
+<form action="reg.php" method="post" name="regform" autocomplete="on">
+	<p>
+    	<label for="usename">用户名：</label>
+        <input type="text" name="username" value="" required autofocus title="用户名为6-12字符" placeholder="用户名为6-12字符">
+		<small id="usernameMsg" class="error"></small>
+    </p>
+    <p>
+    	<label for="password">密&nbsp;&nbsp;&nbsp;码:</label>
+        <input type="password" name="password" value="" required title="密码为6-12字符" placeholder="密码为6-12字符">
+    </p>
+    <p>
+    	<label for="password">确认密码:</label>
+        <input type="password" value="" required>
+    </p>
+     <p>
+    	<label for="sex">性&nbsp;&nbsp;&nbsp;别:</label>
+        <input type="radio" name="sex" value="女" checked required>女
+        <input type="radio" name="sex" value="男" required>男
+    </p>
+     <p>
+    	<label for="age">年&nbsp;&nbsp;&nbsp;龄:</label>
+        <input type="number" name="age" value="" required title="请填写真实年龄" placeholder="请填写真实年龄" pattern="\d{2,3}" min="1">
+    </p>
+     <p>
+    	<label for="city">城&nbsp;&nbsp;&nbsp;市:</label>
+        <input type="text" name="city" value="" required title="请填写所在城市" placeholder="请填写所在城市">
+    </p>
+     <p>
+    	<label for="email">邮&nbsp;&nbsp;&nbsp;箱:</label>
+        <input type="text" name="email" id="email" value="" required title="email用于找回密码" placeholder="email用于找回密码">
+		<small id="emailMsg" class="error"></small>
+    </p>
+	<p>
+	    <input type="checkbox" name="xieyi" required>阅读并接受<a href="javascript:;">《用户协议》</a>
+	</p>
+    <p><input type="submit" name="submit" value="注册"></p>
+</form>
+</fieldset>
+
+
+<p>html表单验证，标签本身验证，js验证, ajax验证用户名和邮箱</p>
+<p>onchange是内容变动使触发，onblur是失去焦点触发，内容没变动时也会触发</p>
+<p><mark>Q:</mark>php没有接收到post的数据？？</p>
+<p><mark>A:</mark>var data="name="+document.getElementById("a").value+"&number="+document.getElementById("b").value;</p>
+<p><mark>Q:</mark>php已经正确响应，但是显示的是undefined？？</p>
+<p><mark>A:</mark>ajax响应内容直接在封装函数里赋给目标对象</p>
+
+<script>
+document.getElementsByName("username")[0].onchange=function(){
+var data="username="+this.value; 
+var obj=document.getElementById("usernameMsg");
+ajax(obj,"post","regajax.php",data);
+}
+document.getElementsByName("email")[0].onchange=function(){
+var data="email="+this.value; 
+var obj=document.getElementById("emailMsg");
+ajax(obj,"post","regajax.php",data);
+}
+
+console.group("reg.html");
+
+　　　　console.log("http://www.xxx.com"); 
+
+　　console.groupEnd();
+
+　　    console.group("login.html");
+
+　　　　console.log("QQ：465137869");
+
+　　    console.groupEnd();
+
+</script>
+</body>
+</html>

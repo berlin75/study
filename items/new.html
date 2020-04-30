@@ -1,0 +1,48 @@
+<!DOCTYPE html> 
+<html> 
+<head> 
+<meta charset="UTF-8"> 
+<title>贪吃蛇</title> 
+<style>
+ </style> 
+ </head> 
+ <body> 
+ <canvas id="cans" width="400" height="400" style="background:black"></canvas>
+ 
+ <script>
+ var sn=[42,41],dz=43.fx=1,n,ctx=document.getElementById("cans").getContext("2d");
+ function draw(t,c){
+	ctx.fillStyle=c;
+	ctx.fillRect(t%20*20+1,~~(t/20)*20+1,18,18);
+ }
+ document.onkeydown=function(e){fx=sn[1]-sn[0]==(n=[-1,-20,1,20][(e||event).keycode-37]||fx)?fx:n};
+ !function(){
+	sn.unfift(n=sn[0]+fx);
+	if(sn.indexof(n,1)>0||n<0||n>339||fx==1&&n%20==0||fx==-1&&n%20==19)return alert("game over");
+	draw(n,"red");
+	if(n==dz){
+		while(sn.indexof(dz=~~(Math.randow()*400))>=0);
+		draw(dz,"red");
+	}else
+		draw(sn.pop(),"black");
+	setTimeout(arguments.callee,130);
+ }();
+ </script>
+ </body> 
+ </html>
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 

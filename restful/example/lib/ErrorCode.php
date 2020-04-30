@@ -1,0 +1,19 @@
+<?php
+class ErrorCode{
+	const USERNAME_CANNOT_EMPTY = 1;
+	const PASSWORD_CANNOT_EMPTY = 2;
+	const USERNAME_EXISTS = 3;
+	const REGISTER_FAIL = 4;
+	const USERNAEM_OR_PASSWORD_INVAILD = 5;
+	const SERVER_INTERNAL_ERROR = 15;
+
+	const TITLE_CANNOT_EMPTY = 6;
+	const CONTENT_CANNOT_EMPTY = 7;
+	const CREATE_FAIL = 8;
+	const Article_ID_CANNOT_EMPTY = 9;
+	const Article_NOT_FOUND = 10;
+	const PERMISSION_DENIED = 11;
+	const EDIT_ARTICLE_FAIL = 12;
+	const DELETE_ARTICLE_FAIL = 13;
+	CONST PAGESIZE_TOO_BIG = 14;
+}

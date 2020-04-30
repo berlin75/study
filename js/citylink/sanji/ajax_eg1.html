@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>省市区三级</title>
+<script src="../../../vendors/jquery-3.1.1.js"></script>
+</head>
+<style>
+.sanji{ margin-left: 550px; margin-top: 150px; }
+</style>
+<body>
+
+<div id="sanji"> </div>
+
+<script>
+$(document).ready(function(e) {
+	//加载三个下拉列表
+	$("#sanji").html("<select id='sheng'></select><select id='shi'></select><select id='qu'></select>");
+	LoadSheng();
+	LoadShi();
+	LoadQu(); 
+
+	//当省份选中变化，重新加载市和区
+	$("#sheng").change(function(){ 
+		LoadShi();
+		LoadQu();
+	});
+
+	//当市选中变化，重新加载区
+	$("#shi").change(function(){
+		LoadQu();
+	});
+});
+
+function LoadSheng(){
+	//取父级代号
+	var pcode = 0;
+	//根据父级代号查数据
+	$.ajax({
+		//取消异步，也就是必须完成上面才能走下面
+		async:false,
+		url:"load1.php",
+		data:{pcode:pcode},
+		type:"POST",
+		dataType:"json",
+		success: function(data){ 
+			var str="";
+			for(var k in data){ 
+				str += "<option value='"+data[k][0]+"'>"+data[k][1]+"</option>";
+			}
+			$("#sheng").html(str);
+		}
+	});
+}
+
+function LoadShi(){
+	//取父级代号
+	var pcode =$("#sheng").val(); console.log(pcode);
+	//根据父级代号查数据
+	$.ajax({
+		//取消异步，也就是必须完成上面才能走下面
+		async:false,
+		url:"load1.php",
+		data:{pcode:pcode},
+		type:"POST",
+		dataType:"json",
+		success: function(data){
+			var str="";
+			for(var k in data){
+				str=str+"<option value='"+data[k][0]+"'>"+data[k][1]+"</option>";
+			}
+			$("#shi").html(str);
+		}
+	});
+}
+
+//加载区信息
+function LoadQu(){
+	$("#qu").html('');  console.log(pcode);
+	//取父级代号
+	var pcode =$("#shi").val(); 
+	var pcode1 = Number(pcode) + 1;  
+	$.ajax({
+		//不需要取消异步
+		url:"load1.php",
+		data:{pcode:pcode1},
+		type:"POST",
+		dataType:"json",
+		success: function(data){  console.log(data);
+			var str="";
+			for(var k in data){
+				str=str+"<option value='"+data[k][0]+"'>"+data[k][1]+"</option>";
+			}
+			$("#qu").html(str);
+		}
+	});
+	//根据父级代号查数据
+	$.ajax({
+		//不需要取消异步
+		url:"load1.php",
+		data:{pcode:pcode},
+		type:"POST",
+		dataType:"json",
+		success: function(data){
+			var str="";
+			for(var k in data){
+				if(data[k][1] != '市辖区'){
+					str=str+"<option value='"+data[k][0]+"'>"+data[k][1]+"</option>";
+				}
+			}
+			$("#qu").append(str);
+		}
+	});
+}
+
+</script>
+
+<pre>
+mysql> select * from china;
++--------+--------------------------------+--------+
+| Id     | Name                           | Pid    |
++--------+--------------------------------+--------+
+|      0 | 中国                           |      0 |
+| 110000 | 北京市                         |      0 |
+| 110100 | 东城区                         | 110000 |
+| 110200 | 西城区                         | 110000 |
+| 110500 | 朝阳区                         | 110000 |
+| 110600 | 丰台区                         | 110000 |
+| 110700 | 石景山区                       | 110000 |
+| 110800 | 海淀区                         | 110000 |
+| 110900 | 门头沟区                       | 110000 |
+| 111100 | 房山区                         | 110000 |
+| 111200 | 通州区                         | 110000 |
+| 111300 | 顺义区                         | 110000 |
+| 111400 | 昌平区                         | 110000 |
+| 111500 | 大兴区                         | 110000 |
+| 111600 | 怀柔区                         | 110000 |
+| 111700 | 平谷区                         | 110000 |
+| 112800 | 密云县                         | 110000 |
+| 112900 | 延庆县                         | 110000 |
+| 120000 | 天津市                         |      0 |
+| 120100 | 和平区                         | 120000 |
+| 120200 | 河东区                         | 120000 |
+</pre>
+</body>
+</html>

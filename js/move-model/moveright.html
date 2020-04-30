@@ -1,0 +1,48 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>无标题文档</title>
+<style type="text/css">
+	*{margin:0; padding:0; }
+	#div1{ width:712px; height:108px; background:red; margin:10px auto; position:relative; overflow:hidden;}
+	#div1 ul{ position:absolute; left:0; top:0;  }
+	#div1 ul li{ list-style:none; float:left;  width:178px; height:108px;}
+</style>
+<script type="text/javascript">
+	window.onload=function()
+	{
+		var odiv=document.getElementById("div1");
+		var oul=odiv.getElementsByTagName("ul")[0];
+		var oli=oul.getElementsByTagName("li");
+		oul.innerHTML=oul.innerHTML+oul.innerHTML;
+		oul.style.width=oli[0].offsetWidth*oli.length+"px";
+		setInterval(function()
+		{
+			if(oul.offsetLeft<(-oul.offsetWidth/2))
+			{
+				oul.style.left="0";
+			}
+			if(oul.offsetLeft>0)
+			{
+				oul.style.left=(-oul.offsetWidth/2)+"px";
+			}
+			oul.style.left=oul.offsetLeft+2+'px';
+		},30);
+	
+	}
+</script>
+</head>
+
+<body>
+<div id="div1"> 
+    <ul>
+        <li><img src="img/11.jpg" /></li>
+        <li><img src="img/12.jpg" /></li>
+        <li><img src="img/13.jpg" /></li>
+        <li><img src="img/14.jpg" /></li>
+    </ul>
+</div>
+
+</body>
+</html>

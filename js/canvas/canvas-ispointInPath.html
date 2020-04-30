@@ -1,0 +1,55 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>canvas 交互 ispointInPath</title>
+<style>
+
+</style>
+</head>
+<body>
+<p>一个canvas交互的实例，点击蓝色的小圆，可变成红色,检测点击点是否在路径内，显示完整路径</p>
+<canvas id="drawing">当前浏览器不支持canvas，请更换浏览器后再试</canvas>
+<script>
+var drawing = document.getElementById('drawing');
+if(drawing.getContext){
+    var cxt = drawing.getContext('2d');
+    var H=150,W=300;
+    var balls = [];
+    var NUM = 5;
+    for(var i = 0; i < NUM; i++){
+        var tempBall = {
+            x:Math.floor(Math.random()*W),
+            y:Math.floor(Math.random()*H),
+            r:Math.floor(Math.random()*40+20)
+        }
+        balls[i] = tempBall;
+        draw();
+        drawing.addEventListener('click',fnDetect);
+    }
+    
+    function draw(){
+        for(var i = 0; i < balls.length; i++){
+            cxt.beginPath();
+            cxt.arc(balls[i].x,balls[i].y,balls[i].r,0,Math.PI*2);
+            cxt.fillStyle = '#058';
+            cxt.fill();
+        }
+    }
+    function fnDetect(e){
+        e = e || event;
+        var x = e.clientX - drawing.getBoundingClientRect().left;
+        var y = e.clientY - drawing.getBoundingClientRect().top;
+        for(var i = 0; i < balls.length; i++){
+            cxt.beginPath();
+            cxt.arc(balls[i].x,balls[i].y,balls[i].r,0,Math.PI*2);
+            if(cxt.isPointInPath(x,y)){
+                cxt.fillStyle = 'red';
+                cxt.fill();
+            }
+        }
+    }
+} 
+</script>
+</body>
+</html>

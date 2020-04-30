@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Express Example for connect-flash</title>
+</head>
+<body>
+<p>
+	<a href="/flash">Flash</a> | 
+	<a href="/no-flash">No Flash</a> | 
+	<a href="/multiple-flash">multiple-flash</a>
+</p>
+<% if (message) { %>
+	<% if(Array.isArray(message)){ %>
+		<% message.forEach( msg => { %>
+			<p><%= msg %></p>
+		<% }) %>
+	<% }else{ %>
+		<p><%= message %></p>
+	<% } %>
+<% } %>
+</body>
+</html>
