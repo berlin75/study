@@ -13,27 +13,25 @@ if(!$con){die('Not connect,错误代码：'.mysqli_errno().'错误信息：'.mys
 
 mysqli_set_charset($con,'utf8');
 
-if(mysqli_query($con,"CREATE DATABASE my_db01 CHARACTER SET utf8 COLLATE utf8_general_ci"))
-    {
-	   echo "Database my_db01 created<br>";
-    }
-else{  echo "Error creating database:".mysqli_error($con).'<br>';}
+if(mysqli_query($con,"CREATE DATABASE test CHARACTER SET utf8 COLLATE utf8_general_ci"))
+  echo "Database test created<br>";
+else
+  echo "Error creating database:".mysqli_error($con).'<br>';
 
-mysqli_select_db($con,"my_db01");
+mysqli_select_db($con,"test");
 
 
 $sql="CREATE TABLE persons
 (
-    personID int NOT NULL AUTO_INCREMENT,
-	PRIMARY KEY(personID),
+  id int NOT NULL AUTO_INCREMENT,
+	PRIMARY KEY(id),
 	FirstName varchar(15),
 	LastName varchar(15),
 	Age int
 )";
 
-if(mysqli_query($con,$sql)){echo "table persons created<br>";}
-
-else{  echo "Error creating table:".mysqli_error($con).'<br>';}
+if(mysqli_query($con,$sql)) echo "table persons created<br>"; 
+else echo "Error creating table:".mysqli_error($con).'<br>';
 
 mysqli_query($con,"INSERT INTO persons(FirstName,LastName,Age) VALUES('艺珍','孙','34')");
 
