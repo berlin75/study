@@ -19,7 +19,7 @@
     "iconv-lite": "^0.4.19",
     "mongodb": "^2.2.33",
     "mongolass": "^3.1.5",
-    "mongoose": "^4.13.6",
+    "mongoose": "^5.7.5",
     "node-schedule": "^1.2.5",
     "redis": "^2.8.0",
     "request": "^2.83.0",
