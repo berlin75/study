@@ -13,7 +13,8 @@
 // ];
 // var_dump($GLOBALS['fd']);
 
-$ws = new swoole_websocket_server('0.0.0.0', 8080);
+echo "starting" . PHP_EOL;
+$ws = new Swoole\WebSocket\Server('0.0.0.0', 9501);
 $ws->on('open', function($ws, $request){
     echo "加入新用户 $request->fd".PHP_EOL;
     // $GLOBALS['fd'][$request->fd] = ['id' => $request->fd, 'name' =>'匿名游客'];
@@ -26,7 +27,7 @@ $ws->on('message', function($ws, $request){
     if(strstr($request->data, "#name#")){
         $GLOBALS['fd'][$request->fd]['name'] = ltrim($request->data, "#name#");
     }else{
-        // $msg = $GLOBALS['fd'][$request->fd]['name'] . ":" .$request->data . "\n";
+        $msg = $GLOBALS['fd'][$request->fd]['name'] . ":" .$request->data . "\n";
         // foreach($GLOBALS['fd'] as $i){
         $clients = file_get_contents('clients.txt');
         $clients = explode(',', $clients);

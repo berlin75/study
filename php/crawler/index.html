@@ -1,0 +1,55 @@
+<input type="text" id="keyword" value="天猫精灵">
+<button>查询</button>
+<div id="show" style="margin-top: 2rem;"></div>
+
+<script>
+// https://ci.5118.com/5707ebc7b2379295/ detail.js解码文件
+function n(t) {
+  for (var e = [], i = 0; i < t.length; i++)
+    e[i] = ("00" + t.charCodeAt(i).toString(16)).slice(-4);
+  return "\\u" + e.join("\\u")
+}
+
+String.prototype.encodeUnicode = function() {
+  return n(this).replace(/\\u00/g, "l").replace(/\\u/g, "").split("").reverse().join("")
+}
+
+window.ajax = async function(params, success, error) {
+  let {url, method, data} = params;
+  let body = new FormData();
+  for(let key in data) {
+    if(data.hasOwnProperty(key)) body.append(key, data[key]);
+  }
+  let xhr = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
+  xhr.timeout = 3000;
+  xhr.open(method, url, true);
+  xhr.addEventListener("readystatechange", evt => {
+    if(xhr.readyState === 4) {
+      if(xhr.status === 200) {
+        success && typeof success === "function" ? success(xhr.response) : console.log(xhr.response);
+      } else {
+        error && typeof error === "function" ? error(xhr.statusText) : console.error(xhr.statusText);
+      }
+    }
+  });
+  xhr.send(body);
+};
+
+document.querySelector('button').onclick = function(){
+  document.querySelector('#show').innerHTML = '';
+  // let keyword = document.getElementById('keyword').value.encodeUnicode();  // js解码
+  let keyword = document.getElementById('keyword').value;                     // php解码
+  let url = `furen.php?keyword=${keyword}`;
+  ajax({
+    url,
+    method: "GET",
+  }, function(resp) {
+    let data = JSON.parse(resp);
+    let html = '';
+    for (let index = 0; index < data.length; index++) {
+      html += data[index] + '<br/>';
+    }
+    document.querySelector('#show').innerHTML = html;
+  })
+}
+</script>

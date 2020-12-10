@@ -5,7 +5,7 @@ class Server{
 
     public function __construct() {
         // 创建swoole_server对象
-        $this->serv = new swoole_server("0.0.0.0", 8888);
+        $this->serv = new Swoole\Server("0.0.0.0", 8888);
         // 调用set函数设置swoole_server的相关配置选项
         $this->serv->set(array(
             'worker_num' => 8,
