@@ -1,41 +1,62 @@
 <?php
 // phpinfo();
 
-class Xrange implements Iterator {
-    protected $start;
-    protected $end;
-    protected $step;
-    protected $value;
-    public function __construct($start, $end, $step = 1){
-      $this->start = $start;
-      $this->end = $end;
-      $this->step  = $step;
+if (!function_exists("fastcgi_finish_request")) {
+    echo 'exists';
+    function fastcgi_finish_request()  {
+        $status = ob_get_status(true);
+        $level = \count($status);
+        $flags = \PHP_OUTPUT_HANDLER_REMOVABLE | \PHP_OUTPUT_HANDLER_FLUSHABLE;
+
+        while ($level-- > 0 && ($s = $status[$level]) && (!isset($s['del']) ? !isset($s['flags']) || ($s['flags'] & $flags) === $flags : $s['del'])) {
+            if (true) {
+                ob_end_flush();
+            } else {
+                ob_end_clean();
+            }
+        }
     }
-    public function rewind(){
-      $this->value = $this->start;
-    }
-    public function next(){
-      $this->value += $this->step;
-    }
-    public function current(){
-      return $this->value;
-    }
-    public function key(){
-      return $this->value + 1;
-    }
-    public function valid(){
-      return $this->value <= $this->end;
-    }
-  }
-  
-  $firstday = isset($time_first) ? $time_first : strtotime(date('Y-m-01 0:0:0', strtotime('-1 month')));
-  $lastday = isset($time_last) ? $time_last : strtotime(date('Y-m-01 0:0:0'));
-  $arr = new Xrange($firstday, $lastday, 20 * 60);
-  foreach ($arr as $key => $val) {
-    echo $key,'->',$val,"\t";
-  }
+}
+
+echo '例子：';
+file_put_contents('log.txt', date('Y-m-d H:i:s') . " 上传视频\n", FILE_APPEND);
+fastcgi_finish_request();
+sleep(10);
+file_put_contents('log.txt', date('Y-m-d H:i:s') . " 转换格式\n", FILE_APPEND);
+sleep(10);
+file_put_contents('log.txt', date('Y-m-d H:i:s') . " 提取图片\n", FILE_APPEND);
+die;
 
 
+function array_sort($data, $key, $type = 'asc') {
+    if (empty($data)) return $data;
+    if (!is_array($data)) return $data;
+    $keys = [];
+    foreach ($data as $k => $v) {
+      $keys[] = $v[$key];
+    }
+    $sort = $type == 'asc' ? SORT_ASC : SORT_DESC;
+    array_multisort($keys, $sort, $data);
+    return $data;
+  }
+
+$data = array(
+    array('volume' => 67, 'edition' => 2),
+    array('volume' => 86, 'edition' => 1),
+    array('volume' => 85, 'edition' => 6),
+    array('volume' => 98, 'edition' => 2),
+    array('volume' => 86, 'edition' => 6),
+    array('volume' => 67, 'edition' => 7)
+);
+var_export(array_sort($data, 'volume', 'desc'));
+// array ( 
+//     0 => array ( 'volume' => 67, 'edition' => 2, ), 
+//     1 => array ( 'volume' => 67, 'edition' => 7, ), 
+//     2 => array ( 'volume' => 85, 'edition' => 6, ), 
+//     3 => array ( 'volume' => 86, 'edition' => 1, ), 
+//     4 => array ( 'volume' => 86, 'edition' => 6, ), 
+//     5 => array ( 'volume' => 98, 'edition' => 2, ),
+// )
 
 // try {
 //     $options = [

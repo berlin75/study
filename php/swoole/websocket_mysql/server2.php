@@ -63,7 +63,7 @@ class Server{
 		}
 		var_dump($result);
 		foreach($this->server->connections as $connection){
-			$this->server->>push($connection, json_encode($result));
+			$this->server->push($connection, json_encode($result));
 		}
 	}
 	public function select($table, $fields){

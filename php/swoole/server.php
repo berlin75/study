@@ -33,7 +33,7 @@ class Server{
         $serv->send( $fd, "Hello {$fd}!" );
     }
 
-    public function onReceive( swoole_server $serv, $fd, $from_id, $data ) {
+    public function onReceive( $serv, $fd, $from_id, $data ) {
         echo "Get Message From Client {$fd}:\n{$data}\n***************************\n";
     }
 
